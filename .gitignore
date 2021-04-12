@@ -1,0 +1,14 @@
+# IDE
+.idea
+/.vscode
+*.code-workspace
+*.sublime-project
+
+# JS
+node_modules/
+
+# Build folders
+build/
+
+# DB files
+*.db
