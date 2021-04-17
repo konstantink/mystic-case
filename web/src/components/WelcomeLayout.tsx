@@ -12,12 +12,13 @@ import { withStyles, WithStyles } from "@material-ui/styles";
 
 const styles = (theme: Theme) => createStyles({
     root: {
-        height: "56vh",
+        borderRadius: theme.spacing(3),
+        height: 784,
         margin: "7.5% auto 0 auto",
         // padding: "32px 48px",
         display: "flex",
         // flexDirection: "column",
-        width: "50%",
+        width: 710,
         [theme.breakpoints.down('sm')]: {
         // '@media (max-width: 400px)': {
             height: "100%",
@@ -77,10 +78,10 @@ const styles = (theme: Theme) => createStyles({
         alignItems: "center",
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        margin: "auto",
-        padding: theme.spacing(6, 4),
-        width: "80%",
+        // height: "100%",
+        // margin: "auto",
+        padding: theme.spacing(10, 10),
+        width: "100%",
         [theme.breakpoints.down('xs')]: {
             padding: theme.spacing(6, 0),
         },
@@ -144,8 +145,8 @@ interface WelcomeProps extends WithStyles<typeof styles> {
 const WelcomeLayout: React.FunctionComponent<WelcomeProps> = ({ classes, children }) => {
     return (
         <React.Fragment>
-            {/* <Paper className={classes.root} variant="outlined"> */}
-                <Grid container component={Paper} className={classes.root}>
+            <Paper className={classes.root} elevation={6} variant="elevation">
+                {/* <Grid container component={Paper} className={classes.root}>
                     <CssBaseline />
                     <Grid item xs={false} sm={4} md={5}>
                         <div className={`${classes.background} ${classes.welcomePart}`}>
@@ -162,7 +163,7 @@ const WelcomeLayout: React.FunctionComponent<WelcomeProps> = ({ classes, childre
                             </Box>
                         </div>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square>
+                    <Grid item xs={12} sm={8} md={7} component={Paper} elevation={6} square> */}
                         <div className={classes.formPart}>
                             {children}
                             {/* <SignInForm /> */}
@@ -177,9 +178,9 @@ const WelcomeLayout: React.FunctionComponent<WelcomeProps> = ({ classes, childre
                                 <Copyright className={classes.link}/>
                             </Box>
                         </div>
-                    </Grid>
-                </Grid>
-            {/* </Paper> */}
+                    {/* </Grid>
+                </Grid> */}
+            </Paper>
         </React.Fragment>
     )
 }

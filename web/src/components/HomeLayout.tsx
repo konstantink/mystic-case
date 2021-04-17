@@ -63,9 +63,7 @@ const styles = (theme: Theme) => createStyles({
         left: 0,
         right: 0,
         top: 0,
-        // height: "100vh",
         zIndex: 0,
-        // width: "100%",
     },
     bg: {
         backgroundImage: "url('/assets/r8-fullsizerender.jpg')",
