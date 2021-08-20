@@ -7,35 +7,17 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	uut "github.com/mystic-case/back/api"
 	"github.com/mystic-case/back/models"
 )
 
-func setupRouter() *gin.Engine {
-	var router = gin.Default()
-	group := router.Group("/u")
-	{
-		group.POST("/signup", uut.RegisterHandlerFunc)
-		group.POST("/signin", uut.LoginHandlerFunc)
-	}
-
-	return router
-}
-
 var _ = Describe("Checking that authentication works", func() {
 	var (
-		router *gin.Engine
-		w      *httptest.ResponseRecorder
+		w *httptest.ResponseRecorder
 		// server *ghttp.Server
 	)
-	BeforeEach(func() {
-		router = setupRouter()
-	})
 
 	AfterEach(func() {
 		models.DB.Where("username = ?", "test_username").Delete(&models.User{})
@@ -57,7 +39,7 @@ var _ = Describe("Checking that authentication works", func() {
 			request := httptest.NewRequest("POST", "/u/signup", strings.NewReader(string(payload)))
 			request.Header.Add("Content-Type", "application/json")
 
-			router.ServeHTTP(w, request)
+			Router.ServeHTTP(w, request)
 
 			Expect(w.Code).To(Equal(201))
 		})
@@ -78,14 +60,14 @@ var _ = Describe("Checking that authentication works", func() {
 			request := httptest.NewRequest("POST", "/u/signup", strings.NewReader(string(payload)))
 			request.Header.Add("Content-Type", "application/json")
 
-			router.ServeHTTP(w, request)
+			Router.ServeHTTP(w, request)
 
 			Expect(w.Code).To(Equal(400))
 			_ = json.Unmarshal(w.Body.Bytes(), &response)
 			Expect(response).To(Equal(map[string]interface{}{"status": "fail", "errors": map[string]interface{}{"email": "Provide correct email address"}}))
 		})
 
-		FContext("Assuming that email is already registered in the system", func() {
+		Context("Assuming that email is already registered in the system", func() {
 			_ = BeforeEach(func() {
 				testUser := models.User{
 					Username:  "test_username",
@@ -118,7 +100,7 @@ var _ = Describe("Checking that authentication works", func() {
 				request := httptest.NewRequest("POST", "/u/signup", strings.NewReader(string(payload)))
 				request.Header.Add("Content-Type", "application/json")
 
-				router.ServeHTTP(w, request)
+				Router.ServeHTTP(w, request)
 
 				Expect(w.Code).To(Equal(400))
 				_ = json.Unmarshal(w.Body.Bytes(), &response)

@@ -17,5 +17,10 @@ func initAPIV1Routes(router *gin.Engine) {
 			authRoutes.POST("/signin", api.LoginHandlerFunc)
 			authRoutes.POST("/signup", api.RegisterHandlerFunc)
 		}
+
+		productRoutes := apiV1Routes.Group("/products", SessionManager())
+		{
+			productRoutes.GET("/featured", api.GetFeaturedProductsList)
+		}
 	}
 }

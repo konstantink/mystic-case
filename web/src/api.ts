@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import * as uuid from "uuid";
 
+import { FeaturedProductsResponse, ProductItem } from "./types";
+
 interface AxiosInstanceParams {
     version?: string,
 }
@@ -60,6 +62,14 @@ export const createAccount = async (params: AuthParams) => {
     const response = await instance.post('/u/signup', {
         params: params,
     })
+
+    return response.data;
+}
+
+export const getFeaturedProducts = async (): Promise<FeaturedProductsResponse> => {
+    const instance = await axiosInstance;
+    
+    const response = await instance.get<FeaturedProductsResponse>('/products/featured');
 
     return response.data;
 }
