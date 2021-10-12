@@ -69,3 +69,10 @@ func GetFeaturedProductsList(c *gin.Context) {
 		}},
 	}}})
 }
+
+// ProductsHandlerFunc is a handler for GET requests used for
+// admin access of the shop to show all available products
+// whether they are published or not
+func ProductsHandlerFunc(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"success": true, "products": []string{"Product #1", "Product #2"}})
+}

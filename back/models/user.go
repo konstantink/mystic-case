@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofrs/uuid"
+	"github.com/mingrammer/cfmt"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -31,8 +32,7 @@ func (u User) String() string {
 // BeforeCreate hook is used to create a random uuid for ID
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	err = u.Validate(tx).Error
-	if tx.Error != nil {
-		// log.Printf("[ERROR] %s", err.Error())
+	if err != nil {
 		return
 	}
 
@@ -42,19 +42,14 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return
 	}
 	u.ID = uuid
-	// err = scope.SetColumn("ID", uuid)
 
-	// hash, err := bcrypt.GenerateFromPassword([]byte(password.Field.String()), bcrypt.DefaultCost)
 	hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
-		// return errors.WithStack(err)
 		return
 	}
-	// err = scope.SetColumn("Password", string(hash))
 	u.Password = string(hash)
 
 	if u.Username == "" {
-		// err = scope.SetColumn("Username", email.Field.String())
 		u.Username = u.Email
 	}
 
@@ -73,13 +68,14 @@ func (u User) Validate(tx *gorm.DB) *gorm.DB {
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs {
-			log.Printf("[WARNING] Validate: %s", e.Translate(trans))
+			log.Print(cfmt.Swarningf("[WARNING] Validate: %s", e.Translate(trans)))
 			tx.AddError(fmt.Errorf("%s:%s", e.Field(), e.Translate(trans)))
 		}
-		// log.Printf("[ERROR] %s", err.Error())
+		log.Print(cfmt.Serrorf("[ERROR] %s", err.Error()))
+		return tx
 	}
 	// db.Raw("SELECT EXISTS ? AS exists", db.Table("users").Select("id").Where("email = ?", u.Email).Where("deleted_at IS NULL").SubQuery()).Scan(&row)
-	tx.Raw("SELECT EXISTS (?) as exists", tx.Table("users").Select("id").Where("email = ?", u.Email)).Scan(&row)
+	tx.Raw("SELECT EXISTS (?) as exists", tx.Table("users").Select("id").Where("username = ?", u.Username)).Scan(&row)
 	if row.Exists {
 		tx.AddError(fmt.Errorf("%s:Email %q is already registered", "__all__", u.Email))
 		// log.Printf("[WARNING] error: %s", fmt.Sprintf("Email %q is already registered", u.Email))

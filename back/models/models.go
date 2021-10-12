@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kelseyhightower/envconfig"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	// import eveything to migrate DB
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -102,7 +104,17 @@ func init() {
 
 	dsn = fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		"127.0.0.1", 5432, "mysticcase", dbName, "pass321")
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			logger.Config{
+				SlowThreshold:             time.Millisecond * 100,
+				LogLevel:                  logger.Error,
+				IgnoreRecordNotFoundError: false,
+				Colorful:                  true,
+			},
+		),
+	})
 	// "postgres", fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 	// "127.0.0.1", 5432, "mysticcase", dbName, "pass321"))
 

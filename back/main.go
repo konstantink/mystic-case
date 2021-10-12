@@ -1,15 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/adam-hanna/sessions"
 	"github.com/adam-hanna/sessions/auth"
-	"github.com/adam-hanna/sessions/store"
 	"github.com/adam-hanna/sessions/transport"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/mystic-case/back/api"
 )
 
 var router *gin.Engine
@@ -21,7 +23,8 @@ type EnvConfig struct {
 }
 
 func initSessionsManager() {
-	seshStore := store.New(store.Options{})
+	// seshStore := store.New(store.Options{})
+	seshStore := &api.SessionStore{}
 	seshAuth, err := auth.New(auth.Options{
 		Key: []byte("2ldKfvHU8qO0oFN2nPTyAXT6tfwHbu62YB1mU/XGFSrgrrmJFViapDsd8keQDbX6wSd3jOpwwHbI9UXZzf97Eg=="),
 	})
@@ -95,9 +98,9 @@ func main() {
 	// - Credentials share
 	// - Preflight requests cached for 12 hours
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000"},
+		AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000", "http://mysticcase.io:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "x-mystic-case-request-id", "x-mystic-case-session-id"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "x-mystic-case-request-id", "x-mystic-case-session-id", "authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		// AllowOriginFunc: func(origin string) bool {
@@ -106,5 +109,5 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 	initRoutes(router)
-	router.Run("127.0.0.1:8085")
+	router.Run(fmt.Sprintf("%s:8085", os.Getenv("MYSTIC_CASE_DOMAIN")))
 }
