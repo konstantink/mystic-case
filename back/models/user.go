@@ -22,6 +22,7 @@ type User struct {
 	Email     string `gorm:"type:varchar(32)" json:"email" validate:"email"` // valid:"email~Provide correct email address"
 	Password  string
 	IsAdmin   bool `gorm:"type:boolean" json:"isAdmin"`
+	Sessions  []Session
 	// Products  Products `json:"-"`
 }
 
@@ -82,4 +83,47 @@ func (u User) Validate(tx *gorm.DB) *gorm.DB {
 	}
 
 	return tx
+}
+
+func (u User) InvalidateSessionsAndTokens() error {
+	for sessionIndex := range u.Sessions {
+		for tokenIndex := range u.Sessions[sessionIndex].Tokens {
+			u.Sessions[sessionIndex].Tokens[tokenIndex].Active = false
+		}
+		u.Sessions[sessionIndex].Active = false
+	}
+
+	// err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&u).Error
+	err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Model(&u).Updates(
+		User{
+			Sessions: []Session{
+				{
+					Active: false,
+					Tokens: []Token{
+						{
+							Active: false,
+						},
+					},
+				},
+			},
+		}).Error
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't invalidate everything %s", err.Error()))
+		return err
+	}
+
+	return nil
+}
+
+// GetUserByID looks up in the database record with
+// corresponding id and if exists stores the result
+// to the first argument
+func GetUserByID(dest *User, id interface{}) error {
+	err := DB.Preload("Sessions").Preload("Sessions.Tokens").First(&dest, "id = ?", id).Error
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't find user %s", id))
+		return err
+	}
+
+	return nil
 }

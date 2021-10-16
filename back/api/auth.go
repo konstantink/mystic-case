@@ -12,8 +12,7 @@ import (
 	"time"
 
 	// "github.com/adam-hanna/jwt-auth/jwt"
-	"github.com/adam-hanna/sessions"
-	"github.com/adam-hanna/sessions/user"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
@@ -45,18 +44,20 @@ func hashPassword(password string) (hashedPassword string) {
 	return
 }
 
-func createToken(uID uuid.UUID) (token *models.TokenData, err error) {
-	secret := os.Getenv("MYSTIC_CASE_SECRET_KEY")
-	// claims := jwt.ClaimsType{}
-	// claims.CustomClaims = make(gin.H)
-	// claims.CustomClaims["userid"] = uID
-	// claims.CustomClaims["authorized"] = true
+func createToken(uID interface{}) (token *models.TokenData, err error) {
+	var userID uuid.UUID
 
-	// err := restrictedRoute.IssueNewTokens(c.Writer, &claims)
-	// if err != nil {
-	// 	log.Printf("[WARNING] failed to issue tokens %s", err.Error())
-	// 	return err
-	// }
+	secret := os.Getenv("MYSTIC_CASE_SECRET_KEY")
+
+	switch uID.(type) {
+	case string:
+		userID = uuid.FromStringOrNil(uID.(string))
+	case uuid.UUID:
+		userID = uID.(uuid.UUID)
+	default:
+		return nil, errors.New("invalid user id type")
+	}
+
 	token = &models.TokenData{}
 	token.AccessUUID, _ = uuid.NewV4()
 	token.AtExpires = time.Now().Add(time.Minute * 15).Unix()
@@ -66,7 +67,7 @@ func createToken(uID uuid.UUID) (token *models.TokenData, err error) {
 	// Creating Access Token
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
-	atClaims["userid"] = uID
+	atClaims["userid"] = userID
 	atClaims["access_uuid"] = token.AccessUUID
 	atClaims["exp"] = token.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
@@ -77,7 +78,7 @@ func createToken(uID uuid.UUID) (token *models.TokenData, err error) {
 
 	// Creating Refresh Token
 	rtClaims := jwt.MapClaims{}
-	rtClaims["userid"] = uID
+	rtClaims["userid"] = userID
 	rtClaims["refresh_uuid"] = token.RefreshUUID
 	rtClaims["exp"] = token.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
@@ -103,38 +104,11 @@ func tryLogin(u *models.User, password string) (bool, error) {
 	return true, nil
 }
 
-func issueSession(c *gin.Context, sesh *sessions.Service, u *models.User) (*user.Session, error) {
-	csrf, err := generateKey()
-
-	if err != nil {
-		log.Fatal("Something happened during csrf generation")
-		return nil, err
-	}
-
-	csrfJSON := SessionJSON{CSRF: csrf}
-
-	JSONBytes, err := json.Marshal(csrfJSON)
-	if err != nil {
-		log.Fatalf("Couldn't marshal csrf structure: %s", err)
-		return nil, err
-	}
-
-	session, err := sesh.IssueUserSession(u.ID.String(), string(JSONBytes[:]), c.Writer)
-	if err != nil {
-		log.Fatalf("Couldn't issue session: %s", err)
-		return nil, err
-	}
-
-	log.Printf("Issued session id: %s; user id: %s", session.ID, session.UserID)
-	log.Printf("Issued csrf: %s", csrf)
-	// c.SetCookie("csrf", csrf, 3600, "/", "localhost", false, false) // TODO: should depend on the environment
-	return session, nil
-}
-
 func checkSessionAndInvalidate(r *http.Request) error {
 	session, err := sesh.GetUserSession(r)
 	if err != nil {
 		log.Print(cfmt.Sinfof("[INFO] Houston, we've got a problem with session %s", err.Error()))
+		return err
 	}
 
 	if session != nil {
@@ -200,52 +174,6 @@ func LoginTokenHandlerFunc(c *gin.Context) {
 	}
 }
 
-// LoginHandlerFunc handler for the Login/Signin action
-func LoginHandlerFunc(c *gin.Context) {
-	var (
-		input struct {
-			Login    string `json:"username"`
-			Password string `json:"password"`
-		}
-		user       models.User
-		sesh       *sessions.Service
-		tmpCookies SessionJSON
-		tmp, _     = c.Get("sessionManager")
-	)
-
-	sesh = tmp.(*sessions.Service)
-
-	c.ShouldBind(&input)
-
-	err := models.DB.Where("username = ?", input.Login).First(&user).Error
-	if err != nil {
-		log.Printf("[WARNING] Can't find user %s in system", input.Login)
-		c.JSON(http.StatusUnauthorized, map[string]string{"Username": "Username and password don't match"})
-	}
-
-	if ok, errors := tryLogin(&user, input.Password); ok {
-		session, err := issueSession(c, sesh, &user)
-		if err != nil {
-			log.Printf("[ERROR] Can't login user")
-			c.JSON(http.StatusInternalServerError, err)
-		}
-
-		// log.Printf("Issued session id: %s", sesh.)
-		err = json.Unmarshal([]byte(session.JSON), &tmpCookies)
-		if err != nil {
-			log.Printf("[ERROR] Couldn't unmarshal issued cookies: %s", err)
-			c.JSON(http.StatusInternalServerError, err)
-		}
-
-		c.SetCookie("csrf", tmpCookies.CSRF, 3600*24, "/", os.Getenv("MYSTIC_CASE_DOMAIN"), true, true)
-		// c.SetCookie("csrf", csrf, 3600, "/", "localhost", false, false)
-		// log.Printf(c.GetHeader("Set-Cookie"))
-		c.JSON(http.StatusOK, map[string]bool{"success": true})
-	} else {
-		c.JSON(http.StatusUnauthorized, errors.Error())
-	}
-}
-
 // RegisterHandlerFunc handler to perform user registration.
 // Get arguments from the request and tries to create new
 // user in the DB. If something wrong happens then sends
@@ -293,9 +221,12 @@ func RegisterHandlerFunc(c *gin.Context) {
 // current refresh token. In case invalidated token is sent
 // invalidates all issued tokens
 func TokenRefreshHandlerFunc(c *gin.Context) {
-	var input struct {
-		RefreshToken string `json:"refreshToken"`
-	}
+	var (
+		input struct {
+			RefreshToken string `json:"refresh_token"`
+		}
+		refreshToken models.Token
+	)
 
 	userSession, err := sesh.GetUserSession(c.Request)
 	if err != nil {
@@ -307,9 +238,6 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": errors.New("invalid session")})
 		return
 	}
-
-	session := models.NewSessionFromUserSession(userSession)
-	session.Invalidate(false)
 
 	_ = c.ShouldBind(&input)
 
@@ -326,7 +254,29 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 		return
 	}
 
-	userID, _ := uuid.FromString(inputToken.Claims.(jwt.MapClaims)["userid"].(string))
+	refreshTokenID, _ := inputToken.Claims.(jwt.MapClaims)["refresh_uuid"].(string)
+	userID := inputToken.Claims.(jwt.MapClaims)["userid"].(string)
+
+	models.GetTokenByID(&refreshToken, refreshTokenID, models.RefreshTokens)
+
+	if !refreshToken.Active {
+		var user models.User
+
+		log.Print(cfmt.Swarningf("[WARNING] the token used %s has been already invalidated", refreshToken.ID))
+		// invalidate all tokens
+		err = models.GetUserByID(&user, userID)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user not registered"})
+			return
+		}
+		user.InvalidateSessionsAndTokens()
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": "incorrect refresh token"})
+		return
+	}
+
+	session, _ := models.GetSession(userSession.ID)
+	session.Invalidate(false)
+
 	token, err := createToken(userID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
@@ -338,7 +288,7 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 		return
 	}
 
-	_, err = sesh.IssueUserSession(userID.String(), string(tokenJSON), c.Writer)
+	_, err = sesh.IssueUserSession(userID, string(tokenJSON), c.Writer)
 	if err != nil {
 		log.Printf("[ERROR] Can't login user")
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})

@@ -23,6 +23,7 @@ func setupRouter() *gin.Engine {
 	{
 		authGroup.POST("/signup", uut.RegisterHandlerFunc)
 		authGroup.POST("/signin", uut.LoginTokenHandlerFunc)
+		authGroup.POST("/token/refresh", uut.TokenRefreshHandlerFunc)
 	}
 
 	productsGroup := router.Group("/products")

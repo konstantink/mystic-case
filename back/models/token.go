@@ -8,6 +8,14 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/mingrammer/cfmt"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
+)
+
+type TokenType int8
+
+const (
+	AccessToken TokenType = iota
+	RefreshToken
 )
 
 type TokenData struct {
@@ -20,16 +28,13 @@ type TokenData struct {
 }
 
 type Session struct {
-	ID             uuid.UUID `gorm:"primaryKey"`
-	User           User      `gorm:"-"`
-	UserID         uuid.UUID
-	Active         bool
-	ExpiresAt      int64
-	JSON           datatypes.JSON
-	AccessToken    AccessToken //`gorm:"-"`
-	AccessTokenID  uuid.UUID
-	RefreshToken   RefreshToken //`gorm:"-"`
-	RefreshTokenID uuid.UUID
+	ID        uuid.UUID `gorm:"primaryKey"`
+	User      User      `gorm:"-"`
+	UserID    uuid.UUID
+	Active    bool
+	ExpiresAt int64
+	JSON      datatypes.JSON
+	Tokens    []Token
 }
 
 func NewSessionFromUserSession(userSession *user.Session) *Session {
@@ -44,7 +49,7 @@ func NewSessionFromUserSession(userSession *user.Session) *Session {
 
 func GetSession(sessionID string) (*Session, error) {
 	var storedSession Session
-	err := DB.Preload("AccessToken").Preload("RefreshToken").Find(&storedSession, "id = ?", sessionID).Error
+	err := DB.Preload("Tokens").Find(&storedSession, "id = ?", sessionID).Error
 	if err != nil {
 		log.Print(cfmt.Infof("[INFO] no session %s found", sessionID))
 		return nil, err
@@ -76,20 +81,26 @@ func GetSession(sessionID string) (*Session, error) {
 
 func (s *Session) Invalidate(justSession bool) error {
 	if !justSession {
-		err := s.AccessToken.Invalidate()
-		if err != nil {
-			return err
+		log.Print(cfmt.Sinfof("[INFO] there are %d associated tokens with session %s", len(s.Tokens), s.ID.String()))
+		for idx := range s.Tokens {
+			s.Tokens[idx].Active = false
 		}
+		// err := s.AccessToken.Invalidate()
+		// if err != nil {
+		// 	return err
+		// }
 
-		err = s.RefreshToken.Invalidate()
-		if err != nil {
-			return err
-		}
+		// err = s.RefreshToken.Invalidate()
+		// if err != nil {
+		// 	return err
+		// }
 	}
 
-	err := DB.Model(&s).Update("active", false).Error
+	s.Active = false
+	// err := DB.Model(&s).Update("active", false).Error
+	err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(s).Error
 	if err != nil {
-		// log.Print(cfmt.Swarningf("[WARNING] can't invalidate session %s", s.ID.String()))
+		log.Print(cfmt.Swarningf("[WARNING] can't invalidate session %s", s.ID.String()))
 		return err
 	}
 
@@ -106,46 +117,82 @@ func (s *Session) Lite() *user.Session {
 }
 
 type Token struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
-	User      User      `gorm:"-"`
-	UserID    uuid.UUID `gorm:"column:user_id"`
-	Active    bool
-	ExpiresAt int64 `gorm:"column:expires_at"`
-	Token     string
+	ID              uuid.UUID `gorm:"primaryKey"`
+	User            User
+	UserID          uuid.UUID `gorm:"column:user_id"`
+	Active          bool
+	ExpiresAt       int64 `gorm:"column:expires_at"`
+	Value           string
+	Type            TokenType
+	RefreshedFrom   *Token
+	RefreshedFromID *uuid.UUID
+	SessionID       uuid.UUID
 }
 
-type AccessToken struct {
-	Token `gorm:"embedded"`
-}
+// type AccessToken struct {
+// 	Token `gorm:"embedded"`
+// }
 
-type RefreshToken struct {
-	Token `gorm:"embedded"`
-}
+// type RefreshToken struct {
+// 	Token `gorm:"embedded"`
+// }
 
-func (at AccessToken) TableName() string {
-	return "access_tokens"
-}
+// func (at AccessToken) TableName() string {
+// 	return "access_tokens"
+// }
 
-func (at AccessToken) Invalidate() error {
-	err := DB.Model(&at).Update("active", false).Error
+func (t Token) Invalidate() error {
+	err := DB.Model(&t).Update("active", false).Error
 	if err != nil {
-		log.Print(cfmt.Swarningf("[WARNING] can't invalidate token %s", at.ID.String()))
+		log.Print(cfmt.Swarningf("[WARNING] can't invalidate token %s %s", t.ID.String(), err.Error()))
 		return err
 	}
-	log.Print(cfmt.Sinfof("[INFO] access token %s is invalidated", at.ID.String()))
+	log.Print(cfmt.Sinfof("[INFO] token %s is invalidated", t.ID.String()))
 	return nil
 }
 
-func (rt RefreshToken) TableName() string {
-	return "refresh_tokens"
+// func (rt RefreshToken) TableName() string {
+// 	return "refresh_tokens"
+// }
+
+// func (rt RefreshToken) Invalidate() error {
+// 	err := DB.Model(&rt).Update("active", false).Error
+// 	if err != nil {
+// 		log.Print(cfmt.Swarningf("[WARNING] can't invalidate token %s", rt.ID.String()))
+// 		return err
+// 	}
+// 	log.Print(cfmt.Sinfof("[INFO] refresh token %s is invalidated", rt.ID.String()))
+// 	return nil
+// }
+
+func AccessTokens(tx *gorm.DB) *gorm.DB {
+	return tx.Where("type = ?", AccessToken)
 }
 
-func (rt RefreshToken) Invalidate() error {
-	err := DB.Model(&rt).Update("active", false).Error
+func RefreshTokens(tx *gorm.DB) *gorm.DB {
+	return tx.Where("type = ?", RefreshToken)
+}
+
+func GetTokenByID(dest interface{}, id interface{}, scopes ...func(*gorm.DB) *gorm.DB) error {
+	var tokenType string
+
+	err := DB.Scopes(scopes...).Find(dest, "id = ?", id).Error
 	if err != nil {
-		log.Print(cfmt.Swarningf("[WARNING] can't invalidate token %s", rt.ID.String()))
+		log.Print(cfmt.Swarningf("[WARNING] can't retrieve %s token %s %s", tokenType, id, err.Error()))
 		return err
 	}
-	log.Print(cfmt.Sinfof("[INFO] refresh token %s is invalidated", rt.ID.String()))
+
+	return nil
+}
+
+func GetTokenByUserID(dest interface{}, userID interface{}, scopes ...func(*gorm.DB) *gorm.DB) error {
+	var tokenType string
+
+	err := DB.Scopes(scopes...).Find(dest, "user_id = ?", userID).Error
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't retrieve %s token for user %s %s", tokenType, userID, err.Error()))
+		return err
+	}
+
 	return nil
 }

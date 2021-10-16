@@ -48,7 +48,7 @@ func init() {
 		Secure:   false, // Should depend on environment: prod or dev
 	})
 
-	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * time.Hour})
+	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * 7 * time.Hour})
 
 	// newRouteError := jwt.New(&restrictedRoute, jwt.Options{
 	// 	SigningMethodString:   "HS256",

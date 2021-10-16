@@ -9,7 +9,6 @@ go 1.14
 require (
 	github.com/adam-hanna/jwt-auth/jwt v0.0.0-20210801230358-648d06fb0092
 	github.com/adam-hanna/sessions v0.0.6
-	github.com/asaskevich/govalidator v0.0.0-20200819183940-29e1ff8eb0bb // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/locales v0.13.0
@@ -24,8 +23,6 @@ require (
 	github.com/onsi/ginkgo v1.12.0
 	github.com/onsi/gomega v1.9.0
 	github.com/pkg/errors v0.9.1
-	github.com/qor/qor v0.0.0-20200729071734-d587cffbbb93 // indirect
-	github.com/qor/validations v0.0.0-20171228122639-f364bca61b46
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gorm.io/datatypes v1.0.2
