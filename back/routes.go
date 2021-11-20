@@ -16,6 +16,7 @@ func initAPIV1Routes(router *gin.Engine) {
 		{
 			authRoutes.POST("/signin", api.LoginTokenHandlerFunc)
 			authRoutes.POST("/signup", api.RegisterHandlerFunc)
+			// authRoutes.GET("/whoami", api.WhomaiHandlerFunc)
 		}
 
 		tokenRoutes := apiV1Routes.Group("/token")

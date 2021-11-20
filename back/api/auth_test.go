@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"github.com/adam-hanna/sessions/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/mingrammer/cfmt"
 	. "github.com/onsi/ginkgo"
@@ -17,7 +16,7 @@ import (
 	"github.com/mystic-case/back/models"
 )
 
-func CreateTestUser() (*models.User, error) {
+func CreateTestUser() (models.User, error) {
 	var (
 		result struct {
 			Exists bool
@@ -33,10 +32,8 @@ func CreateTestUser() (*models.User, error) {
 		}
 	)
 
-	models.DB.Raw("SELECT EXISTS(?) AS exists", models.DB.Model(&testUser).Where("username = ?", testUser.Email)).Scan(&result)
-	// log.Printf("---> %t", result.Exists)
+	models.DB.Raw("SELECT EXISTS (?) AS exists", models.DB.Model(&testUser).Select("id").Where("username = ?", testUser.Email)).Scan(&result)
 	if result.Exists {
-		// log.Print(cfmt.Sinfof("===> Found test user in DB"))
 		err := models.DB.First(&testUser).Error
 		if err != nil {
 			log.Print(cfmt.Swarningf("===> %s", err.Error()))
@@ -45,11 +42,11 @@ func CreateTestUser() (*models.User, error) {
 		err := models.DB.Create(&testUser).Error
 		if err != nil {
 			log.Fatalf("Can't create test user required for the test %s", err.Error())
-			return nil, err
+			return models.User{}, err
 		}
 	}
 
-	return &testUser, nil
+	return testUser, nil
 }
 
 var _ = Describe("checking auth api", func() {
@@ -153,19 +150,19 @@ var _ = Describe("checking auth api", func() {
 
 			It("Logs in the user if username and password are correct", func() {
 				var (
-					storedSession models.Session
-					testUser      models.User
+					testUser     models.User
+					accessToken  models.Token
+					refreshToken models.Token
+					tokensPair   struct {
+						AccessToken  string `json:"access_token"`
+						RefreshToken string `json:"refresh_token"`
+					}
 				)
 
 				testInputData := map[string]string{
 					"username": "test@email.com",
 					"password": "test_password",
 				}
-				authService, _ := auth.New(
-					auth.Options{
-						Key: []byte("secret_session"),
-					},
-				)
 
 				w = httptest.NewRecorder()
 				payload, _ := json.Marshal(testInputData)
@@ -181,14 +178,15 @@ var _ = Describe("checking auth api", func() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				err = models.DB.First(&storedSession, "user_id = ?", testUser.ID).Error
-				if err != nil {
-					log.Fatal(err)
-				}
-				cookies := w.Result().Cookies()
-				Expect(len(cookies)).To(Equal(1))
-				cookieSessionID, _ := authService.VerifyAndDecode(cookies[0].Value)
-				Expect(cookieSessionID).To(Equal(storedSession.ID.String()))
+
+				_ = json.Unmarshal(w.Body.Bytes(), &tokensPair)
+
+				// Compare the returned tokens equal to the ones that were issued
+				models.GetTokenByUserID(&accessToken, testUser.ID, models.AccessTokens)
+				models.GetTokenByUserID(&refreshToken, testUser.ID, models.RefreshTokens)
+
+				Expect(accessToken.Value).To(Equal(tokensPair.AccessToken))
+				Expect(refreshToken.Value).To(Equal(tokensPair.RefreshToken))
 			})
 
 			It("Returns 401 error in case username/password is incorrect", func() {
@@ -220,7 +218,13 @@ var _ = Describe("checking auth api", func() {
 			})
 
 			When("When user is already logged in", func() {
-				var cookies []*http.Cookie
+				// var cookies []*http.Cookie
+				var (
+					firstPair, secondPair struct {
+						AccessToken  string `json:"access_token"`
+						RefreshToken string `json:"refresh_token"`
+					}
+				)
 
 				_ = BeforeEach(func() {
 					testInputData := map[string]string{
@@ -235,54 +239,37 @@ var _ = Describe("checking auth api", func() {
 					request.Header.Add("Content-Type", "application/json")
 
 					Router.ServeHTTP(w, request)
-					cookies = w.Result().Cookies()
+					_ = json.Unmarshal(w.Body.Bytes(), &firstPair)
+					// cookies = w.Result().Cookies()
 				})
 
-				It("If user logs in and cookie is available, then previous one should be invalidated", func() {
+				It("Every time user loggs in we create a new pair of tokens", func() {
 					testInputData := map[string]string{
 						"username": "test@email.com",
 						"password": "test_password",
 					}
-					authService, _ := auth.New(
-						auth.Options{
-							Key: []byte("secret_session"),
-						},
-					)
 
 					w = httptest.NewRecorder()
 					payload, _ := json.Marshal(testInputData)
 
 					request := httptest.NewRequest("POST", "/u/signin", strings.NewReader(string(payload)))
 					request.Header.Add("Content-Type", "application/json")
-					request.AddCookie(cookies[0])
 
 					Router.ServeHTTP(w, request)
 
 					Expect(w.Code).To(Equal(http.StatusOK))
 
-					// Check that new cookie is different from previous
-					// log.Printf("1st: %s", cookies[0].Value)
-					// log.Printf("2nd: %s", w.Result().Cookies()[0].Value)
-					Expect(w.Result().Cookies()[0].Value).NotTo(Equal(cookies[0].Value))
+					_ = json.Unmarshal(w.Body.Bytes(), &secondPair)
 
-					// Check that previous session is set to active = false in DB
-					var session models.Session
-					sessionID, _ := authService.VerifyAndDecode(cookies[0].Value)
-					models.DB.Find(&session, "id = ?", sessionID)
-					Expect(session.Active).To(BeFalse())
-
-					// Check that new session is set to active = true in DB
-					var newSession models.Session
-					newSessionID, _ := authService.VerifyAndDecode(w.Result().Cookies()[0].Value)
-					models.DB.Find(&newSession, "id = ?", newSessionID)
-					Expect(newSession.Active).To(BeTrue())
+					Expect(secondPair.AccessToken).NotTo(Equal(firstPair.AccessToken))
+					Expect(secondPair.RefreshToken).NotTo(Equal(firstPair.RefreshToken))
 				})
 			})
 		})
 	})
 
 	Describe("checking tokens", func() {
-		var testUser *models.User
+		var testUser models.User
 
 		BeforeEach(func() {
 			var err error
@@ -338,7 +325,7 @@ var _ = Describe("checking auth api", func() {
 
 		When("refresh_token request is sent", func() {
 			var (
-				sessionCookie      http.Cookie
+				// sessionCookie      http.Cookie
 				storedAccessToken  models.Token
 				storedRefreshToken models.Token
 			)
@@ -346,7 +333,7 @@ var _ = Describe("checking auth api", func() {
 			BeforeEach(func() {
 				var result gin.H
 
-				CreateTestUser()
+				testUser, _ := CreateTestUser()
 
 				w = httptest.NewRecorder()
 				// Log in to create a pair of tokens
@@ -360,11 +347,14 @@ var _ = Describe("checking auth api", func() {
 
 				Router.ServeHTTP(w, loginRequest)
 
-				sessionCookie = *w.Result().Cookies()[0]
+				// sessionCookie = *w.Result().Cookies()[0]
 				_ = json.Unmarshal(w.Body.Bytes(), &result)
 
-				models.DB.Model(&models.Token{}).Where("value = ?", result["access_token"]).Scan(&storedAccessToken)
-				models.DB.Model(&models.Token{}).Where("value = ?", result["refresh_token"]).Scan(&storedRefreshToken)
+				models.GetTokenByUserID(&storedAccessToken, testUser.ID, models.AccessTokens)
+				models.GetTokenByUserID(&storedRefreshToken, testUser.ID, models.RefreshTokens)
+
+				// models.DB.Model(&models.Token{}).Where("value = ?", result["access_token"]).Scan(&storedAccessToken)
+				// models.DB.Model(&models.Token{}).Where("value = ?", result["refresh_token"]).Scan(&storedRefreshToken)
 			})
 
 			It("creates a new pair of access and refresh tokens and invalidates previous", func() {
@@ -383,7 +373,7 @@ var _ = Describe("checking auth api", func() {
 
 				request := httptest.NewRequest("POST", "/u/token/refresh", strings.NewReader(string(payload)))
 				request.Header.Add("Content-Type", "application/json")
-				request.AddCookie(&sessionCookie)
+				// request.AddCookie(&sessionCookie)
 
 				Router.ServeHTTP(w, request)
 				_ = json.Unmarshal(w.Body.Bytes(), &result)
@@ -416,7 +406,7 @@ var _ = Describe("checking auth api", func() {
 
 				request := httptest.NewRequest("POST", "/u/token/refresh", strings.NewReader(string(payload)))
 				request.Header.Add("Content-Type", "application/json")
-				request.AddCookie(&sessionCookie)
+				// request.AddCookie(&sessionCookie)
 
 				Router.ServeHTTP(w, request)
 
@@ -427,16 +417,13 @@ var _ = Describe("checking auth api", func() {
 				w = httptest.NewRecorder()
 				request = httptest.NewRequest("POST", "/u/token/refresh", strings.NewReader(string(payload)))
 				request.Header.Add("Content-Type", "application/json")
-				request.AddCookie(&sessionCookie)
+				// request.AddCookie(&sessionCookie)
 				Router.ServeHTTP(w, request)
-				log.Print(w.Body.String())
 
 				Expect(w.Code).To(Equal(http.StatusUnauthorized))
 
 				// Check there are no active tokens for current user
 				var numRows int
-				models.DB.Model(&models.Token{}).Select("COUNT(id)").Where("user_id = ?", testUser.ID).Where("active = true").Scan(&numRows)
-				Expect(numRows).To(BeZero())
 				models.DB.Model(&models.Token{}).Select("COUNT(id)").Where("user_id = ?", testUser.ID).Where("active = true").Scan(&numRows)
 				Expect(numRows).To(BeZero())
 			})

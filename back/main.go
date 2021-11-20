@@ -2,16 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"github.com/adam-hanna/sessions"
-	"github.com/adam-hanna/sessions/auth"
-	"github.com/adam-hanna/sessions/transport"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/mystic-case/back/api"
 )
 
 var router *gin.Engine
@@ -22,24 +18,24 @@ type EnvConfig struct {
 	Env string
 }
 
-func initSessionsManager() {
-	// seshStore := store.New(store.Options{})
-	seshStore := &api.SessionStore{}
-	seshAuth, err := auth.New(auth.Options{
-		Key: []byte("2ldKfvHU8qO0oFN2nPTyAXT6tfwHbu62YB1mU/XGFSrgrrmJFViapDsd8keQDbX6wSd3jOpwwHbI9UXZzf97Eg=="),
-	})
+// func initSessionsManager() {
+// 	// seshStore := store.New(store.Options{})
+// 	seshStore := &api.SessionStore{}
+// 	seshAuth, err := auth.New(auth.Options{
+// 		Key: []byte("2ldKfvHU8qO0oFN2nPTyAXT6tfwHbu62YB1mU/XGFSrgrrmJFViapDsd8keQDbX6wSd3jOpwwHbI9UXZzf97Eg=="),
+// 	})
 
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	seshTran := transport.New(transport.Options{
-		HTTPOnly: true,
-		Secure:   false, // Should depend on environment: prod or dev
-	})
+// 	seshTran := transport.New(transport.Options{
+// 		HTTPOnly: true,
+// 		Secure:   false, // Should depend on environment: prod or dev
+// 	})
 
-	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * time.Hour})
-}
+// 	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * time.Hour})
+// }
 
 // func issueSession(c *gin.Context, sesh *sessions.Service, u *models.User) error {
 // 	csrf, err := generateKey()
@@ -69,7 +65,7 @@ func initSessionsManager() {
 func main() {
 	var router = gin.Default()
 
-	initSessionsManager()
+	// initSessionsManager()
 
 	// initRoutes(router)
 

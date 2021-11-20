@@ -109,7 +109,7 @@ func init() {
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold:             time.Millisecond * 100,
-				LogLevel:                  logger.Error,
+				LogLevel:                  logger.Warn,
 				IgnoreRecordNotFoundError: false,
 				Colorful:                  true,
 			},

@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"github.com/mingrammer/cfmt"
+	"github.com/mystic-case/back/models"
 )
 
 func extractFromHeader(c *gin.Context) (string, error) {
@@ -46,6 +47,18 @@ func validationKey(token *jwt.Token) (interface{}, error) {
 	return []byte(os.Getenv("MYSTIC_CASE_SECRET_KEY")), nil
 }
 
+func parseToken(tokenValue string) (*jwt.Token, error) {
+	parser := new(jwt.Parser)
+	parser.ValidMethods = []string{jwt.SigningMethodHS256.Name}
+	parsedToken, err := parser.Parse(tokenValue, validationKey)
+
+	if err != nil {
+		log.Printf(cfmt.Swarningf("[WARNING] failed to parse token: %s", err.Error()))
+		return nil, err
+	}
+	return parsedToken, nil
+}
+
 // AuthMiddleware checks that request has corresponding authorization
 // and populates it with user info, otherwise retun 401 error
 func AuthMiddleware() func(*gin.Context) {
@@ -63,19 +76,20 @@ func AuthMiddleware() func(*gin.Context) {
 			return
 		}
 
-		parsedToken, err := jwt.Parse(token, validationKey)
+		parsedToken, err := parseToken(token)
 		if err != nil {
+			if err.Error() == "Token is expired" {
+				if userID, ok := parsedToken.Claims.(jwt.MapClaims)["sub"]; ok {
+					var accessToken models.Token
+					models.GetTokenByUserID(&accessToken, userID, models.AccessTokens)
+					accessToken.Invalidate()
+				}
+			}
 			log.Printf(cfmt.Swarningf("[WARNING] failed to parse token: %s", err.Error()))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 
-		if ok, err := validateToken(parsedToken); !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
-			return
-		}
-
-		log.Printf(cfmt.Sinfof("[INFO] parsed token: %v", parsedToken))
 		c.Set("access_token", parsedToken)
 
 		c.Next()

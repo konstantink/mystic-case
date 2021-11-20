@@ -22,12 +22,13 @@ type User struct {
 	Email     string `gorm:"type:varchar(32)" json:"email" validate:"email"` // valid:"email~Provide correct email address"
 	Password  string
 	IsAdmin   bool `gorm:"type:boolean" json:"isAdmin"`
-	Sessions  []Session
+	Tokens    []Token
+	// Sessions  []Session
 	// Products  Products `json:"-"`
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("<User: %s %s>", u.ID, u.Username)
+	return fmt.Sprintf("<User: id:%s username:%s>", u.ID, u.Username)
 }
 
 // BeforeCreate hook is used to create a random uuid for ID
@@ -85,41 +86,78 @@ func (u User) Validate(tx *gorm.DB) *gorm.DB {
 	return tx
 }
 
-func (u User) InvalidateSessionsAndTokens() error {
-	for sessionIndex := range u.Sessions {
-		for tokenIndex := range u.Sessions[sessionIndex].Tokens {
-			u.Sessions[sessionIndex].Tokens[tokenIndex].Active = false
-		}
-		u.Sessions[sessionIndex].Active = false
-	}
+func (u User) InvalidateTokenTree(refreshTokenID interface{}) error {
+	// 	for sessionIndex := range u.Sessions {
+	// 		for tokenIndex := range u.Sessions[sessionIndex].Tokens {
+	// 			u.Sessions[sessionIndex].Tokens[tokenIndex].Active = false
+	// 		}
+	// 		u.Sessions[sessionIndex].Active = false
+	// 	}
 
-	// err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&u).Error
-	err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Model(&u).Updates(
-		User{
-			Sessions: []Session{
-				{
-					Active: false,
-					Tokens: []Token{
-						{
-							Active: false,
-						},
-					},
-				},
-			},
-		}).Error
+	// for tokenIdx := range u.Tokens {
+	// 	u.Tokens[tokenIdx].Active = false
+	// }
+
+	// 	// err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&u).Error
+	var (
+		tokens        []Token
+		nextRefreshID uuid.UUID
+	)
+
+	log.Print(cfmt.Sinfof("[INFO] Invalidating tokens tree for user %s", u.ID.String()))
+
+	err := DB.Where("user_id = ?", u.ID).Where("refreshed_from_id = ?", refreshTokenID).Find(&tokens).Error
 	if err != nil {
-		log.Print(cfmt.Swarningf("[WARNING] can't invalidate everything %s", err.Error()))
+		log.Print(cfmt.Swarningf("[WARNING] problems with getting tokens refreshed from %s", refreshTokenID.(string)))
 		return err
 	}
 
-	return nil
+	// No tokens found then we break this loop
+	if len(tokens) == 0 {
+		log.Print(cfmt.Sinfof("[INFO] no tokens to invalidate"))
+		return nil
+	}
+
+	// If we get here that means that we have some tokens that were
+	// created from the given one and we have to invalidate them
+	DB.Transaction(func(tx *gorm.DB) (err error) {
+		err = nil
+		for idx := range tokens {
+			if tokens[idx].Active {
+				err = tokens[idx].Invalidate()
+				// err = DB.Model(&tokens[idx]).Update("active", false).Error
+			}
+			if tokens[idx].Type == RefreshToken {
+				nextRefreshID = tokens[idx].ID
+			}
+		}
+
+		return
+	})
+
+	return u.InvalidateTokenTree(nextRefreshID)
+	// err := DB.Session(&gorm.Session{FullSaveAssociations: true}).Model(&u).Updates(
+	// 	User{
+	// 		Tokens: []Token{
+	// 			{
+	// 				Active: false,
+	// 			},
+	// 		},
+	// 	}).Error
+	// if err != nil {
+	// 	log.Print(cfmt.Swarningf("[WARNING] can't invalidate everything %s", err.Error()))
+	// 	return err
+	// }
+
+	// return nil
 }
 
 // GetUserByID looks up in the database record with
 // corresponding id and if exists stores the result
 // to the first argument
 func GetUserByID(dest *User, id interface{}) error {
-	err := DB.Preload("Sessions").Preload("Sessions.Tokens").First(&dest, "id = ?", id).Error
+	// err := DB.Preload("Tokens", "active = ?", true).First(&dest, "id = ?", id).Error
+	err := DB.First(&dest, "id = ?", id).Error
 	if err != nil {
 		log.Print(cfmt.Swarningf("[WARNING] can't find user %s", id))
 		return err

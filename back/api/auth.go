@@ -3,7 +3,7 @@ package api
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -44,50 +44,85 @@ func hashPassword(password string) (hashedPassword string) {
 	return
 }
 
-func createToken(uID interface{}) (token *models.TokenData, err error) {
-	var userID uuid.UUID
-
-	secret := os.Getenv("MYSTIC_CASE_SECRET_KEY")
-
-	switch uID.(type) {
-	case string:
-		userID = uuid.FromStringOrNil(uID.(string))
-	case uuid.UUID:
-		userID = uID.(uuid.UUID)
-	default:
-		return nil, errors.New("invalid user id type")
+func createPairOfTokensFromRefreshToken(user models.User, refreshToken models.Token) (tokens *models.TokensPair, err error) {
+	tokens, err = generatePairOfTokens(user)
+	if err != nil {
+		return nil, err
 	}
 
-	token = &models.TokenData{}
-	token.AccessUUID, _ = uuid.NewV4()
-	token.AtExpires = time.Now().Add(time.Minute * 15).Unix()
-	token.RefreshUUID, _ = uuid.NewV4()
-	token.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
+	tokens.AccessToken.RefreshedFromID = &refreshToken.ID
+	tokens.RefreshToken.RefreshedFromID = &refreshToken.ID
+
+	err = tokenStore.SaveUserTokens(tokens)
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't store tokens %s", err.Error()))
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func createPairOfTokens(user models.User) (tokens *models.TokensPair, err error) {
+	tokens, err = generatePairOfTokens(user)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tokenStore.SaveUserTokens(tokens)
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't store tokens %s", err.Error()))
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func generatePairOfTokens(user models.User) (tokens *models.TokensPair, err error) {
+	// var userID uuid.UUID
+
+	secret := os.Getenv("MYSTIC_CASE_SECRET_KEY")
+	tokens = new(models.TokensPair)
+
+	tokens.AccessToken.ID, _ = uuid.NewV4()
+	tokens.AccessToken.ExpiresAt = time.Now().Add(time.Minute * 15).Unix()
+	tokens.AccessToken.Type = models.AccessToken
+	tokens.AccessToken.UserID = user.ID
+	tokens.AccessToken.Active = true
+	tokens.RefreshToken.ID, _ = uuid.NewV4()
+	tokens.RefreshToken.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
+	tokens.RefreshToken.Type = models.RefreshToken
+	tokens.RefreshToken.UserID = user.ID
+	tokens.RefreshToken.Active = true
 
 	// Creating Access Token
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
-	atClaims["userid"] = userID
-	atClaims["access_uuid"] = token.AccessUUID
-	atClaims["exp"] = token.AtExpires
+	atClaims["sub"] = user.ID
+	atClaims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+	atClaims["admin"] = user.IsAdmin
+	atClaims["uuid"] = tokens.AccessToken.ID
+	atClaims["exp"] = tokens.AccessToken.ExpiresAt
+	atClaims["iss"] = "mystic-case.co.uk"
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token.AccessToken, err = at.SignedString([]byte(secret))
+	tokens.AccessToken.Value, err = at.SignedString([]byte(secret))
 	if err != nil {
 		return nil, err
 	}
 
 	// Creating Refresh Token
 	rtClaims := jwt.MapClaims{}
-	rtClaims["userid"] = userID
-	rtClaims["refresh_uuid"] = token.RefreshUUID
-	rtClaims["exp"] = token.RtExpires
+	rtClaims["sub"] = user.ID
+	rtClaims["refresh_uuid"] = tokens.RefreshToken.ID
+	rtClaims["access_uuid"] = tokens.AccessToken.ID
+	rtClaims["exp"] = tokens.RefreshToken.ExpiresAt
+	rtClaims["iss"] = "mystic-case.co.uk"
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
-	token.RefreshToken, err = rt.SignedString([]byte(secret))
+	tokens.RefreshToken.Value, err = rt.SignedString([]byte(secret))
 	if err != nil {
 		return nil, err
 	}
 
-	return token, nil
+	return tokens, nil
 }
 
 // tryLogin tries to login user, basically checks if the username exists in DB
@@ -104,24 +139,24 @@ func tryLogin(u *models.User, password string) (bool, error) {
 	return true, nil
 }
 
-func checkSessionAndInvalidate(r *http.Request) error {
-	session, err := sesh.GetUserSession(r)
-	if err != nil {
-		log.Print(cfmt.Sinfof("[INFO] Houston, we've got a problem with session %s", err.Error()))
-		return err
-	}
+// func checkSessionAndInvalidate(r *http.Request) error {
+// 	session, err := sesh.GetUserSession(r)
+// 	if err != nil {
+// 		log.Print(cfmt.Sinfof("[INFO] Houston, we've got a problem with session %s", err.Error()))
+// 		return err
+// 	}
 
-	if session != nil {
-		userSession, err := models.GetSession(session.ID)
-		err = userSession.Invalidate(false)
-		if err != nil {
-			log.Print(cfmt.Swarningf("[WARNING] can't invalidate session %s %s", userSession.ID, err.Error()))
-			return err
-		}
-	}
+// 	if session != nil {
+// 		userSession, err := models.GetSession(session.ID)
+// 		err = userSession.Invalidate(false)
+// 		if err != nil {
+// 			log.Print(cfmt.Swarningf("[WARNING] can't invalidate session %s %s", userSession.ID, err.Error()))
+// 			return err
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // LoginTokenHandlerFunc is an alternative handler for Login action
 // that creates an access/refresh tokens instead of CSRF
@@ -132,43 +167,39 @@ func LoginTokenHandlerFunc(c *gin.Context) {
 			Password string `json:"password"`
 		}
 		user models.User
+		err  error
 	)
-
-	err := checkSessionAndInvalidate(c.Request)
-	if err != nil {
-		log.Print(cfmt.Serrorf("[ERROR] can't invalidate session"))
-	}
 
 	c.ShouldBind(&input)
 
 	err = models.DB.Where("username = ?", input.Login).First(&user).Error
 	if err != nil {
-		log.Printf("[WARNING] Can't find user %s in system", input.Login)
+		log.Print(cfmt.Swarningf("[WARNING] Can't find user %s in system", input.Login))
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Username and password don't match"})
 		return
 	}
 
 	if ok, errors := tryLogin(&user, input.Password); ok {
-		token, err := createToken(user.ID)
+		token, err := createPairOfTokens(user)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
 			return
 		}
-		tokenJSON, err := json.Marshal(token)
+		// tokenJSON, err := json.Marshal(token)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 
-		_, err = sesh.IssueUserSession(user.ID.String(), string(tokenJSON), c.Writer)
+		// _, err = sesh.IssueUserSession(user.ID.String(), string(tokenJSON), c.Writer)
 		if err != nil {
-			log.Printf("[ERROR] Can't login user")
+			log.Print(cfmt.Serror("[ERROR] Can't login user"))
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 		// c.SetSameSite(http.SameSiteNoneMode)
 		// c.SetCookie("session", user.ID.String(), 3600*24, "/", os.Getenv("MYSTIC_CASE_DOMAIN"), false, true)
-		c.JSON(http.StatusOK, gin.H{"success": true, "access_token": token.AccessToken, "refresh_token": token.RefreshToken})
+		c.JSON(http.StatusOK, gin.H{"success": true, "access_token": token.AccessToken.Value, "refresh_token": token.RefreshToken.Value})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": errors.Error()})
 	}
@@ -190,7 +221,7 @@ func RegisterHandlerFunc(c *gin.Context) {
 
 	err := c.ShouldBind(&input)
 	if err != nil {
-		log.Printf("[ERROR] %s", err.Error())
+		log.Print(cfmt.Serrorf("[ERROR] %s", err.Error()))
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
 		return
 	}
@@ -204,7 +235,7 @@ func RegisterHandlerFunc(c *gin.Context) {
 	result := models.DB.Create(&user).Error
 
 	if result != nil {
-		log.Printf("[WARNING] Incorrect input: %s", result.Error())
+		log.Print(cfmt.Swarningf("[WARNING] Incorrect input: %s", result.Error()))
 		response := gin.H{}
 		for _, err := range strings.Split(result.Error(), ",") {
 			fieldWithMsg := strings.Split(err, ":")
@@ -225,75 +256,47 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 		input struct {
 			RefreshToken string `json:"refresh_token"`
 		}
+		accessToken  models.Token
 		refreshToken models.Token
+		user         models.User
 	)
-
-	userSession, err := sesh.GetUserSession(c.Request)
-	if err != nil {
-		log.Print(cfmt.Swarningf("[WARNING] can't extract session from request %s", err.Error()))
-	}
-
-	if userSession == nil {
-		log.Print(cfmt.Swarning("[WARNING] invalid session"))
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": errors.New("invalid session")})
-		return
-	}
 
 	_ = c.ShouldBind(&input)
 
-	inputToken, err := jwt.Parse(input.RefreshToken, validationKey)
-	if err != nil {
-		log.Print(cfmt.Swarningf("[WARNING] can't parse refresh token %s: %s", input.RefreshToken, err.Error()))
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
-		return
-	}
+	parsedToken, err := parseToken(input.RefreshToken)
 
-	if ok, err := validateToken(inputToken); !ok {
-		log.Print(cfmt.Swarningf("[WARNING] refresh token is invalid: %s", err.Error()))
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-
-	refreshTokenID, _ := inputToken.Claims.(jwt.MapClaims)["refresh_uuid"].(string)
-	userID := inputToken.Claims.(jwt.MapClaims)["userid"].(string)
-
+	refreshTokenID, _ := parsedToken.Claims.(jwt.MapClaims)["refresh_uuid"].(string)
+	accessTokenID, _ := parsedToken.Claims.(jwt.MapClaims)["access_uuid"].(string)
+	userID, _ := parsedToken.Claims.(jwt.MapClaims)["sub"].(string)
 	models.GetTokenByID(&refreshToken, refreshTokenID, models.RefreshTokens)
+	models.GetTokenByID(&accessToken, accessTokenID, models.AccessTokens)
+	err = models.GetUserByID(&user, userID)
 
 	if !refreshToken.Active {
-		var user models.User
 
 		log.Print(cfmt.Swarningf("[WARNING] the token used %s has been already invalidated", refreshToken.ID))
 		// invalidate all tokens
-		err = models.GetUserByID(&user, userID)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user not registered"})
-			return
-		}
-		user.InvalidateSessionsAndTokens()
+		user.InvalidateTokenTree(refreshTokenID)
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": "incorrect refresh token"})
 		return
 	}
 
-	session, _ := models.GetSession(userSession.ID)
-	session.Invalidate(false)
+	accessToken.Invalidate()
+	refreshToken.Invalidate()
 
-	token, err := createToken(userID)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	tokenJSON, err := json.Marshal(token)
+	tokens, err := createPairOfTokensFromRefreshToken(user, refreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
-	_, err = sesh.IssueUserSession(userID, string(tokenJSON), c.Writer)
-	if err != nil {
-		log.Printf("[ERROR] Can't login user")
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "access_token": token.AccessToken, "refresh_token": token.RefreshToken})
+	c.JSON(http.StatusOK, gin.H{"success": true, "access_token": tokens.AccessToken.Value, "refresh_token": tokens.RefreshToken.Value})
 }
+
+// WhoamiHandlerFunc tries to identify the user by session cookie or
+// if available access_token. If it's not available, then issue new
+// session only for the guest user. If session is expired and there's
+// no access token, then invalidate current session and re-issue new one.
+// If access_token is available, that means that user was logged in, so
+// he should have refresh token as well, so we return 401 and let him
+// go trhough refresh token process

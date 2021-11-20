@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS public.tokens (
     refreshed_from_id uuid,
     session_id uuid,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_refreshed_from FOREIGN KEY (refreshed_from_id) REFERENCES public.tokens(id) ON DELETE SET NULL,
-    CONSTRAINT fk_session FOREIGN KEY (session_id) REFERENCES public.sessions(id) ON DELETE CASCADE
+    CONSTRAINT fk_refreshed_from FOREIGN KEY (refreshed_from_id) REFERENCES public.tokens(id) ON DELETE SET NULL
+    -- CONSTRAINT fk_session FOREIGN KEY (session_id) REFERENCES public.sessions(id) ON DELETE CASCADE
 );
 
 ALTER TABLE public.tokens OWNER TO mysticcase;
