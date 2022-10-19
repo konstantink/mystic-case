@@ -12,3 +12,6 @@ build/
 
 # DB files
 *.db
+
+# Coverage files
+*.coverprofile
