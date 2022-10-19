@@ -11,12 +11,13 @@ require (
 	github.com/adam-hanna/sessions v0.0.6
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
-	github.com/go-playground/locales v0.13.0
-	github.com/go-playground/universal-translator v0.17.0
-	github.com/go-playground/validator/v10 v10.2.0
+	github.com/go-playground/locales v0.14.0
+	github.com/go-playground/universal-translator v0.18.0
+	github.com/go-playground/validator/v10 v10.10.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/h2non/bimg v1.1.9 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mingrammer/cfmt v1.1.0

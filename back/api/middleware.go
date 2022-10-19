@@ -52,11 +52,11 @@ func parseToken(tokenValue string) (*jwt.Token, error) {
 	parser.ValidMethods = []string{jwt.SigningMethodHS256.Name}
 	parsedToken, err := parser.Parse(tokenValue, validationKey)
 
-	if err != nil {
-		log.Printf(cfmt.Swarningf("[WARNING] failed to parse token: %s", err.Error()))
-		return nil, err
-	}
-	return parsedToken, nil
+	// if err != nil {
+	// 	log.Printf(cfmt.Swarningf("[WARNING] failed to parse token: %s", err.Error()))
+	// 	return nil, err
+	// }
+	return parsedToken, err
 }
 
 // AuthMiddleware checks that request has corresponding authorization
@@ -79,9 +79,9 @@ func AuthMiddleware() func(*gin.Context) {
 		parsedToken, err := parseToken(token)
 		if err != nil {
 			if err.Error() == "Token is expired" {
-				if userID, ok := parsedToken.Claims.(jwt.MapClaims)["sub"]; ok {
+				if tokenID, ok := parsedToken.Claims.(jwt.MapClaims)["uuid"]; ok {
 					var accessToken models.Token
-					models.GetTokenByUserID(&accessToken, userID, models.AccessTokens)
+					models.GetTokenByID(&accessToken, tokenID, models.AccessTokens)
 					accessToken.Invalidate()
 				}
 			}
@@ -91,6 +91,7 @@ func AuthMiddleware() func(*gin.Context) {
 		}
 
 		c.Set("access_token", parsedToken)
+		c.Set("user_id", parsedToken.Claims.(jwt.MapClaims)["sub"].(string))
 
 		c.Next()
 	}

@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
+	v "github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/gofrs/uuid"
 	"github.com/kelseyhightower/envconfig"
@@ -35,10 +35,10 @@ var DB *gorm.DB
 // var validate = validator.New()
 
 var (
-	validate *validator.Validate
-	uni      *ut.UniversalTranslator
-	trans    ut.Translator
-	found    bool
+	validator *v.Validate
+	uni       *ut.UniversalTranslator
+	trans     ut.Translator
+	found     bool
 )
 
 func init() {
@@ -50,10 +50,10 @@ func init() {
 		log.Printf("[WARNING] can't find translator")
 	}
 
-	validate = validator.New()
-	en_translations.RegisterDefaultTranslations(validate, trans)
+	validator = v.New()
+	en_translations.RegisterDefaultTranslations(validator, trans)
 
-	validate.RegisterValidation("unique", func(fl validator.FieldLevel) bool {
+	validator.RegisterValidation("unique", func(fl v.FieldLevel) bool {
 		var row struct {
 			Exists bool
 		}
@@ -66,15 +66,15 @@ func init() {
 		return !row.Exists
 	})
 
-	validate.RegisterTranslation("email", trans, func(ut ut.Translator) error {
+	validator.RegisterTranslation("email", trans, func(ut ut.Translator) error {
 		return ut.Add("email", "Provide correct email address", true) // see universal-translator for details
-	}, func(ut ut.Translator, fe validator.FieldError) string {
+	}, func(ut ut.Translator, fe v.FieldError) string {
 		t, _ := ut.T("email", fe.Field())
 
 		return t
 	})
 
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+	validator.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 		if name == "-" {
 			return ""
@@ -109,7 +109,7 @@ func init() {
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold:             time.Millisecond * 100,
-				LogLevel:                  logger.Warn,
+				LogLevel:                  logger.Info,
 				IgnoreRecordNotFoundError: false,
 				Colorful:                  true,
 			},
@@ -134,15 +134,16 @@ func migrateDB() {
 
 // BaseModel base struct for all models that just uses UUID primary key
 type BaseModel struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt sql.NullTime
+	ID        uuid.UUID    `gorm:"type:uuid;primary_key" json:"id"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
+	DeletedAt sql.NullTime `json:"deleted_at"`
 }
 
 // BeforeCreate use this hook to auto-generate new PK
 func (o *BaseModel) BeforeCreate(tx *gorm.DB) error {
 	// idField, _ := scope.FieldByName("ID")
+	// log.Print(cfmt.Sinfo("[DEBUG] BaseModel BeforeCreate"))
 	if o.ID == uuid.Nil {
 		uuid, err := uuid.NewV4()
 		if err != nil {
@@ -178,4 +179,16 @@ func Personalised(userID interface{}) func(q *gorm.DB) *gorm.DB {
 		}
 		return q
 	}
+}
+
+// IValidator
+type IValidator interface {
+	Validate() (ModelErrors, bool)
+}
+
+// Validate function to initiate validation of the passed model
+// object. Function returns a dictionary of errors and field names
+func Validate(object IValidator) (ModelErrors, bool) {
+	errors, valid := object.Validate()
+	return errors, valid
 }

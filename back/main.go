@@ -104,6 +104,7 @@ func main() {
 		// },
 		MaxAge: 12 * time.Hour,
 	}))
+	router.MaxMultipartMemory = 2 << 20
 	initRoutes(router)
 	router.Run(fmt.Sprintf("%s:8085", os.Getenv("MYSTIC_CASE_DOMAIN")))
 }

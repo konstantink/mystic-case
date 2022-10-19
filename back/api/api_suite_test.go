@@ -29,6 +29,7 @@ func setupRouter() *gin.Engine {
 	productsGroup := router.Group("/products")
 	{
 		productsGroup.GET("/featured", uut.GetFeaturedProductsList)
+		productsGroup.POST("/product", uut.ProductHandlerFunc)
 	}
 
 	return router

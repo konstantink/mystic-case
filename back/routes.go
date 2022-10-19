@@ -22,6 +22,7 @@ func initAPIV1Routes(router *gin.Engine) {
 		tokenRoutes := apiV1Routes.Group("/token")
 		{
 			tokenRoutes.POST("/refresh", api.TokenRefreshHandlerFunc)
+			tokenRoutes.GET("/health", api.AuthMiddleware(), api.TokenHealthHandlerFunc)
 		}
 
 		productRoutes := apiV1Routes.Group("/products", SessionManager())
@@ -32,6 +33,8 @@ func initAPIV1Routes(router *gin.Engine) {
 		adminRoutes := apiV1Routes.Group("/admin", api.AuthMiddleware())
 		{
 			adminRoutes.GET("/products", api.ProductsHandlerFunc)
+			adminRoutes.POST("/product", api.ProductHandlerFunc)
+			adminRoutes.POST("/gallery/upload", api.UploadFileHandlerFunc)
 		}
 	}
 }

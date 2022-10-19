@@ -293,6 +293,13 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "access_token": tokens.AccessToken.Value, "refresh_token": tokens.RefreshToken.Value})
 }
 
+// TokenHealthHandlerFunc is an endpoint to check the state of the
+// token. In case token is valid return successful response. If
+// token is invalid then return 401 to initiate token refresh process
+func TokenHealthHandlerFunc(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
 // WhoamiHandlerFunc tries to identify the user by session cookie or
 // if available access_token. If it's not available, then issue new
 // session only for the guest user. If session is expired and there's
@@ -300,3 +307,19 @@ func TokenRefreshHandlerFunc(c *gin.Context) {
 // If access_token is available, that means that user was logged in, so
 // he should have refresh token as well, so we return 401 and let him
 // go trhough refresh token process
+func WhoamIHandlerFunc(c *gin.Context) {
+	var user models.User
+	if userID, exists := c.Get("user_id"); exists {
+		err := models.GetUserByID(&user, userID)
+		if err != nil {
+			log.Print(cfmt.Warning("[WARNING] user not found"))
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"success": false, "error": "user not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
+	} else {
+		log.Print(cfmt.Warning("[WARNING] user not found"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"success": false, "error": "can't get user from request"})
+	}
+}

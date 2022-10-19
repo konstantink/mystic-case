@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/go-playground/validator/v10"
+	v "github.com/go-playground/validator/v10"
 	"github.com/gofrs/uuid"
 	"github.com/mingrammer/cfmt"
 
@@ -66,9 +66,9 @@ func (u User) Validate(tx *gorm.DB) *gorm.DB {
 	}
 
 	// ok, err := govalidator.ValidateStruct(u)
-	err := validate.Struct(u)
+	err := validator.Struct(u)
 	if err != nil {
-		errs := err.(validator.ValidationErrors)
+		errs := err.(v.ValidationErrors)
 		for _, e := range errs {
 			log.Print(cfmt.Swarningf("[WARNING] Validate: %s", e.Translate(trans)))
 			tx.AddError(fmt.Errorf("%s:%s", e.Field(), e.Translate(trans)))
