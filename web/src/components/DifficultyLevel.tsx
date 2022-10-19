@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: "flex-end",
         display: "flex",
         flexDirection: "column",
-        "& h6": {
+        "& p": {
             color: "#231E52",
             fontFamily: "Pangram",
             fontSize: 20,
@@ -47,7 +47,7 @@ const DifficultyLevel = ({ difficulty }: DifficultyLevelProps) => {
 
     return (
         <Box component="div" className={classes.container}>
-            <Typography variant="h6">
+            <Typography variant="body1">
                 Difficulty level
             </Typography>
             <Box component="div" className={classes.starsContainer}>

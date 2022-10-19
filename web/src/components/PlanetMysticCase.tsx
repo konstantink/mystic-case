@@ -126,10 +126,10 @@ const PlanetMysticCase = () => {
         <Box component="div" className={classes.root}>
             <Grid container className={classes.container}>
                 <Grid item xs={6} className={classes.rightSide}>
-                    <Typography variant="h1" className={classes.h1}>
+                    <Typography variant="h2" className={classes.h1}>
                         Collect your
                     </Typography>
-                    <Typography variant="h1" className={clsx(classes.h1, classes.yellowH1)}>
+                    <Typography variant="h2" className={clsx(classes.h1, classes.yellowH1)}>
                         Mystic case planet
                     </Typography>
                     <Typography variant="body1" className={classes.text}>

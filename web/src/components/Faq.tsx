@@ -143,7 +143,7 @@ const FAQSection = () => {
         return text.split(regex).map((item, idx) => {
             if (values.includes(item))
                 return (
-                    <Link href={name2Url[item]} color="inherit" underline="none" variant="caption" className={classes.link} target="_blank" rel="noreferrer">
+                    <Link key={`regex-${idx}`} href={name2Url[item]} color="inherit" underline="none" variant="caption" className={classes.link} target="_blank" rel="noreferrer">
                         {item}
                     </Link>
                 )
@@ -153,12 +153,12 @@ const FAQSection = () => {
 
     return (
         <Box component="div" className={classes.root}>
-            <Typography variant="h1" className={classes.title} align="center">
+            <Typography variant="h2" className={classes.title} align="center">
                 FAQ
             </Typography>
             <Container className={classes.questionContainer}>
                 {questions.map((item, idx) => (
-                    <React.Fragment key={idx}>
+                    <React.Fragment key={`key-faq-section-${idx}`}>
                         <Accordion square expanded={expanded === item.id} onChange={onChange(item.id)}>
                             <AccordionSummary aria-controls={`${item.id}-content`} id={`${item.id}-header`} expandIcon={<Icon />}>
                                 <Typography variant="body1" className={classes.question}>
@@ -167,7 +167,7 @@ const FAQSection = () => {
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography variant="body2" className={classes.answer}>
-                                    {formatMentionText(item.answer, Object.keys(name2Url), new RegExp(/((?:\w+)?@[\w\-\.]+)/))}
+                                    {formatMentionText(item.answer, Object.keys(name2Url), new RegExp(/((?:\w+)?@[\w\-.]+)/))}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>

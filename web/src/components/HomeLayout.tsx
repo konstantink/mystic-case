@@ -1,14 +1,15 @@
-import React from "react"
+import clsx from "clsx";
+import React from "react";
 
-import { createStyles, Theme } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { withStyles, WithStyles } from "@material-ui/styles";
+import { createStyles, Theme, styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { withStyles, WithStyles } from "@mui/styles";
 
 
-import * as api from "../api";
+import * as api from "../api/api";
 import Description from "./Description";
 import FAQSection from "./Faq";
 import FeatureView, { Feature } from "./Feature";
@@ -29,7 +30,9 @@ import { ProductItem } from "../types";
 
 interface HomeLayoutProps extends WithStyles<typeof styles> { };
 
-interface HeaderProps extends WithStyles<typeof headerStyles> { };
+interface HeaderProps extends WithStyles<typeof headerStyles> { 
+    invert?: boolean;
+};
 
 interface LogoProps {
     containerClass: string;
@@ -51,7 +54,6 @@ const headerStyles = (theme: Theme) => createStyles({
         // backgroundImage: "url(/assets/logo.png)",
         width: 117,
         height: 80,
-        filter: "brightness(0) invert(1)",
         objectFit: "cover",
         "& img": {
             height: "100%",
@@ -59,6 +61,12 @@ const headerStyles = (theme: Theme) => createStyles({
         },
         // paddingLeft: 30,
         // paddingTop: 20,
+    },
+    purple: {
+        filter: "brightness(1)",
+    },
+    white: {
+        filter: "brightness(0) invert(1)",
     },
     header: {
         display: "flex",
@@ -167,7 +175,7 @@ const styles = (theme: Theme) => createStyles({
             letterSpacing: "0.4px",
             textTransform: "capitalize",
         },
-        "& h6": {
+        "& p": {
             fontFamily: "Pangram",
             fontSize: 24,
             fontWeight: "normal",
@@ -269,7 +277,7 @@ const featuresStyles = (theme: Theme) => createStyles({
     },
 });
 
-const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
+export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
     return (
         <div className={containerClass}>
             <img src="/assets/logo.png" alt="logo" />
@@ -277,21 +285,21 @@ const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps)
     )
 }
 
-const Header = withStyles(headerStyles)(({ classes }: HeaderProps) => {
+export const Header = withStyles(headerStyles)(({ classes, invert=false }: HeaderProps) => {
     return (
         <React.Fragment>
             <header className={classes.header}>
                 <Box component="div">
-                    <Logo containerClass={classes.logoContainer}/>
+                    <Logo containerClass={clsx(classes.logoContainer, invert ? classes.purple : classes.white)}/>
                 </Box>
-                <Menu />
+                <Menu invert={invert} />
             </header>
         </React.Fragment>
     )
 });
 
 const RequirementsSection = withStyles(requirementStyles)(({ classes, requirements }: RequirementsSectionProps) => {
-    return(
+    return (
         <Box component="div" className={classes.container}>
             {requirements.map((item, idx) => (
                 <RequirementView key={`requirement-view-${idx}`} {...item} />
@@ -307,7 +315,7 @@ const FeaturesSection = withStyles(featuresStyles)(({ classes, content }: Featur
             <Grid container className={classes.interactiveTextContainer} spacing={5}>
                 <Grid item xs={4}></Grid>
                 <Grid item xs={8}>
-                    <Typography variant="h3" className={classes.interactiveText}>
+                    <Typography variant="h2" className={classes.interactiveText}>
                         <span style={{ color: "#FFD644" }}>Mystic case</span> is an interactive game you can play on the table
                     </Typography>
                 </Grid>
@@ -358,7 +366,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
     }, [])
 
     return (
-        <Box component="div" style={{backgroundColor: "#3A3185"}}>
+        <Box component="div" style={{backgroundColor: "#3A3185", color: "#FEFEFE"}}>
             <Header /> 
             <main className={classes.mainRows}>
                 <div className="row-wrapper">
@@ -378,14 +386,36 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                                 <Star height={80} width={68} left="69%" top={-15} />
                             </Container>
                         </Grid>
-                        <Grid item xs={6} className={classes.rightSideText}>
-                            <Typography variant="h1" style={{ color: "#FFD644" }}>
+                        <Grid item xs={6}
+                            sx={{
+                                alignItems: "flex-start",
+                                display: "flex",
+                                flexDirection: "column",
+                                paddingTop: 16,
+                                "& h1": {
+                                    fontFamily: "Pangram",
+                                    fontSize: 72,
+                                    fontWeight: 700,
+                                    lineHeight: "74px",
+                                    letterSpacing: "0.4px",
+                                    textTransform: "capitalize",
+                                },
+                                "& p": {
+                                    fontFamily: "Pangram",
+                                    fontSize: 24,
+                                    fontWeight: "normal",
+                                    lineHeight: "36px",
+                                    letterSpacing: "0.3px",
+                                }
+                            }}
+                        >
+                            <Typography variant="h1" sx={{ color: "#FFD644" }}>
                                 Challenge your brain
                             </Typography>
-                            <Typography variant="h1" style={{ color: "#FFF" }} gutterBottom>
+                            <Typography variant="h1" sx={{ color: "#FFF" }} gutterBottom>
                                 and spend quality time
                             </Typography>
-                            <Typography variant="h6" style={{ color: "#FEFEFE", marginBottom: 40, maxWidth: 589 }}>
+                            <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px"}}>
                                 Try the brand new way to spend your leisure time at home in the most fun and challengeable way!
                             </Typography>
                             <ShopnowButton>
@@ -406,7 +436,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                     <RequirementsSection requirements={requirements} />
                 </div>
                 <div className="row-wrapper" style={{ backgroundColor: "#E5E5E5", display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 120, paddingTop: 160 }}>
-                    <Typography variant="h1" style={{ color: "#231E52", fontFamily: "Pangram", fontSize: "72px", fontWeight: 700, lineHeight: "74px", letterSpacing: "0.4px", paddingBottom: 120, textAlign: "center" }}>
+                    <Typography variant="h2" style={{ color: "#231E52", fontFamily: "Pangram", fontSize: "72px", fontWeight: 700, lineHeight: "74px", letterSpacing: "0.4px", paddingBottom: 120, textAlign: "center" }}>
                         Choose your box
                     </Typography>
                     <FeaturedProductsList products={products} />

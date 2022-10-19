@@ -6,9 +6,10 @@ import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import App from './App';
+import { AuthProvider } from "./hooks/useAuth";
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';
@@ -17,13 +18,39 @@ const history = createBrowserHistory();
 const store = createStore(combineReducers({
     router: connectRouter(history),
 }));
-const theme = createMuiTheme({});
+const theme = createTheme({
+    components: {
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    fontFamily: "Pangram",
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                input: {
+                    fontFamily: "Pangram",
+                }
+            }
+        },
+        MuiFormHelperText: {
+            styleOverrides: {
+                root: {
+                    fontFamily: "Pangram",
+                },
+            },
+        },
+    },
+});
 
 ReactDOM.render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <Provider store={store}>
-                <App history={history}/>
+                <AuthProvider>
+                    <App history={history}/>
+                </AuthProvider>
             </Provider>
         </ThemeProvider>
     </React.StrictMode>,

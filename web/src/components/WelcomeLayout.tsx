@@ -1,13 +1,11 @@
 import React from "react";
 
 import { Link } from "react-router-dom";
-import { createStyles, Theme } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from '@material-ui/core/Typography';
-import { withStyles, WithStyles } from "@material-ui/styles";
+import { createStyles, Theme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from '@mui/material/Typography';
+import { withStyles, WithStyles } from "@mui/styles";
 
 
 const styles = (theme: Theme) => createStyles({
@@ -61,7 +59,7 @@ const styles = (theme: Theme) => createStyles({
         '&::after': {
             backgroundImage: "url('https://subbly-bucket.storage.googleapis.com/userFiles/mystic-case-5ecd78619126f/images/logo.png?v=1590686539')",
             backgroundRepeat: 'no-repeat',
-            backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+            backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
             backgroundSize: 'contain',
             backgroundPosition: 'center',
             content: '""',
@@ -95,7 +93,7 @@ const styles = (theme: Theme) => createStyles({
         [theme.breakpoints.down('xs')]: {
             backgroundImage: "url('https://subbly-bucket.storage.googleapis.com/userFiles/mystic-case-5ecd78619126f/images/logo.png?v=1590686539')",
             backgroundRepeat: 'no-repeat',
-            backgroundColor: theme.palette.type === 'light' ? "#fff" : theme.palette.grey[900],
+            backgroundColor: theme.palette.mode === 'light' ? "#fff" : theme.palette.grey[900],
             backgroundSize: 'contain',
             backgroundPosition: 'center',
             display: "block",

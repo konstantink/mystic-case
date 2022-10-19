@@ -248,15 +248,17 @@ export const Product = withStyles(styles)(({ classes, ...product }: ProductProps
             {product.isBestseller && (<BestSellerLabel />)}
             <Box className={classes.imageContainer}>
                 <Box className={classes.image}>
-                    <animated.img src={product.images[0].url} alt={product.images[0].name} style={springProps}/>
+                    <animated.img src={product.images ? product.images[0].url : ""} alt={product.images ? product.images[0].name : "product image"} style={springProps}/>
                 </Box>
             </Box>
             <Box flexDirection="row" display="flex" justifyContent="space-between" marginBottom="16px">
-                <Typography variant="h4" className={classes.productNamePrice}>
+                <Typography variant="body1" className={classes.productNamePrice}>
                     {product.name}
                 </Typography>
-                <Typography variant="h4" className={classes.productNamePrice}>
-                    {Intl.NumberFormat('en-GB', {style: "currency", currency: product.currency}).format(product.price/100)}
+                <Typography variant="body1" className={classes.productNamePrice}>
+                    {product.prices ?
+                        Intl.NumberFormat('en-GB', {style: "currency", currency: product.prices[0].currency}).format(typeof product.prices[0].price === "number" ? product.prices[0].price/100 : parseFloat(product.prices[0].price))
+                        : "N/A"}
                 </Typography>
             </Box>
             <TruncateText 
@@ -273,7 +275,7 @@ export const Product = withStyles(styles)(({ classes, ...product }: ProductProps
                     <BuyNowButton />
                     <AddToCartButton />
                 </Box>
-                <DifficultyLevel difficulty={product.difficulty} />
+                <DifficultyLevel difficulty={product.difficulty || 0} />
             </Box>
         </Box>
     );

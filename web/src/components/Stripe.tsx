@@ -29,7 +29,7 @@ interface StripeProps extends WithStyles<typeof styles> {};
 const Stripe = withStyles(styles)(({ classes, children }: React.PropsWithChildren<StripeProps>) => (
     <Box className={classes.root} component="div">
         <Marquee play direction="left" gradient={false}>
-            <Typography className={classes.text} variant="h1">
+            <Typography className={classes.text} variant="h2">
                 {children}
             </Typography>
         </Marquee>

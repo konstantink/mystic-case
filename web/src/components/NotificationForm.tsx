@@ -61,9 +61,9 @@ const NotificationForm = () => {
 
     return (
         <Box component="div">
-            <Typography variant="h6" className={classes.text}>
+            <Typography variant="body1" className={classes.text}>
                 Subscribe to get latest news about&nbsp;
-                <Typography variant="h6" className="yellow" component="span">
+                <Typography variant="body1" className="yellow" component="span">
                     our boxes
                 </Typography>
             </Typography>
@@ -81,7 +81,7 @@ const NotificationForm = () => {
                                 <IconButton
                                     onClick={() => {}}
                                 >
-                                    <ArrowRight viewBox="0 0 40 22" htmlColor="#FFFFFF" height={22} width={40} fontSize="inherit" />
+                                    <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
                                 </IconButton>
                             </InputAdornment>
                         )

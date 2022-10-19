@@ -1,12 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
+import * as React from 'react';
+// import logo from './logo.svg';
 import './App.css';
 
 import { ConnectedRouter } from "connected-react-router";
 import { History } from "history";
-import { Switch, Route} from "react-router";
+import { Route, Switch } from "react-router";
+// import { BrowserRouter } from "react-router-dom";
 
-import routes from "./routes";
+import AdminApp from "./AdminApp";
+import { routes } from "./routes";
 
 // <div className="App">
 //   <header className="App-header">
@@ -39,6 +41,9 @@ const App = (props: AppProps) => {
                         return (<Route key={`route-idx-${idx}`} exact path={route.path} component={route.component} />)
                     }
                     )}
+                    
+                    <Route path="/admin" component={AdminApp} />
+                    {/* <Route path="/admin" */}
                 </Switch>
             </ConnectedRouter>
         </React.Fragment>

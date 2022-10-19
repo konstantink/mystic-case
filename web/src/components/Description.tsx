@@ -103,16 +103,16 @@ const Description = () => {
             <Grid container spacing={10}>
                 <Grid item xs={6} className={classes.leftSide}>
                     <animated.div className={clsx(classes.imgContainer, classes.backImg)}>
-                        <img src="/assets/images/description_1.png" alt="Collaboration" />
+                        <img src="/assets/images/description_1.webp" alt="Collaboration" />
                     </animated.div>
                     <animated.div className={clsx(classes.imgContainer, classes.frontImg)}>
-                        <img src="/assets/images/description_2.png" alt="Fun" />
+                        <img src="/assets/images/description_2.webp" alt="Fun" />
                     </animated.div>
                 </Grid>
                 <Grid item xs={6} className={classes.rightSide}>
-                    <Typography variant="h1" className={clsx(classes.h1, classes.marginBottom80)}>
+                    <Typography variant="h2" className={clsx(classes.h1, classes.marginBottom80)}>
                         Your&nbsp;
-                        <Typography variant="h1" component="span" className={clsx(classes.h1, classes.yellowH1)}>
+                        <Typography variant="h2" component="span" className={clsx(classes.h1, classes.yellowH1)}>
                             fun activity
                         </Typography>
                     </Typography>

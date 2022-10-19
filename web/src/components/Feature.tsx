@@ -55,10 +55,10 @@ const FeatureView = withStyles(featureStyles)(({ classes, name, text, imageUrl}:
         <Box component="div" className={classes.image}>
             <img src={imageUrl} alt={name} />
         </Box>
-        <Typography variant="h4" className={classes.header}>
+        <Typography variant="h3" className={classes.header}>
             {name}
         </Typography>
-        <Typography variant="h5" className={classes.text}>
+        <Typography variant="h4" className={classes.text}>
             {text}
         </Typography>
     </Box>

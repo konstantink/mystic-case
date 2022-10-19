@@ -5,7 +5,7 @@ import { useSpringCarousel } from "react-spring-carousel-js";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { createMuiTheme, makeStyles, Theme, ThemeProvider } from "@material-ui/core/styles";
+import { createTheme, makeStyles, Theme, ThemeProvider } from "@material-ui/core/styles";
 
 import { ArrowLeft, ArrowRight } from "../icons/Arrows";
 import { AvatarGirl1, AvatarGirl2, AvatarMan1, AvatarMan2, AvatarMan3 } from "../icons/Avatars";
@@ -250,7 +250,7 @@ const Feedback = ({avatar, name, from, comment}: FeedbackProps) => {
                 {React.createElement(avatar, {className: classes.avatar})}
             </Box>
             <Box component="div" display="flex" flexDirection="column" paddingLeft="80px">
-                <Typography variant="h6" className={classes.name}>
+                <Typography variant="body1" className={classes.name}>
                     {name}
                     <Typography variant="body1" className={classes.city} component="span">
                         ({from})
@@ -283,7 +283,7 @@ const Dot = ({ active, onClick }: DotProps) => (
     </Box>
 )
 
-const buttonTheme = createMuiTheme({
+const buttonTheme = createTheme({
     palette: {
         primary: {
             main: "rgba(147,140,209,0.3)",
@@ -312,7 +312,7 @@ const FeedbackSection = () => {
         return () => {
             window.clearInterval(interval);
         }
-    }, [api.slideToNextItem]);
+    }, [api]);
 
     api.useListenToCustomEvent((data) => {
         switch (data.eventName) {
@@ -328,15 +328,15 @@ const FeedbackSection = () => {
         <Box component="div" className={classes.root}>
             <Box component="div" className={classes.stickersContainer}>
                 <Box component="div" className={clsx(classes.imageContainer, classes.image, classes.purpleBorder, classes.first)}>
-                    <img src="/assets/images/feedback_1.png" alt="group_of_people" />
+                    <img src="/assets/images/feedback_1.webp" alt="group_of_people" />
                 </Box>
                 <Box component="div" className={clsx(classes.textContainer, classes.plot)}>
-                    <Typography variant="h4" className={classes.text}>
+                    <Typography variant="body1" className={classes.text}>
                         Exciting plot with logical and interactive tasks
                     </Typography>
                 </Box>
                 <Box component="div" className={clsx(classes.textContainer, classes.hints)}>
-                    <Typography variant="h4" className={classes.text}>
+                    <Typography variant="body1" className={classes.text}>
                         Detailed hints for every stage if you're stuck
                     </Typography>
                 </Box>
@@ -347,7 +347,7 @@ const FeedbackSection = () => {
                     <img src="/assets/images/feedback_3.png" alt="family" />
                 </Box>
                 <Box component="div" className={clsx(classes.textContainer, classes.clues)}>
-                    <Typography variant="h4" className={classes.text}>
+                    <Typography variant="body1" className={classes.text}>
                         Clues, cyphers, tasks, puzzles and codes
                     </Typography>
                 </Box>
@@ -355,7 +355,7 @@ const FeedbackSection = () => {
                     <img src="/assets/images/feedback_4.png" alt="girl_2" />
                 </Box>
                 <Box component="div" className={clsx(classes.textContainer, classes.objects)}>
-                    <Typography variant="h4" className={classes.text}>
+                    <Typography variant="body1" className={classes.text}>
                         Various objects and tools
                     </Typography>
                 </Box>
@@ -364,7 +364,7 @@ const FeedbackSection = () => {
                 <ThemeProvider theme={buttonTheme}>
                     <Box component="div" display="flex" alignItems="center">
                         <Button onClick={api.slideToPrevItem} className={classes.navButtons} variant="contained" color="primary">
-                            <ArrowLeft viewBox="0 0 40 22" htmlColor="#FFFFFF" height={22} width={40} fontSize="inherit" />
+                            <ArrowLeft viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
                         </Button>
                     </Box>
                 </ThemeProvider>
@@ -372,7 +372,7 @@ const FeedbackSection = () => {
                 <ThemeProvider theme={buttonTheme}>
                     <Box component="div" display="flex" alignItems="center">
                         <Button onClick={api.slideToNextItem} className={classes.navButtons} variant="contained" color="primary">
-                            <ArrowRight viewBox="0 0 40 22" htmlColor="#FFFFFF" height={22} width={40} fontSize="inherit"/>
+                            <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit"/>
                         </Button>
                     </Box>
                 </ThemeProvider>

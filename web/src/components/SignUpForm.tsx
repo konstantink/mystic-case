@@ -5,13 +5,13 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
-import { Theme } from "@material-ui/core/styles";
-import Typography from '@material-ui/core/Typography';
+import { Theme } from "@mui/material/styles";
+import Typography from '@mui/material/Typography';
 import EmailOutlined from "@material-ui/icons/EmailOutlined";
 import LockOutlined from "@material-ui/icons/LockOutlined"
-import { createStyles, withStyles, WithStyles } from "@material-ui/styles";
+import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
-import { createAccount } from "../api";
+import { createAccount } from "../api/auth";
 
 
 const styles = (theme: Theme) => createStyles({

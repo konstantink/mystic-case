@@ -1,21 +1,23 @@
 import React from "react";
 
 import { Link } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
+// import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Container from "@material-ui/core/Container";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Grid from "@material-ui/core/Grid";
+// import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TextField from "@material-ui/core/TextField";
 import { Theme } from "@material-ui/core/styles";
 import Typography from '@material-ui/core/Typography';
 import EmailOutlined from "@material-ui/icons/EmailOutlined";
 import LockOutlined from "@material-ui/icons/LockOutlined"
-import { createStyles, withStyles, WithStyles } from "@material-ui/styles";
+import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
-import { AuthParams, tryLogin } from "../api";
+// import { AuthParams, tryLogin } from "../api";
+import { useAuth } from "../hooks/useAuth";
+import { AuthParams } from "../types";
 
 
 const styles = (theme: Theme) => createStyles({
@@ -86,7 +88,8 @@ const styles = (theme: Theme) => createStyles({
     submit: {
         margin: theme.spacing(3, 'auto', 2),
         [theme.breakpoints.down('md')]:{
-            margin: theme.spacing(7.5, 0, 2),
+            // margin: theme.spacing(7.5, 0, 2),
+            marginTop: theme.spacing(7.5),
         }
     },
     link: {
@@ -186,8 +189,12 @@ const RememberForgot = withStyles(checkboxStyles)(({ classes }: WithStyles<typeo
 const ColorButton = withStyles(buttonStyles)(Button);
 
 const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classes }) => {
+    // const usernameRef = React.useRef<HTMLInputElement>(null);
+    // const passwordRef = React.useRef<HTMLInputElement>(null);
+    const { login } = useAuth();
+
     const [credentials, setCredential] = React.useState<AuthParams>({
-        email: '',
+        username: '',
         password: '',
     });
 
@@ -202,11 +209,17 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
 
     const onSubmit: React.FormEventHandler<HTMLFormElement | HTMLButtonElement> = async e => {
         e.preventDefault();
-        await tryLogin(credentials).then((response) => {
-            console.log(response);
-        }).catch(() => {
-            console.log("failed");
-        })
+        login(credentials.username, credentials.password);
+        // try {
+        //     const data = await tryLogin(credentials);
+        //     console.log(data);
+        //     if (data.success) {
+        //         localStorage.setItem("at", data.access_token);
+        //         localStorage.setItem("rt", data.refresh_token);
+        //     }
+        // } catch (exc) {
+        //     console.log("failed", exc);
+        // }
     }
 
     return (
@@ -223,10 +236,10 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     margin="normal"
                     type="text"
                     required
-                    value={credentials.email}
+                    value={credentials.username}
                     variant="outlined"
                     inputProps={{
-                        name: 'email'
+                        name: 'username'
                     }}
                     InputProps={{
                         className: classes.input,
