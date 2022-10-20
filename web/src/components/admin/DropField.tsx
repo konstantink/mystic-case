@@ -318,6 +318,7 @@ const placeImages = (ref: React.RefObject<HTMLDivElement>, order: Array<number>,
 
 export interface DropFieldProps {
     images?: Array<ProductImage>;
+    onUploadSuccess?(images: Array<ProductImage>): void;
 }
 
 export default ({ images }: DropFieldProps) => {
@@ -402,8 +403,7 @@ export default ({ images }: DropFieldProps) => {
                 try{
                     await Promise.all(promises);
                     success(`Successfully uploaded ${promises.length} file(s)`);
-                } catch(err) {
-                    // console.log(err);
+                } catch (err) {
                     error(err.message);
                 }
             }

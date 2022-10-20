@@ -1,6 +1,6 @@
 import slug from "limax";
 import * as React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import AddOutlined from "@mui/icons-material/AddOutlined";
 import Box from "@mui/material/Box";
@@ -78,7 +78,7 @@ export const PriceField = ({ fullWidth=true, margin="normal", maxWidth="150px", 
 )}
 
 export default () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const [newProduct, updateProduct] = React.useState<ProductItem>({
         id: undefined,
         name: "",
@@ -189,7 +189,7 @@ export default () => {
         newProduct.images = images;
         const response = await api.createProduct(newProduct);
         if (response.success) {
-             history.push("/admin/products");
+             navigate("/admin/products");
         } else {
             setErrors(response.errors);
         }
@@ -411,7 +411,7 @@ export default () => {
             <Divider sx={{margin: "16px 0"}} />
             <Stack direction="row" flexDirection="row-reverse" sx={{marginTop: 2, "& button:not(:last-of-type)": {marginLeft: 1}}}>
                 <Button variant="contained" onClick={onSubmit}>Save</Button>
-                <Button variant="outlined" onClick={() => history.push("/admin/products")}>Cancel</Button>
+                <Button variant="outlined" onClick={() => navigate("/admin/products")}>Cancel</Button>
             </Stack>
         </Box>
     )

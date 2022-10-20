@@ -2,13 +2,12 @@ import * as React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 
-import { ConnectedRouter } from "connected-react-router";
+// import { ConnectedRouter } from "connected-react-router";
 import { History } from "history";
-import { Route, Switch } from "react-router";
-// import { BrowserRouter } from "react-router-dom";
+import { Route, Routes } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import AdminApp from "./AdminApp";
-import { routes } from "./routes";
+import { routes } from "./router";
 
 // <div className="App">
 //   <header className="App-header">
@@ -30,22 +29,23 @@ import { routes } from "./routes";
 interface AppProps {
     history: History
 }
+const router = createBrowserRouter(routes);
 
 const App = (props: AppProps) => {
     return (
         <React.Fragment>
-            <ConnectedRouter history={props.history}>
-                <Switch>
+            <RouterProvider router={router} />
+            {/* <BrowserRouter>
+                <Routes>
                     {routes.map((route, idx) => {
                         console.log(route);
-                        return (<Route key={`route-idx-${idx}`} exact path={route.path} component={route.component} />)
-                    }
-                    )}
+                        return (<Route key={`route-idx-${idx}`} path={route.path} element={} />)
+                    })}
                     
-                    <Route path="/admin" component={AdminApp} />
-                    {/* <Route path="/admin" */}
-                </Switch>
-            </ConnectedRouter>
+                    <Route path="/admin" element={AdminApp} />
+                    <Route path="/admin" />
+                </Routes>
+            </BrowserRouter> */}
         </React.Fragment>
     );
 }

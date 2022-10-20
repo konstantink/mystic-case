@@ -1,3 +1,8 @@
+import * as React from "react";
+import { Navigate, RouteObject } from "react-router-dom";
+import { useRoutes } from "react-router-dom";
+
+import AdminApp from "./AdminApp";
 import Home from "./containers/Home";
 import Shop from "./containers/Shop";
 import SignIn from "./containers/SignIn";
@@ -11,29 +16,34 @@ export type RouteType = {
     name?: string,
 };
 
-export const routes: RouteType[] = [{
+export const adminRoutes: Array<RouteObject> = [{
+    index: true,
+    element: <Navigate to="products" />
+}, {
+    path: "products",
+    element: <Products />,
+}, {
+    path: "product",
+    element: <Product />,
+}];
+
+export const routes: Array<RouteObject> = [{
     path: "/signin",
-    component: SignIn,
+    element: <SignIn />,
 }, {
     path: "/signup",
-    component: SignUp,
+    element: <SignUp />,
 }, {
     path: '/',
-    component: Home,
+    element: <Home />,
 }, {
     path: '/shop',
-    component: Shop,
-}]
-
-export const adminRoutes: Array<RouteType> = [{
-    path: "/products",
-    name: "Products",
-    component: Products,
+    element: <Shop />,
 }, {
-    path: "/product",
-    // name: "Create a product",
-    component: Product,
-}, ];
+    path: '/admin',
+    element: <AdminApp />,
+    children: adminRoutes
+}];
 
 // export default [
 //     ...mainRoutes,

@@ -1,17 +1,22 @@
 import * as React from "react";
-import { NavLink, useRouteMatch } from "react-router-dom";
+import { NavLink, useRoutes } from "react-router-dom";
 
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import StyleOutlined from "@mui/icons-material/StyleOutlined";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import { createStyles, Theme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import { withStyles, WithStyles } from "@mui/styles";
 
 // import AdminRoute from "../../containers/admin/AdminRoute";
 import { Logo } from "../HomeLayout";
-import { adminRoutes } from "../../routes";
+import { adminRoutes } from "../../router";
 import clsx from "clsx";
 
 const drawerWidth = 240;
@@ -37,8 +42,6 @@ const styles = (theme: Theme) => createStyles({
 interface SideBarProps extends WithStyles<typeof styles> { }
 
 export default withStyles(styles)(({ children, classes }: React.PropsWithChildren<SideBarProps>) => {
-    const { path, url } = useRouteMatch();
-    console.log(path, url);
     return (
         <React.Fragment>
             <Drawer
@@ -57,13 +60,26 @@ export default withStyles(styles)(({ children, classes }: React.PropsWithChildre
                     <Logo containerClass={clsx(classes.logoContainer, classes.purple)}/>
                 </Toolbar>
                 <Divider />
-                <List>
-                    {adminRoutes.filter(item => item.name !== undefined).map((route, idx) => (
-                        <ListItem key={`admin-route-idx-${idx}`}>
-                            <NavLink to={`${url}${route.path}`}>{route.name}</NavLink>
+                <nav aria-label="main">
+                    <List>
+                        <ListItem disablePadding>
+                            <NavLink to="/admin/orders" className={({ isActive }) => isActive ? "orders-active active" : "inactive"}>
+                                <ListItemIcon>
+                                    <ShoppingBagOutlinedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Orders" disableTypography />
+                            </NavLink>
                         </ListItem>
-                    ))}
-                </List>
+                        <ListItem disablePadding>
+                            <NavLink to="/admin/products" className={({ isActive }) => isActive ? "products-active active" : "inactive"}>
+                                <ListItemIcon>
+                                    <StyleOutlined />
+                                </ListItemIcon>
+                                <ListItemText primary="Products" disableTypography />
+                            </NavLink>
+                        </ListItem>
+                    </List>
+                </nav>
             </Drawer>
             {children}
         </React.Fragment>
