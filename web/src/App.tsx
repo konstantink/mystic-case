@@ -7,7 +7,7 @@ import { History } from "history";
 import { Route, Routes } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { routes } from "./router";
+import { routes } from "./routes";
 
 // <div className="App">
 //   <header className="App-header">

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NavLink, useRoutes } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import StyleOutlined from "@mui/icons-material/StyleOutlined";
@@ -7,7 +7,6 @@ import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { createStyles, Theme } from "@mui/material/styles";
@@ -16,7 +15,6 @@ import { withStyles, WithStyles } from "@mui/styles";
 
 // import AdminRoute from "../../containers/admin/AdminRoute";
 import { Logo } from "../HomeLayout";
-import { adminRoutes } from "../../router";
 import clsx from "clsx";
 
 const drawerWidth = 240;
