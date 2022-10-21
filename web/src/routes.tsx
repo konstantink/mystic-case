@@ -25,7 +25,7 @@ export const adminRoutes: Array<RouteObject> = [{
 }, {
     path: "product",
     element: <Product />,
-}];
+},];
 
 export const routes: Array<RouteObject> = [{
     path: "/signin",
