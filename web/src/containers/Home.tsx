@@ -1,7 +1,7 @@
 import React from "react"
 
-import { createStyles, Theme } from "@material-ui/core";
-import { withStyles, WithStyles } from "@material-ui/styles";
+import { Theme } from "@mui/material/styles";
+import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
 import HomeLayout from "../components/HomeLayout";
 
