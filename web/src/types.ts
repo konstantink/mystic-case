@@ -6,28 +6,42 @@ export type ProductImage = {
 }
 
 export type ProductItem = {
-    id?: string | undefined,
+    id?: string,
     name?: string,
     slug?: string,
     title?: string,
     description?: string,
     // price: number | string,
     // currency: string,
-    prices: Array<Price>,
+    prices?: Array<Price>,
     difficulty?: number,
     isFeatured?: boolean,
     isNew?: boolean,
     isBestseller?: boolean,
-    images: Array<ProductImage>,
+    images?: Array<ProductImage>,
     hasVariants?: boolean;
     variants?: Array<OptionType>,
+    sku?: string;
 }
 
+export type Errors<Item> = {
+    [key in keyof Item]: string;
+}
+
+export enum PriceType {
+    OneTime = 0,
+    Recurring = 1,
+};
+
 export type Price ={
-    price: number | string,
+    id?: string,
+    active?: boolean,
+    default?: boolean,
+    price: number,
     currency: string,
-    type: number,
+    type: PriceType,
     interval?: Interval,
+    value?: string,
 }
 
 export type IntervalOption = "month" | "week" | "day" | "custom";
@@ -97,13 +111,14 @@ export type ProductSuccessResponse = {
 
 export type ProductFailiureResponse = {
     success: false;
-    errors: ProductItem;
+    errors: Errors<ProductItem>;
 }
 
-export type ProductResponse = ProductFailiureResponse | ProductFailiureResponse;
+export type ProductResponse = ProductSuccessResponse | ProductFailiureResponse;
 
 export type UploadSuccessResponse = {
     success: true;
+    item: ProductImage;
 }
 
 export type UploadFailureResponse = {

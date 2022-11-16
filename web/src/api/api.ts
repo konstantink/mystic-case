@@ -103,18 +103,42 @@ export const getProducts = async (): Promise<ProductsResponse> => {
     return response.data;
 }
 
+export const getProductLoader = async ({ params }: any) => {
+    const product = await getProduct(params.productId);
+    return product;
+}
+
+export const getProduct = async (productId: string): Promise<ProductResponse> => {
+    const instance = await axiosInstance;
+
+    const response = await instance.get<ProductResponse>(`/admin/product/${productId}`);
+
+    return response.data;
+}
+
 const omitUndefined = (dict: any): any => {
     return Object.fromEntries(Object.entries(dict).filter(item => item[1] !== undefined))
 }
 
 export const createProduct = async (product: ProductItem): Promise<ProductResponse> => {
     const instance = await axiosInstance;
-    console.log(product);
+
     try {
         const response = await instance.post<ProductResponse>("/admin/product", omitUndefined(product))
         return response.data;
     } catch (err) {
         console.log(err);
+        return Promise.reject({success: false, errors: {__all__: (err as Error).message}});
+    }
+}
+
+export const updateProduct = async (product: ProductItem): Promise<ProductResponse> => {
+    const instance = await axiosInstance;
+
+    try {
+        const response = await instance.patch<ProductResponse>(`/admin/product/${product.id}`, product);
+        return response.data;
+    } catch (err) {
         return Promise.reject({success: false, errors: {__all__: (err as Error).message}});
     }
 }

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -23,19 +22,21 @@ type ModelErrors map[string]interface{}
 type Product struct {
 	BaseModel
 
-	Name         string         `validate:"required" json:"name"`
-	Slug         string         `validate:"required" json:"slug"`
-	Description  string         `gorm:"type:text"`
-	Title        string         `json:"title"`
-	Difficulty   *int8          `json:"difficulty"`
-	IsFeatured   bool           `json:"isFeatured"`
-	IsNew        bool           `json:"isNew"`
-	IsBestseller bool           `json:"isBestseller"`
-	IsPublished  bool           `json:"isPublished"`
-	Prices       Prices         `json:"prices,omitempty"`
-	Images       []Image        `gorm:"many2many:products_images"`
-	SKU          sql.NullString `json:"sku"`
-	Variations   Variations     `json:"variations,omitempty"`
+	Name         string     `validate:"required" json:"name"`
+	Slug         string     `validate:"required" json:"slug"`
+	Description  string     `json:"description" gorm:"type:text"`
+	Title        string     `json:"title"`
+	Difficulty   *int8      `json:"difficulty"`
+	IsFeatured   bool       `json:"isFeatured"`
+	IsNew        bool       `json:"isNew"`
+	IsBestseller bool       `json:"isBestseller"`
+	IsPublished  bool       `json:"isPublished"`
+	Prices       Prices     `json:"prices,omitempty"`
+	Images       []Image    `json:"images,omitempty" gorm:"many2many:products_images"`
+	SKU          NullString `json:"sku"`
+	Variations   Variations `json:"variations,omitempty"`
+	UserID       uuid.UUID  `json:"-"`
+	User         User       `json:"-"`
 }
 
 func (p Product) String() string {
@@ -66,6 +67,7 @@ func CreateProduct(tx *gorm.DB, newProduct *Product) (ModelErrors, error) {
 	if len(newProduct.Prices) > 0 {
 		for idx := range newProduct.Prices {
 			newProduct.Prices[idx].ProductID = newProduct.ID
+			newProduct.Prices[idx].UserID = newProduct.UserID
 		}
 
 		err = tx.Omit(clause.Associations).Create(newProduct.Prices).Error
@@ -90,6 +92,18 @@ func CreateProduct(tx *gorm.DB, newProduct *Product) (ModelErrors, error) {
 	}
 
 	return errors, err
+}
+
+// GetProductByID to fetch Product from DB by the product ID
+// for the specific user
+func GetProductByID[T string | uuid.UUID](dest any, productID, userID T) error {
+	err := DB.First(&dest, "id = ?", productID).Where("used_id = ?", userID).Error
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't find product %s", productID))
+		return err
+	}
+
+	return nil
 }
 
 // Validate to check that Product object has required fields set

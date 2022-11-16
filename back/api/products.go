@@ -5,9 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/mingrammer/cfmt"
 	"github.com/mystic-case/back/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type WebProduct struct {
@@ -99,26 +101,111 @@ func GetFeaturedProductsList(c *gin.Context) {
 	}}})
 }
 
-// ProductsHandlerFunc is a handler for GET requests used for
+// FetchProductsHandlerFunc is a handler for GET requests used for
 // admin access of the shop to show all available products
 // whether they are published or not
-func ProductsHandlerFunc(c *gin.Context) {
+func FetchProductsHandlerFunc(c *gin.Context) {
 	var products []models.Product
-	models.DB.Scopes(models.WithoutDeleted).Find(&products)
-	//c.JSON(http.StatusOK, gin.H{"success": true, "products": []string{"Product #1", "Product #2"}})
+
+	userID, exists := c.Get("user_id")
+	if !exists {
+		log.Print(cfmt.Serrorf("[ERROR] request is not authorized"))
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user is not authenticated"})
+		return
+	}
+
+	models.DB.Scopes(models.WithoutDeleted, models.Personalised(userID)).
+		Preload("Prices", models.DB.Where("deleted_at IS NULL")).
+		Where("deleted_at IS NULL").
+		Find(&products)
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "products": products})
 }
 
-// ProductHandlerFunc is a handler for POST / PUT / PATCH
-// requests. This is available only for registered users,
+// FetchProductHandlerFunc is a handler for GET requests used
+// to get information about product
+func FetchProductHandlerFunc(c *gin.Context) {
+	var product models.Product
+	userID, _ := c.Get("user_id")
+	log.Print(cfmt.Sinfof("[DEBUG] found user %s", userID))
+	models.DB.Scopes(models.WithoutDeleted, models.Personalised(userID)).
+		Preload("Prices").
+		Find(&product, "id = ?", c.Param("productId"))
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "product": product})
+}
+
+// PatchProductHandlerFunc is a handler for PATCH requests used
+// to update product. Only changes are sent that should be applied
+// to the product.
+func PatchProductHandlerFunc(c *gin.Context) {
+	var (
+		product, updatedProduct models.Product
+	)
+
+	// userID, exists := c.Get("user_id")
+	// if !exists {
+	// 	log.Print(cfmt.Serrorf("[ERROR] request is not authorized"))
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user is not authenticated"})
+	// 	return
+	// }
+
+	userID, _ := c.Get("user_id")
+
+	err := models.GetProductByID(product, c.Param("product_id"), userID.(string))
+	if err != nil {
+		log.Print(cfmt.Serrorf("[ERROR] can't find product %s", err.Error()))
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	c.BindJSON(&updatedProduct)
+
+	err = models.DB.Model(&updatedProduct).Omit(clause.Associations).Updates(updatedProduct).Error
+	if err != nil {
+		log.Print(cfmt.Serrorf("[ERROR] can't update product %s", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	// if
+	if len(updatedProduct.Prices) > 0 {
+		// for _, price := range product.Prices {
+		// 	for _, newPrice := range updatedProduct.Prices {
+		// 		if
+		// 	}
+		// }
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{"success": true})
+}
+
+// ProductHandlerFunc is a handler for POST requests.
+// This is available only for registered users,
 // i.e. admins to create new products for the shop
 func ProductHandlerFunc(c *gin.Context) {
 	var (
+		user       models.User
 		newProduct models.Product
 		errors     models.ModelErrors
 		// price      models.Price
 		// webProduct WebProduct
 	)
+
+	userID, exists := c.Get("user_id")
+	if !exists {
+		log.Print(cfmt.Serrorf("[ERROR] request is not authorized"))
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user is not authenticated"})
+		return
+	}
+
+	// models.GetUserByID(&user, userID)
+
+	if !user.IsAdmin {
+		log.Print(cfmt.Serrorf("[ERROR] user is not authorized"))
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user is not authorized"})
+		return
+	}
 
 	err := c.BindJSON(&newProduct)
 	if err != nil {
@@ -128,6 +215,7 @@ func ProductHandlerFunc(c *gin.Context) {
 	}
 	// log.Print(newProduct)
 
+	newProduct.UserID = userID.(uuid.UUID)
 	errors, valid := models.Validate(newProduct)
 	if !valid {
 		log.Print(cfmt.Warningf("[WARNING] something is invalid"))

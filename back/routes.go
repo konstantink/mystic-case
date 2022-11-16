@@ -32,7 +32,9 @@ func initAPIV1Routes(router *gin.Engine) {
 
 		adminRoutes := apiV1Routes.Group("/admin", api.AuthMiddleware())
 		{
-			adminRoutes.GET("/products", api.ProductsHandlerFunc)
+			adminRoutes.GET("/products", api.FetchProductsHandlerFunc)
+			adminRoutes.GET("/product/:productId", api.FetchProductHandlerFunc)
+			adminRoutes.PATCH("/product/:productId", api.PatchProductHandlerFunc)
 			adminRoutes.POST("/product", api.ProductHandlerFunc)
 			adminRoutes.POST("/gallery/upload", api.UploadFileHandlerFunc)
 		}

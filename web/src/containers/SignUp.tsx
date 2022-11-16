@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { createStyles, Theme } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Typography from '@material-ui/core/Typography';
-import { withStyles, WithStyles } from "@material-ui/styles";
+import { Theme } from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
+import Typography from '@mui/material/Typography';
+import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
 import SignUpForm, { SignUpText } from "../components/SignUpForm";
-import WelcomeLayout from "../components/WelcomeLayout";
+import { WelcomeLayout } from "../components/WelcomeLayout";
 
 
 interface SignUpProps extends WithStyles<typeof styles> { };

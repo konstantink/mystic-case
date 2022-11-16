@@ -8,16 +8,35 @@ import TableCell from "@mui/material/TableCell"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 
-import { ProductItem } from "../../types";
+import { Price, ProductItem } from "../../types";
+import { NavLink } from "react-router-dom";
 
 
 const ProductTableRow = (props: ProductItem) => {
+    const { prices, variants } = props;
+    let priceToShow = "";
+    if (prices && prices.length > 0) {
+        const sortedPrices = prices.sort((r: Price, l: Price) => (r.price as number) - (l.price as number));
+        priceToShow = ((sortedPrices[0]
+            .price as number) / 100.)
+            .toLocaleString("en-GB", {currency: 'GBP', currencyDisplay: "symbol", style: "currency"});
+        if (prices.length > 1) {
+            priceToShow = `from ${priceToShow}`;
+        }
+    }
     return (
         <TableRow>
-            <TableCell align="center"><img alt={props.name} src="/url" /></TableCell>
-            <TableCell align="left">{props.name}</TableCell>
-            <TableCell align="left"><Switch checked={props.isFeatured} /></TableCell>
-            <TableCell align="right">{props.prices?.length}</TableCell>
+            <TableCell align="center" sx={{ fontFamily: "inherit" }}><img alt={props.name} src="/url" /></TableCell>
+            <TableCell align="left" sx={{ fontFamily: "inherit" }}>
+                <NavLink to={`/admin/product/${props.id}`}>
+                    <Box component="div" height="100%" padding="8px" width="100%" sx={{ background: "rgba(0,0,0,0.03)" }}>
+                        {props.name}
+                    </Box>
+                </NavLink>
+            </TableCell>
+            <TableCell align="left" sx={{ fontFamily: "inherit" }}>{props.description}</TableCell>
+            <TableCell align="left" sx={{ fontFamily: "inherit" }}><Switch checked={props.isFeatured} /></TableCell>
+            <TableCell align="right" sx={{ fontFamily: "inherit" }}>{priceToShow ? priceToShow : ""}</TableCell>
         </TableRow>
     )
 }
@@ -35,16 +54,16 @@ export default ({ products }: {products: Array<ProductItem>}) => {
             <Table
                 size="small"
                 sx={{
-                    fontFamily: "Pangram",
                     width: "100%",
                 }}
             >
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center" sx={{fontFamily: "Pangram", width: 100}}>Thumbnail</TableCell>
-                        <TableCell align="center" sx={{fontFamily: "Pangram"}}>Name</TableCell>
-                        <TableCell align="left" sx={{fontFamily: "Pangram", width: 100}}>Is Live</TableCell>
-                        <TableCell align="right" sx={{fontFamily: "Pangram", width: 150}}>Price</TableCell>
+                        <TableCell align="center" sx={{fontFamily: "inherit", width: 100}}>Thumbnail</TableCell>
+                        <TableCell align="center" sx={{fontFamily: "inherit", width: 150}}>Name</TableCell>
+                        <TableCell align="center" sx={{fontFamily: "inherit"}}>Description</TableCell>
+                        <TableCell align="left" sx={{fontFamily: "inherit", width: 100}}>Is Live</TableCell>
+                        <TableCell align="right" sx={{fontFamily: "inherit", width: 150}}>Price</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -53,7 +72,14 @@ export default ({ products }: {products: Array<ProductItem>}) => {
                             <ProductTableRow key={`id-product-row-${idx}`} {...item} />
                         ))) : (
                             <TableRow>
-                                <TableCell colSpan={4}>No products added so far</TableCell>
+                                <TableCell
+                                    colSpan={4}
+                                    sx={{
+                                        color: "rgba(0,0,0,.35)",
+                                        fontFamily: "inherit",
+                                        textAlign: "center",
+                                        width: "100%"
+                                    }}>No products added so far</TableCell>
                             </TableRow>
                         )
                     }

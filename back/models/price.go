@@ -36,13 +36,15 @@ type Interval struct {
 type Price struct {
 	BaseModel
 
-	Type          PriceType
+	Type          PriceType `json:"type" validate:"required"`
 	Amount        int       `json:"price" validate:"gt=0"`
-	AmountDecimal string    `json:"price_decimal" gorm:"->;type:GENERATED ALWAYS AS (CAST( amount as VARCHAR ));default:(-);"`
-	Currency      string    `gorm:"type:varchar(3)"`
-	Active        bool      `gorm:"default:true"`
-	Interval      Interval  `gorm:"constraint:OnDelete:SET NULL;"`
-	ProductID     uuid.UUID `gorm:"constraint:OnDelete:DELETE;"`
+	AmountDecimal string    `json:"-" gorm:"->;type:GENERATED ALWAYS AS (CAST( amount as VARCHAR ));default:(-);"`
+	Currency      string    `json:"currency" gorm:"type:varchar(3)"`
+	Active        bool      `json:"active" gorm:"default:true"`
+	Interval      Interval  `json:"-" gorm:"constraint:OnDelete:SET NULL;"`
+	ProductID     uuid.UUID `json:"-" gorm:"constraint:OnDelete:DELETE;"`
+	UserID        uuid.UUID `json:"-"`
+	User          User      `json:"-"`
 	// IntervalID uuid.UUID
 }
 

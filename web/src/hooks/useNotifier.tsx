@@ -73,7 +73,7 @@ export const useNotifier = () => {
                     key: `${new Date().toISOString()}-${Math.round(Math.random()*1000000)}`,
                     variant: variant,
                     preventDuplicate: true,
-                    anchorOrigin: { horizontal: "right", vertical: "bottom" },
+                    anchorOrigin: { horizontal: "left", vertical: "bottom" },
                 }
             }
         });

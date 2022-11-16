@@ -3,7 +3,7 @@ import React from "react";
 import { Theme } from "@mui/material/styles";
 import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
-import WelcomeLayout from "../components/WelcomeLayout";
+import { WelcomeLayout } from "../components/WelcomeLayout";
 import SignInForm from "../components/SignInForm";
 
 

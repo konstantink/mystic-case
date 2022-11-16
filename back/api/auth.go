@@ -310,7 +310,7 @@ func TokenHealthHandlerFunc(c *gin.Context) {
 func WhoamIHandlerFunc(c *gin.Context) {
 	var user models.User
 	if userID, exists := c.Get("user_id"); exists {
-		err := models.GetUserByID(&user, userID)
+		err := models.GetUserByID(&user, userID.(string))
 		if err != nil {
 			log.Print(cfmt.Warning("[WARNING] user not found"))
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"success": false, "error": "user not found"})

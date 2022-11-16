@@ -2,6 +2,8 @@ package models
 
 import (
 	"database/sql"
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -134,10 +136,10 @@ func migrateDB() {
 
 // BaseModel base struct for all models that just uses UUID primary key
 type BaseModel struct {
-	ID        uuid.UUID    `gorm:"type:uuid;primary_key" json:"id"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
-	DeletedAt sql.NullTime `json:"deleted_at"`
+	ID        uuid.UUID `gorm:"type:uuid;primary_key" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt NullTime  `json:"deleted_at"`
 }
 
 // BeforeCreate use this hook to auto-generate new PK
@@ -191,4 +193,90 @@ type IValidator interface {
 func Validate(object IValidator) (ModelErrors, bool) {
 	errors, valid := object.Validate()
 	return errors, valid
+}
+
+// NullString - wrapper around sql.NullString to support
+// serialization
+type NullString sql.NullString
+
+// MarshalJSON serialize NullString object
+func (obj NullString) MarshalJSON() ([]byte, error) {
+	if !obj.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(obj.String)
+}
+
+// UnmarshalJSON deserialize input data to NullString object
+func (obj *NullString) UnmarshalJSON(rawData []byte) error {
+	var data string
+	err := json.Unmarshal(rawData, &data)
+	if err != nil {
+		return err
+	}
+	if data == "null" {
+		obj.Valid = false
+		obj.String = ""
+		return nil
+	}
+
+	obj.Valid = true
+	obj.String = data
+	return nil
+}
+
+// Scan to support Scanner interface
+func (obj *NullString) Scan(value interface{}) error {
+	return (*sql.NullString)(obj).Scan(value)
+}
+
+// Value to support Valuer interface
+func (obj NullString) Value() (driver.Value, error) {
+	return sql.NullString(obj).Value()
+}
+
+// NullTime wrapper around sql.NullTime to provide
+// custom serialization
+type NullTime sql.NullTime
+
+// Scan - following Scanner interface
+func (obj *NullTime) Scan(value interface{}) error {
+	return (*sql.NullTime)(obj).Scan(value)
+}
+
+// Value - following Valuer interface
+func (obj NullTime) Value() (driver.Value, error) {
+	return (sql.NullTime)(obj).Value()
+}
+
+// MarshalJSON serialize NullTime to the string instead
+// of structure of actual datetime value and Valid flad
+func (obj NullTime) MarshalJSON() ([]byte, error) {
+	if obj.Valid {
+		return json.Marshal(obj.Time)
+	}
+
+	return []byte("null"), nil
+}
+
+// UnmarshallJSON construct structure out of the input
+// string, depending on the value: if value is null
+// then set the flag to false, otherwise true and store
+// value
+func (obj *NullTime) UnmarshalJSON(rawData []byte) error {
+	var data string
+	err := json.Unmarshal(rawData, &data)
+	if err != nil {
+		return err
+	}
+
+	if data == "null" {
+		obj.Valid = false
+		obj.Time = time.Now()
+		return nil
+	}
+
+	obj.Valid = false
+	obj.Time, _ = time.Parse(time.RFC3339, data)
+	return nil
 }

@@ -22,7 +22,14 @@ import { FileUploadOutlined } from '@mui/icons-material';
 
 import * as mcApi from "../../api/api";
 import { useNotifier } from '../../hooks/useNotifier';
-import { ProductImage, ProgressAction, ProgressReducer, ProgressState } from "../../types";
+import { 
+    ProductImage,
+    ProgressAction,
+    ProgressReducer,
+    ProgressState,
+    UploadResponse,
+    UploadSuccessResponse
+} from "../../types";
 
 
 const move = <T extends any>(array: Array<T>, moveIndex: number, toIndex: number) => {
@@ -321,7 +328,7 @@ export interface DropFieldProps {
     onUploadSuccess?(images: Array<ProductImage>): void;
 }
 
-export default ({ images }: DropFieldProps) => {
+export default ({ images, onUploadSuccess }: DropFieldProps) => {
     const { error, success } = useNotifier();
     const [files, setFiles] = React.useState<Array<ProductImage | File>>(images ? images : []);
     const classes = useStyles();
@@ -401,7 +408,12 @@ export default ({ images }: DropFieldProps) => {
                 const promises = new Array();
                 files.filter(item => !item.hasOwnProperty("id")).forEach(file => promises.push(mcApi.uploadFile(file as File, onProgress(file as File))));
                 try{
-                    await Promise.all(promises);
+                    const values = await Promise.all(promises);
+                    if (onUploadSuccess) {
+                        onUploadSuccess(values
+                            .filter((item: UploadResponse) => item.success)
+                            .map((item: UploadSuccessResponse) => item.item));
+                    }
                     success(`Successfully uploaded ${promises.length} file(s)`);
                 } catch (err) {
                     error(err.message);

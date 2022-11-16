@@ -155,7 +155,7 @@ func (u User) InvalidateTokenTree(refreshTokenID interface{}) error {
 // GetUserByID looks up in the database record with
 // corresponding id and if exists stores the result
 // to the first argument
-func GetUserByID(dest *User, id interface{}) error {
+func GetUserByID[T string | uuid.UUID](dest *User, id T) error {
 	// err := DB.Preload("Tokens", "active = ?", true).First(&dest, "id = ?", id).Error
 	err := DB.First(&dest, "id = ?", id).Error
 	if err != nil {

@@ -9,9 +9,9 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { createStyles, Theme } from "@mui/material/styles";
+import { Theme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
-import { withStyles, WithStyles } from "@mui/styles";
+import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
 // import AdminRoute from "../../containers/admin/AdminRoute";
 import { Logo } from "../HomeLayout";

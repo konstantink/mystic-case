@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Navigate, RouteObject } from "react-router-dom";
-import { useRoutes } from "react-router-dom";
 
 import AdminApp from "./AdminApp";
+import * as mcApi from "./api/api";
 import Home from "./containers/Home";
 import Shop from "./containers/Shop";
 import SignIn from "./containers/SignIn";
@@ -25,6 +25,11 @@ export const adminRoutes: Array<RouteObject> = [{
 }, {
     path: "product",
     element: <Product />,
+    children: [{
+        path: ":productId",
+        element: <Product />,
+        //loader: mcApi.getProductLoader
+    }]
 },];
 
 export const routes: Array<RouteObject> = [{
