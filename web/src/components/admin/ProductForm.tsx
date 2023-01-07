@@ -1,4 +1,4 @@
-import slug from "limax";
+import getSlug from "speakingurl";
 import _ from "lodash";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormHelperText from "@mui/material/FormHelperText";
 import Grid from "@mui/material/Unstable_Grid2";
 import InputAdornment from "@mui/material/InputAdornment";
+import InputBase from "@mui/material/InputBase";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -22,12 +23,15 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Typography from "@mui/material/Typography";
 
 import DropField from "./DropField";
 import StyledSwitch from "./StyledSwitch";
 import Variants, { Option, OptionValue } from "./Variants";
 import * as api from "../../api/api";
 import { 
+    Difference,
+    DisplayIntervalOption,
     Errors,
     Interval,
     IntervalOption,
@@ -92,10 +96,103 @@ export const PriceField = ({ fullWidth=true, margin="normal", maxWidth="150px", 
     );
 }
 
+export interface CustomIntervalFieldProps {
+    interval: IntervalOption;
+    intervalCount: string;
+    onChange(e: React.ChangeEvent<HTMLInputElement>): void;
+    onSelectChange(e: SelectChangeEvent): void;
+}
+
+export const CustomIntervalField = ({interval, intervalCount, onChange, onSelectChange}: CustomIntervalFieldProps) => {
+    return (
+        <Box
+            component="div"
+            sx={{
+                alignItems: "center",
+                border: "1px solid rgba(0, 0, 0, 0.54)",
+                borderRadius: "4px",
+                display: "flex",
+                flexDirection: "row",
+                height: "40px",
+                mb: "10px",
+                pl: "8px",
+            }}
+        >
+            <Typography variant="body1" sx={{fontFamily: "inherit", fontSize: "10pt"}}>
+                every
+            </Typography>
+            <InputBase
+                inputProps={{
+                    sx: {
+                        p: 1,
+                        textAlign: "center",
+                    }
+                }}
+                sx={{
+                    borderLeft: "1px solid rgba(0, 0, 0, 0.12)",
+                    flex: 1,
+                    height: "40px",
+                    ml: 1,
+                    right: "-2px",
+                    "&.Mui-focused": {
+                        border: "2px solid rgba(25, 118, 210, 1)",
+                        borderRadius: "4px",
+                        //height: "27px"
+                    }
+                }}
+                value={intervalCount}
+                onChange={onChange}
+            />
+            <Select
+                inputProps={{
+                    name: "customBillingPeriod",
+                }}
+                MenuProps={{
+                    MenuListProps: {
+                        sx: {
+                            "& li": {
+                                fontFamily: "Pangram",
+                                fontSize: "10pt",
+                            },
+                        },
+                    },
+                }}
+                sx={{
+                    fontSize: "10pt",
+                    height: "40px",
+                    right: "-1px",
+                    width: "100px",
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderBottomLeftRadius: "4px",
+                        borderColor: "rgba(25, 118, 210, 1)",
+                        borderTopLeftRadius: "4px",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                    },
+                    "&:not(.Mui-focused):hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "rgba(0, 0, 0, 0.23)",
+                    },
+                }}
+                value={interval as string}
+                onChange={onSelectChange}
+            >
+                <MenuItem value="day">days</MenuItem>
+                <MenuItem value="week">weeks</MenuItem>
+                <MenuItem value="month">months</MenuItem>
+                <MenuItem value="year">years</MenuItem>
+            </Select>
+        </Box>
+    )
+};
+
 export interface PriceFormProps {
     direction?: "row" | "column";
     prices?: Array<Price>;
     onAddPrice(): void;
+    onIntervalChange(idx: number): (event: SelectChangeEvent) => void;
+    onIntervalCountChange(idx: number): (event: React.ChangeEvent<HTMLInputElement>) => void;
     onDefaultChange(idx: number): (event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => void;
     onPriceChange(idx: number): (price: string) => void;
     onTypeChange(idx: number): (event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => void;
@@ -127,7 +224,7 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
-    border: 0,
+    border: "1px solid rgba(0, 0, 0, 0.12)",
     fontFamily: "Pangram",
     "&.Mui-selected": {
         background: "none",
@@ -138,6 +235,8 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
 export const PriceForm = ({
     prices,
     onAddPrice,
+    onIntervalChange,
+    onIntervalCountChange,
     onDefaultChange,
     onPriceChange,
     onTypeChange
@@ -196,11 +295,11 @@ export const PriceForm = ({
                                 value="true"
                                 selected={price.default}
                                 aria-label="default-price"
-                                onChange={onDefaultChange(idx)}
+                                onChange={!price.default ? onDefaultChange(idx) : ()=>{}}
                             >
                                 {price.default ? (
                                     <Box component="span" sx={{ alignItems: "center", display: "flex" }}>
-                                        <Check sx={{ color: "green", marginRight: 1 }}  />
+                                        <Check sx={{ color: "green", height: "22.75px", marginRight: 1, width: "22.75px" }}  />
                                         <span>Default price</span>
                                     </Box>
                                 ) : (
@@ -209,33 +308,38 @@ export const PriceForm = ({
                             </StyledToggleButton>
                             {price.type === PriceType.Recurring ? (
                                 <FormControl fullWidth margin="normal">
-                                    <InputLabel id="billing-period" shrink>Billing period</InputLabel>
+                                    <InputLabel id="billing-period">Billing period</InputLabel>
                                     <Select
                                         labelId="billing-period"
                                         id="billing-period-select"
                                         inputProps={{
-                                            name: "billingPeriod"
+                                            name: "billingPeriod",
                                         }}
+                                        label="Billing period"
                                         MenuProps={{
                                             MenuListProps: {
                                                 sx: {
                                                     "& li": {
                                                         fontFamily: "Pangram",
-                                                        fontSize: "12pt",
+                                                        fontSize: "10pt",
                                                     },
                                                 },
                                             },
                                         }}
                                         margin="dense"
                                         size="small"
-                                        // sx={{
-                                        //     fontFamily: "Pangram",
-                                        //     fontSize: "12pt",
-                                        // }}
-                                        value={price.interval}
-                                        label="Billing period"
-                                        onChange={() => {}}
+                                        sx={{
+                                            "& .MuiOutlinedInput-input": {
+                                                fontSize: "10pt",
+                                            }
+                                        }}
+                                        value={price.interval?.displayInterval}
+                                        onChange={onIntervalChange(idx)}
                                     >
+                                        <MenuItem value="day">Daily</MenuItem>
+                                        <MenuItem value="week">Weekly</MenuItem>
+                                        <MenuItem value="month">Monthly</MenuItem>
+                                        <MenuItem value="year">Yearly</MenuItem>
                                         <MenuItem value="custom">Custom</MenuItem>
                                     </Select>
                                 </FormControl>
@@ -244,9 +348,19 @@ export const PriceForm = ({
                             )}
                         </Box>
                     </Grid>
+                    { price.interval && price.interval.displayInterval ==="custom" ? (
+                        <Grid xs={3} sx={{alignItems: "flex-end", display: "flex"}}>
+                            <CustomIntervalField
+                                interval={price.interval.interval}
+                                intervalCount={price.interval.intervalCount ? price.interval.intervalCount.toString() : ""}
+                                onChange={onIntervalCountChange(idx)}
+                                onSelectChange={onIntervalChange(idx)}
+                            />
+                        </Grid>
+                    ) : null }
                 </Grid>
             ))
-            : (<React.Fragment></React.Fragment>)
+            : (null)
             }
             <Button startIcon={<AddOutlined />} size="small" sx={{fontFamily: "Pangram", fontSize: "10pt", padding: "4px 1px"}} onClick={onAddPrice}>
                 Add Price
@@ -264,7 +378,7 @@ export default ({ product }: ProductFormProps) => {
 
     const [isDirty, setDirty] = React.useState<boolean>(false);
 
-    const [newProduct, updateProduct] = React.useState<ProductItem>(product ? product : {
+    const [newProduct, updateProduct] = React.useState<ProductItem>(product ? _.omit(product, ["prices", "images"]) : {
         id: undefined,
         name: "",
         slug: "",
@@ -283,19 +397,28 @@ export default ({ product }: ProductFormProps) => {
 
     const emptyPrice: Price = {
         active: true,
+        default: false,
         price: 0.0,
         currency: "GBP",
         type: 0,
         value: ""
     };
 
+    const defaultInterval: Interval = {
+        displayInterval: "month",
+        interval: "month",
+        intervalCount: 1,
+    }
+
     const [prices, setPrices] = React.useState<Array<Price>>(product && product.prices ? product.prices.map(item => ({
         id: item.id,
         active: item.active,
+        default: item.default,
         price: item.price,
         currency: item.currency,
         type: item.type,
-        value: (item.price / 100.).toString() //.toLocaleString("en-GB", {minimumFractionDigits: 2, maximumFractionDigits: 2, style: "decimal"}),
+        value: (item.price / 100.).toString(), //.toLocaleString("en-GB", {minimumFractionDigits: 2, maximumFractionDigits: 2, style: "decimal"}),
+        interval: item.interval ? { ...item.interval } : null,
     } as Price)) : []);
 
     const [variants, setVariants] = React.useState<Array<OptionType>>([]);
@@ -313,7 +436,7 @@ export default ({ product }: ProductFormProps) => {
     };
 
     const onProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateProduct({...newProduct, name: e.target.value, slug: slug(e.target.value || "")});
+        updateProduct({...newProduct, name: e.target.value, slug: getSlug(e.target.value || "")});
     };
 
     const onAddPrice = () => {
@@ -328,15 +451,54 @@ export default ({ product }: ProductFormProps) => {
     };
 
     const onPriceTypeChange = (idx: number) => (event: React.MouseEvent<HTMLElement, MouseEvent>, priceType: string) => {
-        const toChange = prices[idx];
-        toChange.type = parseFloat(priceType);
-        setPrices([...prices.slice(0, idx), toChange, ...prices.slice(idx+1)]);
+        setPrices(prevState => {
+            const toChange = prices[idx];
+            toChange.type = parseFloat(priceType);
+            toChange.interval = parseFloat(priceType) ? defaultInterval : undefined;
+            return [...prevState.slice(0, idx), toChange, ...prevState.slice(idx+1)]
+        });
     }
 
     const onPriceDefaultChange = (idx: number) => (event: React.MouseEvent<HTMLElement, MouseEvent>, value: string) => {
-        const toChange = prices[idx];
-        toChange.default = !toChange.default;
-        setPrices([...prices.slice(0, idx), toChange, ...prices.slice(idx+1)]);
+        setPrices(prevState => {
+            return prevState.map((price, index) => ({ ...price, default: index === idx }));
+        });
+    }
+
+    const onPriceIntervalChange = (idx: number) => (event: SelectChangeEvent) => {
+        setPrices(prevState => {
+            const toChange = prevState[idx];
+            const { name, value } = event.target;
+            if (name === "billingPeriod" && value === "custom") {
+                toChange.interval = {
+                    displayInterval: "custom",
+                    interval: "month",
+                    intervalCount: 2,
+                };
+            } else if (name === "customBillingPeriod") {
+                toChange.interval = {
+                    ...toChange.interval as Interval,
+                    interval: value,
+                };
+            } else {
+                toChange.interval = {
+                    displayInterval: value as DisplayIntervalOption,
+                    interval: value,
+                    intervalCount: 1,
+                };
+            }
+            return [...prevState.slice(0, idx), toChange, ...prevState.slice(idx+1)];
+        });
+    }
+
+    const onPriceIntervalCountChange = (idx: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPrices(prevState => {
+            const toChange = prevState[idx];
+            if (toChange.interval) {
+                toChange.interval.intervalCount = parseFloat(event.target.value);
+            }
+            return [...prevState.slice(0, idx), toChange, ...prevState.slice(idx+1)];
+        })
     }
 
     const onVariantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -401,8 +563,8 @@ export default ({ product }: ProductFormProps) => {
         const sortedInitialPrice = initialPrice.sort((l, r) => l.price - r.price || l.currency > r.currency ? 1 : l.currency === r.currency ? 0 : -1)
         const sortedChangedPrice = changedPrice.sort((l, r) => l.price - r.price || l.currency > r.currency ? 1 : l.currency === r.currency ? 0 : -1)
 
-        return _.isEqual(sortedInitialPrice.map(item => _.pick(item, "price", "currency", "type")),
-            sortedChangedPrice.map(item => _.pick(item, "price", "currency", "type")));
+        return _.isEqual(sortedInitialPrice.map(item => _.pick(item, "price", "currency", "type", "interval", "intervalCount")),
+            sortedChangedPrice.map(item => _.pick(item, "price", "currency", "type", "interval", "intervalCount")));
     };
 
     const isImageEqual = (initialImage: Array<ProductImage> = [], changedImage: Array<ProductImage> = []) => {
@@ -418,57 +580,71 @@ export default ({ product }: ProductFormProps) => {
         const sortedChangedVariant = changedVariant;
 
         return _.isEqual(sortedInitialVariant, sortedChangedVariant);
-    }
-
-    const getProductDiff = (initial: ProductItem, changed: ProductItem): ProductItem => {
-        let diff: ProductItem = { id: initial.id };
-        let keys: Array<keyof ProductItem>;
-
-        const isEqual = (key: keyof ProductItem, initial: ProductItem, changed: ProductItem) => {
-            switch (key) {
-                case "prices":
-                    return isPriceEqual(initial.prices, changed.prices);
-                case "images":
-                    return isImageEqual(initial.images, changed.images);
-                case "variants":
-                    return isVariantEqual(initial.variants, changed.variants);
-                default:
-                    return _.isEqual(initial[key], changed[key]);
-            }
-        }
-
-        if (!_.isEqual(Object.keys(initial), Object.keys(changed))) {
-            keys = Array.from(new Set([
-                ...Object.keys(initial) as Array<keyof ProductItem>,
-                ...Object.keys(changed) as Array<keyof ProductItem>
-            ]));
-        } else {
-            keys = Object.keys(initial) as Array<keyof ProductItem>;
-        }
-        keys.forEach(key => {
-            if (!isEqual(key, initial, changed)) {
-                if (changed[key]){
-                    diff = { ...diff, [key]: changed[key] };
-                }
-            }
-        })
-        console.log("Diff", diff);
-        return diff
     };
+
+
+
+    const getDiff = <T extends {}>(initial: T | Array<T> | undefined, changed: T | Array<T> | undefined): Difference<T> => {
+        let diffs: Difference<T> = {
+            created: [],
+            updated: [],
+            deleted: []
+        };
+
+        const _getDiff = <Type extends {}>(initial: Type | undefined, changed: Type | undefined): Type => {
+            if (initial === changed === undefined)
+                return {} as Type;
+            if (initial === undefined)
+                return changed as Type;
+            if (changed === undefined)
+                return initial as Type;
+            const diff = _.transform(changed, (result: Type, value: any, key: keyof Type) => {
+                if (value && value !== initial[key]) {
+                    result[key] = value;
+                }
+                return result;
+            }, {} as Type);
+            console.log("Diff", diff);
+            return diff;
+        }
+
+        if (initial && changed) {
+            if (_.isArray(initial) && _.isArray(changed)) {
+                const zipped = _.zip(initial, changed);
+                if (zipped !== undefined) {
+                    console.log("Zipped:", zipped);
+                    diffs.updated = [];//.map((item: [T|undefined, T|undefined]) => _getDiff<T>(item[0], item[1]));
+                }
+                return diffs;
+            }
+            diffs.updated.push(_getDiff(initial as T, changed as T))
+        } else if (initial === undefined && changed) {
+            diffs.created = _.isArray(changed) ? changed : [changed];
+        } else if (initial && changed === undefined) {
+            diffs.deleted = _.isArray(initial) ? initial : [initial];
+        }
+        return diffs;
+    }
 
     const onSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
         let response;
-        const toSave = {
-            ...newProduct,
-            prices,
-            variants,
-            images,
-        };
+        
         if (product) {
-            const productChanges = getProductDiff(product, toSave);
-            response = await api.updateProduct(productChanges);
+            const productChanges = getDiff<ProductItem>(_.omit(product, "prices", "images", "variants"), newProduct);
+            const pricesChanges = getDiff<Price>(product.prices, prices);
+            const imagesChanges = getDiff<ProductImage>(product.images, images);
+            response = await api.updateProduct({
+                ...productChanges,
+                prices: pricesChanges.updated,
+                images: imagesChanges.updated,
+            });
         } else {
-
+            const toSave = {
+                ...newProduct,
+                prices,
+                variants,
+                images,
+            };
             response = await api.createProduct(toSave);
         }
         if (response.success) {
@@ -485,6 +661,7 @@ export default ({ product }: ProductFormProps) => {
                 //|| !_.isEqual(product.images, images)
                 //|| !_.isEqual(product.variants, variants)
             );
+            getDiff(product.prices, prices);
             // console.log(product, newProduct);
             // console.log("product === newProduct", _.isEqual(product, newProduct));
         } else {
@@ -660,6 +837,8 @@ export default ({ product }: ProductFormProps) => {
                 direction="row"
                 prices={prices}
                 onAddPrice={onAddPrice}
+                onIntervalChange={onPriceIntervalChange}
+                onIntervalCountChange={onPriceIntervalCountChange}
                 onDefaultChange={onPriceDefaultChange}
                 onPriceChange={onPriceChange}
                 onTypeChange={onPriceTypeChange}

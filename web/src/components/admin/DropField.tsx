@@ -1,3 +1,4 @@
+import { AxiosProgressEvent } from 'axios';
 import clamp from 'lodash-es/clamp'
 import * as React from "react";
 import { useDropzone } from "react-dropzone";
@@ -384,14 +385,14 @@ export default ({ images, onUploadSuccess }: DropFieldProps) => {
     }
     const [progress, progressDispatch] = React.useReducer<ProgressReducer>(progressReducer, {});
 
-    const onProgress = (file: File) => (pe: ProgressEvent) => {
+    const onProgress = (file: File) => (pe: AxiosProgressEvent) => {
         progressDispatch({
             type: "progress",
             fileName: file.name,
-            progress: Math.round((pe.loaded / pe.total) * 100),
+            progress: Math.round((pe.loaded / pe.total!) * 100),
             status: "pending",
         } as ProgressAction)
-        if (pe.loaded / pe.total === 1) {
+        if (pe.loaded / pe.total! === 1) {
             progressDispatch({
                 type: "progress",
                 fileName: file.name,
@@ -416,7 +417,7 @@ export default ({ images, onUploadSuccess }: DropFieldProps) => {
                     }
                     success(`Successfully uploaded ${promises.length} file(s)`);
                 } catch (err) {
-                    error(err.message);
+                    error((err as Error).message);
                 }
             }
         } catch (err) {

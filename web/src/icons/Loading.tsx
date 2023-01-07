@@ -1,7 +1,7 @@
 import * as React from "react";
 import { animated, config, useChain, useSpringRef, useSprings } from "react-spring";
 
-import { SvgIconProps } from "@material-ui/core";
+import { SvgIconProps } from "@mui/material";
 
 
 const Loading = (rest: SvgIconProps) => {

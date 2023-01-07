@@ -1,8 +1,9 @@
 import * as React from "react";
 
-import Box from "@material-ui/core/Box";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import { Theme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import { makeStyles } from "@mui/styles";
 
 
 interface DifficultyLevelProps {

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
+import { SvgIconProps } from "@mui/material/SvgIcon";
 
 export const ArrowLeft = (rest: SvgIconProps) => (
     <svg {...rest}>

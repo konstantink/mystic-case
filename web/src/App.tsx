@@ -4,7 +4,7 @@ import './App.css';
 
 // import { ConnectedRouter } from "connected-react-router";
 import { History } from "history";
-import { Route, Routes } from "react-router";
+// import { Route, Routes } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { routes } from "./routes";
@@ -27,7 +27,7 @@ import { routes } from "./routes";
 // </div>
 
 interface AppProps {
-    history: History
+    history?: History
 }
 const router = createBrowserRouter(routes);
 

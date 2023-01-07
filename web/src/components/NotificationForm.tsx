@@ -1,11 +1,12 @@
 import * as React from "react";
 
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import MuiTextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import MuiTextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { Theme, styled } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import { ArrowRight } from "../icons/Arrows";
 
@@ -26,35 +27,33 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const TextField = withStyles({
-    root: {
-        "& .MuiInput-underline": {
-            "&:before": {
-                borderBottom: "2px solid #938CD160",
-            },
-            "&:hover:before": {
-                borderBottom: "4px solid #938CD1",
-            },
-            "&:after": {
-                borderBottom: "2px solid #FEFEFE",
-            },
-            "&.Mui-focused:after": {
-                boxShadow: "1px 5px 8px rgb(147 140 209 / 90%)",
-                borderBottom: "4px solid #FEFEFE",
-                transform: "scaleX(1)",
-            },
+const TextField = styled(MuiTextField)({
+    "& .MuiInput-underline": {
+        "&:before": {
+            borderBottom: "2px solid #938CD160",
         },
-        "& .MuiInput-underline input": {
-            color: "#938CD1",
-            fontFamily: "Pangram",
-            fontSize: "24px",
-            fontWeight: 400,
-            letterSpacing: "0.3px",
-            lineHeight: "36px",
-            paddingBottom: 16,
+        "&:hover:before": {
+            borderBottom: "4px solid #938CD1",
+        },
+        "&:after": {
+            borderBottom: "2px solid #FEFEFE",
+        },
+        "&.Mui-focused:after": {
+            boxShadow: "1px 5px 8px rgb(147 140 209 / 90%)",
+            borderBottom: "4px solid #FEFEFE",
+            transform: "scaleX(1)",
         },
     },
-})(MuiTextField);
+    "& .MuiInput-underline input": {
+        color: "#938CD1",
+        fontFamily: "Pangram",
+        fontSize: "24px",
+        fontWeight: 400,
+        letterSpacing: "0.3px",
+        lineHeight: "36px",
+        paddingBottom: 16,
+    },
+});
 
 const NotificationForm = () => {
     const classes = useStyles();

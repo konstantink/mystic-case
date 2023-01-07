@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Theme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import NotificationForm from "./NotificationForm";
 

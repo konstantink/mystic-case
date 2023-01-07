@@ -1,7 +1,8 @@
 import * as React from "react";
 import { animated, useSpring } from "@react-spring/web";
 
-import { createStyles, Theme, WithStyles, withStyles} from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import { createStyles, WithStyles, withStyles} from "@mui/styles";
 
 type Coords = {
     x: number,

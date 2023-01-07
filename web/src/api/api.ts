@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import * as uuid from "uuid";
 
 import { tryRefreshToken } from "./auth";
@@ -34,11 +34,11 @@ const getInstance = async (params: AxiosInstanceParams): Promise<AxiosInstance> 
     instance.interceptors.request.use((config: AxiosRequestConfig): AxiosRequestConfig => {
         const accessToken = localStorage.getItem("at") || "";
         if (accessToken) {
-            Object.assign(config.headers.common, {
+            Object.assign(config.headers!, {
                 Authorization: `Bearer ${accessToken}`,
             });
         }
-        Object.assign(config.headers.common, {
+        Object.assign(config.headers!, {
             [SESSION_ID_HEADER]: getSessionID(),
             [REQUEST_ID_HEADER]: getRequestID(),
         })
@@ -48,12 +48,13 @@ const getInstance = async (params: AxiosInstanceParams): Promise<AxiosInstance> 
 
     instance.interceptors.response.use((response) => response, async (error: any) => {
         console.log(error.response);
-        if (error.response.status === 401 && error.config.url === "/token/refresh") {
+        if (error.response.status === 401 && (error.config._retry || error.config.url === "/token/refresh")) {
             return Promise.reject(error);
         }
         switch (error.response.status) {
             case 401:
                 const refreshToken = localStorage.getItem("rt") || "";
+                error.config._retry = true;
                 if (refreshToken) {
                     const response = await tryRefreshToken({ refresh_token: refreshToken });
                     if (response.success) {
@@ -67,10 +68,11 @@ const getInstance = async (params: AxiosInstanceParams): Promise<AxiosInstance> 
                         // return axios(error.config);
                     }
                 }
+                return Promise.reject(error);
             case 400:
                 return Promise.resolve(error.response);
             default:
-                Promise.reject(error);
+                return Promise.reject(error);
         }
     })
 
@@ -143,7 +145,7 @@ export const updateProduct = async (product: ProductItem): Promise<ProductRespon
     }
 }
 
-export const uploadFile = async (file: File, uploadCb: (progress: ProgressEvent) => void): Promise<UploadResponse> => {
+export const uploadFile = async (file: File, uploadCb: (progress: AxiosProgressEvent) => void): Promise<UploadResponse> => {
     const instance = await axiosInstance;
     const formData = new FormData();
     if (file) {

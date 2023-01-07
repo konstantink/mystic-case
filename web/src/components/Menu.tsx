@@ -2,12 +2,11 @@ import clsx from "clsx";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import { createStyles, makeStyles, Theme, WithStyles, withStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Theme } from "@mui/material/styles";
+import { createStyles, makeStyles, WithStyles, withStyles } from "@mui/styles";
 import { animated, config, useTransition } from "@react-spring/web";
-// import { makeStyles } from "@material-ui/styles";
 
 const menuStyles = (theme: Theme) => createStyles({
     root: {

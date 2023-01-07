@@ -1,8 +1,9 @@
 import type { AxiosResponse } from "axios";
-import { RouterState } from "connected-react-router";
+// import { RouterState } from "connected-react-router";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useLocation } from "react-router";
+// import { useSelector } from "react-redux";
 
 import * as authApi from "../api/auth";
 import { FailureResponse } from "../types";
@@ -33,13 +34,13 @@ export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Ele
     const [user, setUser] = React.useState<User>({} as User);
     const [error, setError] = React.useState<AxiosResponse<FailureResponse> | null>();
     const [loading, setLoading] = React.useState<boolean>(false);
-    const rstate = useSelector<{router: RouterState<{location: {pathname: string}}>}, {pathname: string}>(state => state.router.location);
-    // const location = useLocation();
-    console.log(rstate);
+    // const rstate = useSelector<{router: RouterState<{location: {pathname: string}}>}, {pathname: string}>(state => state.router.location);
+    const location = useLocation();
+    console.log(location);
 
     React.useEffect(() => {
         if (error) setError(null);
-    }, [rstate.pathname])
+    }, [location])
 
     React.useEffect(() => {
         (async () => {

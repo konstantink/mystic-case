@@ -1,7 +1,7 @@
 import * as React from "react"
 import { animated, useSpring } from "react-spring";
 
-import SvgIcon from "@material-ui/core/SvgIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 
 import { BackgroundPart } from "./Clock";
 

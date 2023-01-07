@@ -1,14 +1,14 @@
 import React from "react";
 
 import { Link } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import TextField from "@material-ui/core/TextField";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
 import { Theme } from "@mui/material/styles";
 import Typography from '@mui/material/Typography';
-import EmailOutlined from "@material-ui/icons/EmailOutlined";
-import LockOutlined from "@material-ui/icons/LockOutlined"
+import EmailOutlined from "@mui/icons-material/EmailOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined"
 import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
 import { createAccount } from "../api/auth";

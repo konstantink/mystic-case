@@ -1,7 +1,7 @@
 import * as React from "react"
 import { animated, useSpring } from "react-spring";
 
-import { SvgIcon } from "@material-ui/core";
+import { SvgIcon } from "@mui/material";
 
 export const BackgroundPart = ({ delay }: {delay: number}) => {
     const props = useSpring({

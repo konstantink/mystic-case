@@ -1,9 +1,10 @@
 import * as React from "react";
 
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { createStyles, makeStyles, Theme, withStyles, WithStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { Theme, styled } from "@mui/material/styles";
+import { createStyles, makeStyles, WithStyles } from "@mui/styles";
 import { animated, config, useSpring } from "@react-spring/web";
 
 import { ProductItem } from "../types";
@@ -22,13 +23,14 @@ import DifficultyLevel from "./DifficultyLevel";
 //     images: Array<ProductImage>;
 // }
 
-type ProductProps = ProductItem & WithStyles<typeof styles>;
+type ProductProps = ProductItem;
 
-interface FeaturedProductsListProps extends WithStyles<typeof featuredListStyles> {
+interface FeaturedProductsListProps {
+    className?: string;
     products: Array<ProductItem>;
 }
 
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles((theme: Theme) => ({
     productContainer: {
         marginBottom: theme.spacing(15),
         position: "relative",
@@ -98,7 +100,7 @@ const styles = (theme: Theme) => createStyles({
             marginRight: theme.spacing(2),
         },
     },
-});
+}));
 
 const featuredListStyles = (theme: Theme) => createStyles({
     root: {
@@ -235,7 +237,8 @@ const BestSellerLabel = () => {
     )
 }
 
-export const Product = withStyles(styles)(({ classes, ...product }: ProductProps) => {
+export const Product = ({ ...product }: ProductProps) => {
+    const classes = useStyles();
     const springProps = useSpring({
         from: { scale: 1.25 },
         to: { scale: 1 },
@@ -279,11 +282,12 @@ export const Product = withStyles(styles)(({ classes, ...product }: ProductProps
             </Box>
         </Box>
     );
-});
+};
 
-export const FeaturedProductsList = withStyles(featuredListStyles)(({ classes, products }: FeaturedProductsListProps) => {
+export const FeaturedProductsList = styled(({ className, products }: FeaturedProductsListProps) => {
+
     return (
-        <Grid className={classes.root} container justify="space-between">
+        <Grid className={className} container>
             {products.sort((left: ProductItem, right: ProductItem) => {
                 if (left.isNew && !right.isNew)
                     return -1;
@@ -306,4 +310,8 @@ export const FeaturedProductsList = withStyles(featuredListStyles)(({ classes, p
             ))}
         </Grid>
     )
-});
+})(({ theme }) => `
+    justifyContent: "space-between",
+    paddingLeft: ${theme.spacing(12)},
+    paddingRight: ${theme.spacing(12)}`
+);

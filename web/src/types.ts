@@ -44,9 +44,11 @@ export type Price ={
     value?: string,
 }
 
-export type IntervalOption = "month" | "week" | "day" | "custom";
+export type DisplayIntervalOption = "month" | "week" | "day" | "year" | "custom";
+export type IntervalOption = Omit<DisplayIntervalOption, "custom">;
 
 export type Interval = {
+    displayInterval: DisplayIntervalOption
     interval: IntervalOption,
     intervalCount: number,
 }
@@ -60,6 +62,12 @@ export type OptionValueType = {
     overridePrice: boolean,
     price: string,
     value: string,
+}
+
+export type Difference<T> = {
+    updated: Array<T>,
+    created: Array<T>,
+    deleted: Array<T>
 }
 
 export type ProgressActionType = "progress" | "clear_progress" | "load" | "error";

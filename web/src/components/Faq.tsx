@@ -1,13 +1,15 @@
 import * as React from "react";
 
-import MuiAccordion from "@material-ui/core/Accordion";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
-import Typography from "@material-ui/core/Typography"
-import { createStyles, makeStyles, Theme, WithStyles, withStyles } from "@material-ui/core/styles";
+import MuiAccordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography"
+import { Theme, styled } from "@mui/material/styles";
+import { createStyles, makeStyles, WithStyles, withStyles } from "@mui/styles";
+
 
 import { Collapse, Expand } from "../icons/Expand"; 
 
@@ -90,43 +92,43 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const Accordion = withStyles({
-    root: {
-        boxShadow: "none",
-        "&:before": {
-            height: 0,
-        },
-    },
-})(MuiAccordion);
-
-const AccordionSummary = withStyles({
-    root: {
-    },
-})(MuiAccordionSummary);
-
-const iconStyles = createStyles({
-    root: {
-        "& > .e": {
-            display: "block",
-        },
-        "& > .c": {
-            display: "none",
-        },
-        ".Mui-expanded & > .c": {
-            display: "block",
-        },
-        ".Mui-expanded & > .e": {
-            display: "none",
-        },
+const Accordion = styled(MuiAccordion)({
+    boxShadow: "none",
+    "&:before": {
+        height: 0,
     },
 });
 
-const Icon = withStyles(iconStyles)(({ classes }: WithStyles<typeof iconStyles>) => (
-    <div className={classes.root}>
+const AccordionSummary =styled(MuiAccordionSummary)({});
+
+const iconStyles = {
+    "& > .e": {
+        display: "block",
+    },
+    "& > .c": {
+        display: "none",
+    },
+    ".Mui-expanded & > .c": {
+        display: "block",
+    },
+    ".Mui-expanded & > .e": {
+        display: "none",
+    },
+};
+
+// const Icon = withStyles(iconStyles)(({ classes }: WithStyles<typeof iconStyles>) => (
+//     <div className={classes.root}>
+//         <Expand  className="e" />
+//         <Collapse className="c" />
+//     </div>
+// ));
+
+const Icon = styled(() => (
+    <div>
         <Expand  className="e" />
         <Collapse className="c" />
     </div>
-));
+))(iconStyles)
 
 const FAQSection = () => {
     const classes = useStyles();
