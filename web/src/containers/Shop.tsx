@@ -4,7 +4,6 @@ import * as api from "../api/api";
 import ShopLayout from "../components/shop/ShopLayout";
 import { ProductItem } from "../types";
 
-
 const Shop = () => {
     const [products, setProducts] = React.useState<Array<ProductItem>>([]);
 
@@ -19,6 +18,6 @@ const Shop = () => {
     return (
         <ShopLayout products={products} />
     );
-}
+};
 
 export default Shop;

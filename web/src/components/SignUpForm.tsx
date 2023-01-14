@@ -6,13 +6,12 @@ import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { Theme } from "@mui/material/styles";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
-import LockOutlined from "@mui/icons-material/LockOutlined"
+import LockOutlined from "@mui/icons-material/LockOutlined";
 import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
-import { createAccount } from "../api/auth";
-
+// import { createAccount } from "../api/auth";
 
 const styles = (theme: Theme) => createStyles({
     avatar: {
@@ -29,13 +28,13 @@ const styles = (theme: Theme) => createStyles({
         marginTop: "4px",
         marginBottom: theme.spacing(2),
         flexDirection: "row",
-        '&:first-child': {
+        "&:first-child": {
             marginTop: theme.spacing(5),
         },
-        // '&:not(:last-child)': {
+        // "&:not(:last-child)": {
         //     marginBottom: 16,
         // },
-        '& .Mui-focused svg': {
+        "& .Mui-focused svg": {
             color: "#3f51b5",
         },
     },
@@ -48,17 +47,17 @@ const styles = (theme: Theme) => createStyles({
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             margin: theme.spacing(1.5, 0, 2),
-        }
+        },
     },
     link: {
         color: "#666666",
         textDecoration: "none",
     },
-})
+});
 
-const signUpTextStyles = (theme: Theme) => createStyles({
+const signUpTextStyles = () => createStyles({
     txt1: {
         // fontFamily: "Dosis, Streetvertising, sans-serif",
         fontSize: 14,
@@ -76,23 +75,24 @@ export const SignUpText = withStyles(signUpTextStyles)(({ classes }: WithStyles<
                 <Link to="/admin/signup">Sign up</Link>
             </span>
         </div>
-    )
+    );
 });
 
 const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classes }) => {
     // const [credentials, setCredential] = React.useState<AuthParams>({
-    //     username: '',
-    //     password: '',
+    //     username: "",
+    //     password: "",
     // });
 
     const onChange: React.ChangeEventHandler<HTMLInputElement> = e => {
         const name = e.target.name;
         const value = e.target.value;
+        console.log("Name:", name, "Value:", value);
         // setCredential(state => ({
         //     ...state,
         //     [name]: value,
         // }));
-    }
+    };
 
     const onSubmit: React.FormEventHandler<HTMLFormElement | HTMLButtonElement> = e => {
         e.preventDefault();
@@ -101,7 +101,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
         // }).catch(() => {
         //     console.log("failed");
         // })
-    }
+    };
 
     return (
         <React.Fragment>
@@ -124,7 +124,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     }}
                     onChange={onChange}
                 /> */}
-                <TextField 
+                <TextField
                     className={classes.textField}
                     fullWidth
                     label="Email"
@@ -133,7 +133,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     // value={credentials.username}
                     variant="outlined"
                     inputProps={{
-                        name: 'email'
+                        name: "email",
                     }}
                     InputProps={{
                         startAdornment: (
@@ -144,7 +144,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     }}
                     onChange={onChange}
                 />
-                <TextField 
+                <TextField
                     className={classes.textField}
                     fullWidth
                     label="Password"
@@ -153,7 +153,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     // value={credentials.password}
                     variant="outlined"
                     inputProps={{
-                        name: 'password'
+                        name: "password",
                     }}
                     InputProps={{
                         startAdornment: (
@@ -164,7 +164,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     }}
                     onChange={onChange}
                 />
-                <TextField 
+                <TextField
                     className={classes.textField}
                     fullWidth
                     label="Confirm password"
@@ -173,7 +173,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     // value={credentials.password}
                     variant="outlined"
                     inputProps={{
-                        name: 'confirmPassword'
+                        name: "confirmPassword",
                     }}
                     InputProps={{
                         startAdornment: (
@@ -194,7 +194,7 @@ const SignUpForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                 </Button>
             </form>
         </React.Fragment>
-    )
-}
+    );
+};
 
 export default withStyles(styles)(SignUpForm);

@@ -1,17 +1,16 @@
-import * as React from "react"
+import * as React from "react";
 import { animated, useSpring } from "react-spring";
 
 import SvgIcon from "@mui/material/SvgIcon";
 
 import { BackgroundPart } from "./Clock";
 
-
 const FiguresPart = ({ delay }: {delay: number}) => {
     const props = useSpring({
         from: { scale: 0, rotate: -90 },
         to: { scale: 1, rotate: 0 },
         config: { duration: 750 },
-        delay: delay,
+        delay,
     });
 
     return (
@@ -33,7 +32,7 @@ const FiguresPart = ({ delay }: {delay: number}) => {
                 </g>
             </defs>
 
-            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box", ...props}}>
+            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box", ...props }}>
                 <use href="#child-fig" x="39" y="47.08"/>
                 <use href="#child-shadow-left" x="44.93" y="76.09"/>
                 <use href="#child-shadow-right" x="65.49" y="76.09"/>
@@ -47,8 +46,8 @@ const FiguresPart = ({ delay }: {delay: number}) => {
                 <use href="#parent-shadow-legs" x="99.45" y="97.9"/>
             </animated.g>
         </React.Fragment>
-    )
-}
+    );
+};
 
 const FamilyIcon = ({ delay }: {delay: number}) => (
     <SvgIcon viewBox="0 0 160 160">

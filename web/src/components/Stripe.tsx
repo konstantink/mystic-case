@@ -22,10 +22,10 @@ const styles = (theme: Theme) => createStyles({
         letterSpacing: "4px",
         lineHeight: "76.8px",
         textTransform: "uppercase",
-    }
+    },
 });
 
-interface StripeProps extends WithStyles<typeof styles> {};
+type StripeProps = WithStyles<typeof styles>;
 
 const Stripe = withStyles(styles)(({ classes, children }: React.PropsWithChildren<StripeProps>) => (
     <Box className={classes.root} component="div">

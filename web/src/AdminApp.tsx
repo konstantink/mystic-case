@@ -1,15 +1,17 @@
 import * as React from "react";
 import { Outlet } from "react-router-dom";
 
-import AppAdminFrame from "./containers/admin/AppAdminFrame"
+import AppAdminFrame from "./containers/admin/AppAdminFrame";
+import { AuthProvider } from "./hooks/useAuth";
 
-const AdminApp = () => {
-
+export const AdminApp = () => {
     return (
-        <AppAdminFrame>
-            <Outlet />
-        </AppAdminFrame>
-    )
+        <AuthProvider>
+            <AppAdminFrame>
+                <Outlet />
+            </AppAdminFrame>
+        </AuthProvider>
+    );
 };
 
 export default AdminApp;

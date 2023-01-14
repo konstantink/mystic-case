@@ -2,7 +2,7 @@ import * as React from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 
 import AdminApp from "./AdminApp";
-import * as mcApi from "./api/api";
+// import * as mcApi from "./api/api";
 import Home from "./containers/Home";
 import Shop from "./containers/Shop";
 import SignIn from "./containers/SignIn";
@@ -18,7 +18,7 @@ export type RouteType = {
 
 export const adminRoutes: Array<RouteObject> = [{
     index: true,
-    element: <Navigate to="products" />
+    element: <Navigate to="products" />,
 }, {
     path: "products",
     element: <Products />,
@@ -28,9 +28,9 @@ export const adminRoutes: Array<RouteObject> = [{
     children: [{
         path: ":productId",
         element: <Product />,
-        //loader: mcApi.getProductLoader
-    }]
-},];
+        // loader: mcApi.getProductLoader
+    }],
+}];
 
 export const routes: Array<RouteObject> = [{
     path: "/signin",
@@ -39,19 +39,18 @@ export const routes: Array<RouteObject> = [{
     path: "/signup",
     element: <SignUp />,
 }, {
-    path: '/',
+    path: "/",
     element: <Home />,
 }, {
-    path: '/shop',
+    path: "/shop",
     element: <Shop />,
 }, {
-    path: '/admin',
+    path: "/admin",
     element: <AdminApp />,
-    children: adminRoutes
+    children: adminRoutes,
 }];
 
 // export default [
 //     ...mainRoutes,
 //     ...adminRoutes,
 // ] as RouteType[];
-

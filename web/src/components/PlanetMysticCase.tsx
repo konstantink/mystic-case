@@ -9,7 +9,6 @@ import { makeStyles } from "@mui/styles";
 
 import ShopnowButton from "./ShopnowButton";
 
-
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(20, 17.5, 20, 17.5),
@@ -56,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         backgroundColor: "#fff",
         borderRadius: theme.spacing(60),
         filter: "blur(560px)",
-        //float: "left",
+        // float: "left",
         height: theme.spacing(120),
         mixBlendMode: "overlay",
         // opacity: 0.6,
@@ -150,8 +149,6 @@ const PlanetMysticCase = () => {
                         <Grid item xs={4} className={classes.ufo}>
                             <img src="/assets/images/magnit_ufo.png" alt="UFO Crash" />
                         </Grid>
-                    {/* </Grid>
-                    <Grid container spacing={3} className={classes.planet}> */}
                         <Grid item xs={4} className={classes.sim}>
                             <img src="/assets/images/magnit_sim.png" alt="Simulation Theory" />
                         </Grid>
@@ -161,8 +158,6 @@ const PlanetMysticCase = () => {
                         <Grid item xs={4} className={classes.som}>
                             <img src="/assets/images/magnit_som.png" alt="School of Magic" />
                         </Grid>
-                    {/* </Grid>
-                    <Grid container spacing={3} className={classes.planet}> */}
                         <Grid item xs={4}>
                             <Box component="div" className={clsx(classes.liEmpty, classes.vdEmpty)}><span>?</span></Box>
                         </Grid>
@@ -177,6 +172,6 @@ const PlanetMysticCase = () => {
             </Grid>
         </Box>
     );
-}
+};
 
 export default PlanetMysticCase;

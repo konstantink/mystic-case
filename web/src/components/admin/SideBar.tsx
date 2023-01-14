@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import StyleOutlined from "@mui/icons-material/StyleOutlined";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
@@ -37,7 +37,7 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
-interface SideBarProps extends WithStyles<typeof styles> { }
+type SideBarProps = WithStyles<typeof styles>
 
 export default withStyles(styles)(({ children, classes }: React.PropsWithChildren<SideBarProps>) => {
     const { pathname } = useLocation();
@@ -52,11 +52,11 @@ export default withStyles(styles)(({ children, classes }: React.PropsWithChildre
                     "& .MuiDrawer-paper": {
                         width: drawerWidth,
                         boxSizing: "border-box",
-                    }
+                    },
                 }}
                 variant="permanent"
             >
-                <Toolbar style={{display: "flex", justifyContent: "center"}}>
+                <Toolbar style={{ display: "flex", justifyContent: "center" }}>
                     <Logo containerClass={clsx(classes.logoContainer, classes.purple)}/>
                 </Toolbar>
                 <Divider />
@@ -83,5 +83,5 @@ export default withStyles(styles)(({ children, classes }: React.PropsWithChildre
             </Drawer>
             {children}
         </React.Fragment>
-    )
+    );
 });

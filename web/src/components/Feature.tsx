@@ -28,7 +28,7 @@ const featureStyles = (theme: Theme) => createStyles({
             height: "100%",
             objectFit: "cover",
             width: "100%",
-        }
+        },
     },
     header: {
         color: "#B3D138",
@@ -51,7 +51,7 @@ const featureStyles = (theme: Theme) => createStyles({
 
 type FeatureProps = WithStyles<typeof featureStyles> & Feature;
 
-const FeatureView = withStyles(featureStyles)(({ classes, name, text, imageUrl}: FeatureProps) => (
+const FeatureView = withStyles(featureStyles)(({ classes, name, text, imageUrl }: FeatureProps) => (
     <Box component="div" className={classes.container}>
         <Box component="div" className={classes.image}>
             <img src={imageUrl} alt={name} />

@@ -9,19 +9,21 @@ interface TruncateTextProps {
     url?: string;
 }
 
-export default ({ children,
-                  truncateBy="words",
-                  limit, 
-                  className, 
-                  showMore=false,
-                  url="/" }: React.PropsWithChildren<TruncateTextProps>) => {
-    const [text, setText] = React.useState<string>('');
-    
+export default ({
+    children,
+    truncateBy = "words",
+    limit,
+    className,
+    showMore = false,
+    url = "/",
+}: React.PropsWithChildren<TruncateTextProps>) => {
+    const [text, setText] = React.useState<string>("");
+
     React.useEffect(() => {
         if (children) {
-            if (Array.isArray(children)) {// setText(children);
-                const input = (children as Array<string>).reduce((prev: string, curr: string) => (`${prev} ${curr}`), '');
-                setText(input)
+            if (Array.isArray(children)) { // setText(children);
+                const input = (children as Array<string>).reduce((prev: string, curr: string) => (`${prev} ${curr}`), "");
+                setText(input);
             } else {
                 setText(children as string);
             }
@@ -29,19 +31,19 @@ export default ({ children,
     }, [children]);
 
     const truncateText = () => {
-        if (truncateBy === "words"){
+        if (truncateBy === "words") {
             const truncated = text.split(" ", limit);
             return `${truncated.join(" ")}... `;
         }
         return text;
-    }
+    };
 
     return (
         <React.Fragment>
             <p className={className}>
                 {truncateText()}
-                {showMore ? (<Link to={url}>Read More</Link>) : ''}
+                {showMore ? (<Link to={url}>Read More</Link>) : ""}
             </p>
         </React.Fragment>
-    )
-}
+    );
+};

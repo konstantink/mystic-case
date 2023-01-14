@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Theme, styled } from "@mui/material/styles";
-import { createStyles, makeStyles, WithStyles } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
 import { animated, config, useSpring } from "@react-spring/web";
 
 import { ProductItem } from "../types";
@@ -44,9 +44,9 @@ const useStyles = makeStyles((theme: Theme) => ({
             textDecoration: "none",
         },
         "& a::after": {
-            content: "' >'",
+            content: "\" >\"",
             color: "#231E52",
-        }
+        },
     },
     imageContainer: {
         backgroundColor: "#3A3185",
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: 748,
     },
     image: {
-        // background: "url('/assets/images/family.jpeg')",
+        // background: "url("/assets/images/family.jpeg")",
         borderRadius: theme.spacing(2),
         height: 748,
         // marginBottom: theme.spacing(3),
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
             height: "100%",
             objectFit: "cover",
             width: "100%",
-        }
+        },
     },
     productNamePrice: {
         color: "#231E52",
@@ -102,15 +102,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-const featuredListStyles = (theme: Theme) => createStyles({
-    root: {
-        paddingLeft: theme.spacing(12),
-        paddingRight: theme.spacing(12),
-        // width: "calc(100% - 40px)",
-    }
-})
-
-const useNewLabelStyles = makeStyles((theme: Theme) => ({
+const useNewLabelStyles = makeStyles(() => ({
     container: {
         alignContent: "center",
         alignItems: "center",
@@ -153,7 +145,7 @@ const useNewLabelStyles = makeStyles((theme: Theme) => ({
         },
         "& div:nth-child(3)": {
             // transform: "rotate(120deg)",
-        }
+        },
     },
     text: {
         color: "#242424",
@@ -177,8 +169,8 @@ const NewLabel = () => {
         reset: true,
         config: {
             duration: 10000,
-        }
-    })
+        },
+    });
 
     return (
         <div className={classes.container}>
@@ -191,10 +183,10 @@ const NewLabel = () => {
             </animated.div>
             <span className={classes.text}>New</span>
         </div>
-    )
+    );
 };
 
-const useBestSellerLabelStyles = makeStyles((theme: Theme) => ({
+const useBestSellerLabelStyles = makeStyles(() => ({
     container: {
         backgroundColor: "#B3D138",
         borderRadius: "50%",
@@ -234,8 +226,8 @@ const BestSellerLabel = () => {
             </div> */}
             <span className={classes.text}>Best seller</span>
         </div>
-    )
-}
+    );
+};
 
 export const Product = ({ ...product }: ProductProps) => {
     const classes = useStyles();
@@ -259,15 +251,15 @@ export const Product = ({ ...product }: ProductProps) => {
                     {product.name}
                 </Typography>
                 <Typography variant="body1" className={classes.productNamePrice}>
-                    {product.prices ?
-                        Intl.NumberFormat('en-GB', {style: "currency", currency: product.prices[0].currency}).format(typeof product.prices[0].price === "number" ? product.prices[0].price/100 : parseFloat(product.prices[0].price))
+                    {product.prices
+                        ? Intl.NumberFormat("en-GB", { style: "currency", currency: product.prices[0].currency }).format(typeof product.prices[0].price === "number" ? product.prices[0].price / 100 : parseFloat(product.prices[0].price))
                         : "N/A"}
                 </Typography>
             </Box>
-            <TruncateText 
-                truncateBy="words" 
-                limit={20} 
-                className={classes.productDescription} 
+            <TruncateText
+                truncateBy="words"
+                limit={20}
+                className={classes.productDescription}
                 showMore
                 url={"/"}
             >
@@ -284,33 +276,31 @@ export const Product = ({ ...product }: ProductProps) => {
     );
 };
 
-export const FeaturedProductsList = styled(({ className, products }: FeaturedProductsListProps) => {
-
-    return (
-        <Grid className={className} container>
-            {products.sort((left: ProductItem, right: ProductItem) => {
-                if (left.isNew && !right.isNew)
-                    return -1;
-                else if (!left.isNew && right.isNew)
-                    return 1;
-                else if (left.isBestseller && !right.isBestseller)
-                    return -1;
-                else if (!left.isBestseller && right.isBestseller)
-                    return 1;
-                else if (left.isFeatured && !right.isFeatured)
-                    return -1;
-                else if (!left.isFeatured && right.isFeatured)
-                    return 1;
-                else
-                    return 0;
-            }).map((item, idx) => (
-                <Grid key={`key-produc-${idx}`} item xs={6} style={{ maxWidth: 844 }}>
-                    <Product {...item} />
-                </Grid>
-            ))}
-        </Grid>
-    )
-})(({ theme }) => `
+export const FeaturedProductsList = styled(({ className, products }: FeaturedProductsListProps) => (
+    <Grid className={className} container>
+        {products.sort((left: ProductItem, right: ProductItem) => {
+            if (left.isNew && !right.isNew) {
+                return -1;
+            } else if (!left.isNew && right.isNew) {
+                return 1;
+            } else if (left.isBestseller && !right.isBestseller) {
+                return -1;
+            } else if (!left.isBestseller && right.isBestseller) {
+                return 1;
+            } else if (left.isFeatured && !right.isFeatured) {
+                return -1;
+            } else if (!left.isFeatured && right.isFeatured) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }).map((item, idx) => (
+            <Grid key={`key-produc-${idx}`} item xs={6} style={{ maxWidth: 844 }}>
+                <Product {...item} />
+            </Grid>
+        ))}
+    </Grid>
+))(({ theme }) => `
     justifyContent: "space-between",
     paddingLeft: ${theme.spacing(12)},
     paddingRight: ${theme.spacing(12)}`

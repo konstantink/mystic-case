@@ -3,18 +3,17 @@ import { animated, config, useChain, useSpringRef, useSprings } from "react-spri
 
 import { SvgIconProps } from "@mui/material";
 
-
 const Loading = (rest: SvgIconProps) => {
-    const refs = [useSpringRef(), useSpringRef(), useSpringRef()]
-    const stars = [{x: 50, y: 32}, {x: 28, y: 88}, {x: 96, y: 64}];
-    const [ springs ] = useSprings(3, (index) => ({
+    const refs = [useSpringRef(), useSpringRef(), useSpringRef()];
+    const stars = [{ x: 50, y: 32 }, { x: 28, y: 88 }, { x: 96, y: 64 }];
+    const [springs] = useSprings(3, (index) => ({
         from: { scale: 0, rotate: 0 },
         loop: {
             reset: true,
             delay: 600,
         },
-        to: [{ scale: 4, rotate: 90 }, { scale: 0, rotate: 180   }],
-        delay: 600*index,
+        to: [{ scale: 4, rotate: 90 }, { scale: 0, rotate: 180 }],
+        delay: 600 * index,
         config: {
             ...config.gentle,
             duration: 600,
@@ -37,6 +36,6 @@ const Loading = (rest: SvgIconProps) => {
             </animated.svg>
         </React.Fragment>
     );
-}
+};
 
 export default Loading;

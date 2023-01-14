@@ -1,13 +1,12 @@
 import clsx from "clsx";
 import React from "react";
 
-import { createStyles, Theme, styled } from "@mui/material/styles";
+import { createStyles, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { withStyles, WithStyles } from "@mui/styles";
-
 
 import * as api from "../api/api";
 import Description from "./Description";
@@ -27,25 +26,6 @@ import ClockIcon from "../icons/Clock";
 import FamilyIcon from "../icons/Family";
 import FriendsIcon from "../icons/Friends";
 import { ProductItem } from "../types";
-
-interface HomeLayoutProps extends WithStyles<typeof styles> { };
-
-interface HeaderProps extends WithStyles<typeof headerStyles> { 
-    invert?: boolean;
-};
-
-interface LogoProps {
-    containerClass: string;
-};
-
-interface RequirementsSectionProps extends WithStyles<typeof requirementStyles> {
-    requirements: Array<Requirement>;
-}
-
-interface FeaturesSectionProps extends WithStyles<typeof featuresStyles> {
-    content: Array<Feature>;
-}
-
 
 const headerStyles = (theme: Theme) => createStyles({
     logoContainer: {
@@ -94,7 +74,7 @@ const styles = (theme: Theme) => createStyles({
         backgroundColor: "#fff",
         borderRadius: 319,
         filter: "blur(200px)",
-        //float: "left",
+        // float: "left",
         height: 637,
         mixBlendMode: "overlay",
         // opacity: 0.6,
@@ -115,12 +95,12 @@ const styles = (theme: Theme) => createStyles({
     row: {
         position: "relative",
     },
-    parallaxContainer: { 
-        // alignItems: "center", 
-        display: "flex", 
-        // justifyContent: "center", 
-        height: "100%", 
-        position: "relative" 
+    parallaxContainer: {
+        // alignItems: "center",
+        display: "flex",
+        // justifyContent: "center",
+        height: "100%",
+        position: "relative",
     },
     boxImg: {
         filter: "brightness(1.3) drop-shadow(2px 4px 6px black)",
@@ -160,7 +140,7 @@ const styles = (theme: Theme) => createStyles({
         position: "absolute",
         top: 0,
         width: 214,
-        zIndex: 0
+        zIndex: 0,
     },
     rightSideText: {
         alignItems: "flex-start",
@@ -181,10 +161,10 @@ const styles = (theme: Theme) => createStyles({
             fontWeight: "normal",
             lineHeight: "36px",
             letterSpacing: "0.3px",
-        }
+        },
     },
     requirementContainer: {
-        background: 'rgba(57, 49, 133, 0.4)',
+        background: "rgba(57, 49, 133, 0.4)",
     },
     featureContainer: {
 
@@ -213,39 +193,6 @@ const requirementStyles = (theme: Theme) => createStyles({
         "& h2": {
             fontFamily: "Balsamiq Sans,Roboto,Arial",
         },
-    // },
-    // requirementContent: {
-        // "@media screen and (min-width: 106.25em)": {
-        //     padding: 0,
-        //     width: "calc(1.3333 * 1200px)",
-        //     "& h1": {
-        //         fontSize: "4rem",
-        //     },
-        //     "& h2": {
-        //         fontSize: "3rem",
-        //     }
-        // },
-
-        // "@media screen and (min-width: 64em)": {
-        //     padding: 0,
-        //     width: 1200,
-
-        //     "& h1": {
-        //         fontSize: "3rem",
-        //     },
-        //     "& h2": {
-        //         fontSize: "2rem",
-        //     },
-        // },
-
-        // [theme.breakpoints.down("xs")]: {
-        //     "& h1": {
-        //         fontSize: "2rem",
-        //     },
-        //     "& h2": {
-        //         fontSize: "1.5rem",
-        //     },
-        // }
     },
 });
 
@@ -273,19 +220,37 @@ const featuresStyles = (theme: Theme) => createStyles({
         lineHeight: `${theme.spacing(8)}px`,
         // marginLeft: "auto",
         maxWidth: theme.spacing(120.5),
-        textTransform: "capitalize"
+        textTransform: "capitalize",
     },
 });
+
+type HomeLayoutProps = WithStyles<typeof styles>;
+
+interface HeaderProps extends WithStyles<typeof headerStyles> {
+    invert?: boolean;
+}
+
+interface LogoProps {
+    containerClass: string;
+}
+
+interface RequirementsSectionProps extends WithStyles<typeof requirementStyles> {
+    requirements: Array<Requirement>;
+}
+
+interface FeaturesSectionProps extends WithStyles<typeof featuresStyles> {
+    content: Array<Feature>;
+}
 
 export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
     return (
         <div className={containerClass}>
             <img src="/assets/logo.png" alt="logo" />
         </div>
-    )
-}
+    );
+};
 
-export const Header = withStyles(headerStyles)(({ classes, invert=false }: HeaderProps) => {
+export const Header = withStyles(headerStyles)(({ classes, invert = false }: HeaderProps) => {
     return (
         <React.Fragment>
             <header className={classes.header}>
@@ -295,7 +260,7 @@ export const Header = withStyles(headerStyles)(({ classes, invert=false }: Heade
                 <Menu invert={invert} />
             </header>
         </React.Fragment>
-    )
+    );
 });
 
 const RequirementsSection = withStyles(requirementStyles)(({ classes, requirements }: RequirementsSectionProps) => {
@@ -331,7 +296,7 @@ const FeaturesSection = withStyles(featuresStyles)(({ classes, content }: Featur
             </Grid>
             {/* </Box> */}
         </Box>
-    )
+    );
 });
 
 const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeLayoutProps) => {
@@ -350,24 +315,24 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
         icon: <FriendsIcon delay={800} />,
         text: "Team from 2-5 persons",
         delay: 800,
-    }]
+    }];
 
     const features: Array<Feature> = [
-        {name: 'Perfect Family Activity', text: 'Spend quality time all together - there is something for everyone!', imageUrl: '/assets/images/family.jpeg'},
-        {name: 'Fun Activity for Couples', text: 'Hang out with your partner instead of just watching TV', imageUrl: '/assets/images/couple.jpeg'},
-        {name: 'Friends Gathering', text: 'A fun activity for friends to do and spend time in a new unusual way', imageUrl: '/assets/images/friends.jpeg'},
-    ]
+        { name: "Perfect Family Activity", text: "Spend quality time all together - there is something for everyone!", imageUrl: "/assets/images/family.jpeg" },
+        { name: "Fun Activity for Couples", text: "Hang out with your partner instead of just watching TV", imageUrl: "/assets/images/couple.jpeg" },
+        { name: "Friends Gathering", text: "A fun activity for friends to do and spend time in a new unusual way", imageUrl: "/assets/images/friends.jpeg" }
+    ];
 
     React.useEffect(() => {
         (async () => {
             const response = await api.getFeaturedProducts();
             setProducts(response.products);
         })();
-    }, [])
+    }, []);
 
     return (
-        <Box component="div" style={{backgroundColor: "#3A3185", color: "#FEFEFE"}}>
-            <Header /> 
+        <Box component="div" style={{ backgroundColor: "#3A3185", color: "#FEFEFE" }}>
+            <Header />
             <main className={classes.mainRows}>
                 <div className="row-wrapper">
                     <Grid container style={{ paddingBottom: 178, paddingLeft: 96, paddingRight: 96 }}>
@@ -406,7 +371,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                                     fontWeight: "normal",
                                     lineHeight: "36px",
                                     letterSpacing: "0.3px",
-                                }
+                                },
                             }}
                         >
                             <Typography variant="h1" sx={{ color: "#FFD644" }}>
@@ -415,7 +380,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                             <Typography variant="h1" sx={{ color: "#FFF" }} gutterBottom>
                                 and spend quality time
                             </Typography>
-                            <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px"}}>
+                            <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px" }}>
                                 Try the brand new way to spend your leisure time at home in the most fun and challengeable way!
                             </Typography>
                             <ShopnowButton>
@@ -475,7 +440,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                 </div>
             </main>
         </Box>
-    )
+    );
 };
 
 export default withStyles(styles)(HomeLayout);

@@ -1,8 +1,44 @@
+export type DisplayIntervalOption = "month" | "week" | "day" | "year" | "custom";
+export type IntervalOption = Omit<DisplayIntervalOption, "custom">;
+
+export type OptionValueType = {
+    overridePrice: boolean,
+    price: string,
+    value: string,
+}
+
+export type OptionType = {
+    name: string,
+    values: Array<OptionValueType>,
+}
+
+export type Interval = {
+    displayInterval: DisplayIntervalOption
+    interval: IntervalOption,
+    intervalCount: number,
+}
+
+export enum PriceType {
+    OneTime = 0,
+    Recurring = 1,
+}
+
 export type ProductImage = {
     id: string,
     url: string,
     name: string,
     order?: number;
+}
+
+export type Price ={
+    id?: string,
+    active?: boolean,
+    default?: boolean,
+    price: number,
+    currency: string,
+    type: PriceType,
+    interval?: Interval,
+    value?: string,
 }
 
 export type ProductItem = {
@@ -26,42 +62,6 @@ export type ProductItem = {
 
 export type Errors<Item> = {
     [key in keyof Item]: string;
-}
-
-export enum PriceType {
-    OneTime = 0,
-    Recurring = 1,
-};
-
-export type Price ={
-    id?: string,
-    active?: boolean,
-    default?: boolean,
-    price: number,
-    currency: string,
-    type: PriceType,
-    interval?: Interval,
-    value?: string,
-}
-
-export type DisplayIntervalOption = "month" | "week" | "day" | "year" | "custom";
-export type IntervalOption = Omit<DisplayIntervalOption, "custom">;
-
-export type Interval = {
-    displayInterval: DisplayIntervalOption
-    interval: IntervalOption,
-    intervalCount: number,
-}
-
-export type OptionType = {
-    name: string,
-    values: Array<OptionValueType>,
-}
-
-export type OptionValueType = {
-    overridePrice: boolean,
-    price: string,
-    value: string,
 }
 
 export type Difference<T> = {
@@ -90,7 +90,7 @@ export type ProgressReducer = (s: ProgressState, a: ProgressAction) => ProgressS
 export interface FailureResponse {
     success: false;
     error: string;
-};
+}
 
 export interface AuthParams {
     username: string,
@@ -102,7 +102,6 @@ export type AuthResponse = {
     access_token: string;
     refresh_token: string;
  } | FailureResponse;
-
 
 export interface FeaturedProductsResponse {
     products: Array<ProductItem>;

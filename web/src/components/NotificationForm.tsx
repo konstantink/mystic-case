@@ -10,7 +10,6 @@ import { makeStyles } from "@mui/styles";
 
 import { ArrowRight } from "../icons/Arrows";
 
-
 const useStyles = makeStyles((theme: Theme) => ({
     text: {
         color: "#FEFEFE",
@@ -23,8 +22,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         "& > .yellow": {
             color: "#FFD644",
             font: "inherit",
-        }
-    }
+        },
+    },
 }));
 
 const TextField = styled(MuiTextField)({
@@ -78,17 +77,17 @@ const NotificationForm = () => {
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
-                                    onClick={() => {}}
+                                    onClick={() => {} /* eslint-disable-line */}
                                 >
                                     <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
                                 </IconButton>
                             </InputAdornment>
-                        )
+                        ),
                     }}
                 />
             </form>
         </Box>
-    )
+    );
 };
 
 export default NotificationForm;

@@ -8,7 +8,6 @@ import { makeStyles } from "@mui/styles";
 
 import NotificationForm from "./NotificationForm";
 
-
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
         background: "#231E52",
@@ -20,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     link: {
         marginBottom: theme.spacing(3),
         "& a": {
-            color:"#FEFEFE",
+            color: "#FEFEFE",
             fontFamily: "Pangram",
             fontSize: "32px",
             fontWeight: 700,

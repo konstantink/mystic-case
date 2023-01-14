@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 // import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 
 // import { ConnectedRouter } from "connected-react-router";
-import { History } from "history";
+// import { History } from "history";
 // import { Route, Routes } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -26,12 +26,13 @@ import { routes } from "./routes";
 //   </header>
 // </div>
 
-interface AppProps {
-    history?: History
-}
+// interface AppProps {
+//     history?: History
+// }
+
 const router = createBrowserRouter(routes);
 
-const App = (props: AppProps) => {
+const App = () => {
     return (
         <React.Fragment>
             <RouterProvider router={router} />
@@ -39,15 +40,15 @@ const App = (props: AppProps) => {
                 <Routes>
                     {routes.map((route, idx) => {
                         console.log(route);
-                        return (<Route key={`route-idx-${idx}`} path={route.path} element={} />)
+                        return (<Route key={`route-idx-${idx}`} path={route.path} element={route.element} />)
                     })}
-                    
-                    <Route path="/admin" element={AdminApp} />
+
+                    <Route path="/admin" element={<AdminApp />} />
                     <Route path="/admin" />
                 </Routes>
             </BrowserRouter> */}
         </React.Fragment>
     );
-}
+};
 
 export default App;

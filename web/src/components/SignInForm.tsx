@@ -10,15 +10,14 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { styled, Theme } from "@mui/material/styles";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
-import LockOutlined from "@mui/icons-material/LockOutlined"
-import { createStyles, makeStyles, withStyles, WithStyles } from "@mui/styles";
+import LockOutlined from "@mui/icons-material/LockOutlined";
+import { createStyles, WithStyles, withStyles } from "@mui/styles";
 
 // import { AuthParams, tryLogin } from "../api";
 import { useAuth } from "../hooks/useAuth";
 import { AuthParams } from "../types";
-
 
 const styles = (theme: Theme) => createStyles({
     avatar: {
@@ -47,19 +46,19 @@ const styles = (theme: Theme) => createStyles({
         flexDirection: "row",
         height: 80,
         marginBottom: theme.spacing(4),
-        '&:first-child': {
+        "&:first-child": {
             marginTop: theme.spacing(7),
         },
-        '&:nth-child(2)': {
+        "&:nth-child(2)": {
             marginBottom: theme.spacing(2),
         },
         "& fieldset": {
             border: "2px solid #E1E1E1",
         },
-        // '&:not(:last-child)': {
+        // "&:not(:last-child)": {
         //     marginBottom: 24,
         // },
-        '& .Mui-focused svg': {
+        "& .Mui-focused svg": {
             color: "#3f51b5",
         },
     },
@@ -86,8 +85,8 @@ const styles = (theme: Theme) => createStyles({
     //     color: "#666666",
     // },
     // submit: {
-    //     margin: theme.spacing(3, 'auto', 2),
-    //     [theme.breakpoints.down('md')]:{
+    //     margin: theme.spacing(3, "auto", 2),
+    //     [theme.breakpoints.down("md")]:{
     //         // margin: theme.spacing(7.5, 0, 2),
     //         marginTop: theme.spacing(7.5),
     //     }
@@ -96,7 +95,7 @@ const styles = (theme: Theme) => createStyles({
     //     color: "#666666",
     //     textDecoration: "none",
     // },
-})
+});
 
 const signUpTextStyles = {
     // fontFamily: "Dosis, Streetvertising, sans-serif",
@@ -108,7 +107,7 @@ const signUpTextStyles = {
     " a, a:visited": {
         color: "#3A3185",
         textDecoration: "none",
-    }
+    },
 };
 
 const buttonStyles = {
@@ -124,7 +123,7 @@ const buttonStyles = {
     width: 260,
     ":hover": {
         backgroundColor: "#9FBE24",
-    }
+    },
 };
 
 const SignUpText = () => (
@@ -147,13 +146,13 @@ const RememberForgot = () => (
                 lineHeight: "30px",
                 letterSpacing: "0.3px",
                 textDecoration: "none",
-            }
+            },
         }}
         disableGutters
     >
         <FormControlLabel
             control={
-                <Checkbox 
+                <Checkbox
                     checked={false}
                     name="rememberMe"
                 />
@@ -175,7 +174,7 @@ const RememberForgot = () => (
 // const ColorButton = withStyles(buttonStyles)(Button);
 const ColorButton = styled(Button)(buttonStyles);
 
-const FormattedForm = styled('form')({
+const FormattedForm = styled("form")({
     display: "flex",
     flexDirection: "column",
     // margin: "16px 32px 48px 32px",
@@ -188,8 +187,8 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
     const { login } = useAuth();
 
     const [credentials, setCredential] = React.useState<AuthParams>({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
     });
 
     const onChange: React.ChangeEventHandler<HTMLInputElement> = e => {
@@ -199,7 +198,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
             ...state,
             [name]: value,
         }));
-    }
+    };
 
     const onSubmit: React.FormEventHandler<HTMLFormElement | HTMLButtonElement> = async e => {
         e.preventDefault();
@@ -214,7 +213,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
         // } catch (exc) {
         //     console.log("failed", exc);
         // }
-    }
+    };
 
     return (
         <React.Fragment>
@@ -232,7 +231,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
             </Typography>
             <SignUpText />
             <FormattedForm method="submit" onSubmit={onSubmit}>
-                <TextField 
+                <TextField
                     className={classes.textField}
                     fullWidth
                     label="Email"
@@ -242,7 +241,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     value={credentials.username}
                     variant="outlined"
                     inputProps={{
-                        name: 'username'
+                        name: "username",
                     }}
                     InputProps={{
                         sx: theme => ({
@@ -253,7 +252,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                         }),
                         startAdornment: (
                             <InputAdornment position="start">
-                                <EmailOutlined fontSize="small"  />
+                                <EmailOutlined fontSize="small" />
                             </InputAdornment>
                         ),
                     }}
@@ -269,7 +268,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     }}
                     onChange={onChange}
                 />
-                <TextField 
+                <TextField
                     className={classes.textField}
                     fullWidth
                     label="Password"
@@ -279,7 +278,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     value={credentials.password}
                     variant="outlined"
                     inputProps={{
-                        name: 'password'
+                        name: "password",
                     }}
                     InputProps={{
                         sx: theme => ({
@@ -299,7 +298,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                             color: "#231E52",
                             fontFamily: "Pangram",
                             fontSize: 20,
-                            "span": {
+                            span: {
                                 color: "red",
                             },
                         },
@@ -309,10 +308,10 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                 <RememberForgot />
                 <ColorButton
                     sx={theme => ({
-                        margin: theme.spacing(3, 'auto', 2),
+                        margin: theme.spacing(3, "auto", 2),
                         marginTop: {
                             md: theme.spacing(7.5),
-                        }
+                        },
                     })}
                     color="primary"
                     variant="contained"
@@ -322,7 +321,7 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                 </ColorButton>
             </FormattedForm>
         </React.Fragment>
-    )
-}
+    );
+};
 
 export default withStyles(styles)(SignInForm);

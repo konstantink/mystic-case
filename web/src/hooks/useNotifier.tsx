@@ -14,6 +14,12 @@ enum NotifierActionType {
     CloseNotification = "@@notifier/CLOSE_NOTIFICATION"
 }
 
+type Notification = {
+    message: SnackbarMessage;
+    dismissed?: boolean;
+    options: OptionsObject;
+};
+
 type NotifierPushAction = {
     type: NotifierActionType.PushNotification;
     notification: Notification;
@@ -26,12 +32,6 @@ type NotifierCloseAction = {
 
 type NotifierAction = NotifierPushAction | NotifierCloseAction;
 
-type Notification = {
-    message: SnackbarMessage;
-    dismissed?: boolean;
-    options: OptionsObject;
-};
-
 type NotifierState = {
     notifications: Array<Notification>;
 };
@@ -42,23 +42,23 @@ export const useNotifier = () => {
     const { closeSnackbar, enqueueSnackbar } = useSnackbar();
     const reducer = (state: NotifierState, action: NotifierAction) => {
         switch (action.type) {
-            case NotifierActionType.PushNotification:
-                return {
-                    ...state,
-                    notifications: [
-                        ...state.notifications, 
-                        action.notification
-                    ]
-                }
-            case NotifierActionType.CloseNotification:
-                return {
-                    ...state,
-                    notifications: state.notifications.map(item => item.options.key === action.key ? { ...item, dismissed: true } : item),
-                }
-            default:
-                return state;
+        case NotifierActionType.PushNotification:
+            return {
+                ...state,
+                notifications: [
+                    ...state.notifications,
+                    action.notification
+                ],
+            };
+        case NotifierActionType.CloseNotification:
+            return {
+                ...state,
+                notifications: state.notifications.map(item => item.options.key === action.key ? { ...item, dismissed: true } : item),
+            };
+        default:
+            return state;
         }
-    }
+    };
     const initialState: NotifierState = {
         notifications: [],
     };
@@ -70,12 +70,12 @@ export const useNotifier = () => {
             notification: {
                 message,
                 options: {
-                    key: `${new Date().toISOString()}-${Math.round(Math.random()*1000000)}`,
-                    variant: variant,
+                    key: `${new Date().toISOString()}-${Math.round(Math.random() * 1000000)}`,
+                    variant,
                     preventDuplicate: true,
                     anchorOrigin: { horizontal: "left", vertical: "bottom" },
-                }
-            }
+                },
+            },
         });
 
     const success = sendNotification("success");
@@ -84,14 +84,14 @@ export const useNotifier = () => {
     const info = sendNotification("info");
 
     React.useEffect(() => {
-        state.notifications.forEach(({ message, options, dismissed=false }) => {
+        state.notifications.forEach(({ message, options, dismissed = false }) => {
             if (dismissed) {
                 closeSnackbar(options.key);
-                return
+                return;
             }
             enqueueSnackbar(message, {
                 ...options,
-                onClose: (e: React.SyntheticEvent<any> | null, reason: CloseReason, key?: SnackbarKey) => {
+                onClose: (e: React.SyntheticEvent | null, reason: CloseReason, key?: SnackbarKey) => {
                     if (options.onClose) {
                         options.onClose(e, reason, key);
                     }
@@ -99,12 +99,12 @@ export const useNotifier = () => {
                 onExited: (e: HTMLElement, key: SnackbarKey) => {
                     dispatch({
                         type: NotifierActionType.CloseNotification,
-                        key: key
+                        key,
                     });
-                }
+                },
             });
         });
     }, [state.notifications]);
 
-    return { info, success, warn, error }
-}
+    return { info, success, warn, error };
+};

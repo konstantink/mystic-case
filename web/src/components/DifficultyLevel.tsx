@@ -5,10 +5,9 @@ import { Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 
-
 interface DifficultyLevelProps {
     difficulty: number;
-};
+}
 
 const FilledStar = () => (
     <svg width="28" height="26" viewBox="0 0 28 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +21,7 @@ const OutlinedStar = () => (
     </svg>
 );
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({ // eslint-disable-line
     container: {
         alignItems: "flex-end",
         display: "flex",
@@ -35,12 +34,12 @@ const useStyles = makeStyles((theme: Theme) => ({
             lineHeight: "38px",
             lineSpacing: "0.8px",
             textTransform: "uppercase",
-        }
+        },
     },
     starsContainer: {
         display: "flex",
         flexDirection: "row",
-    }
+    },
 }));
 
 const DifficultyLevel = ({ difficulty }: DifficultyLevelProps) => {
@@ -52,12 +51,12 @@ const DifficultyLevel = ({ difficulty }: DifficultyLevelProps) => {
                 Difficulty level
             </Typography>
             <Box component="div" className={classes.starsContainer}>
-                {[1,2,3,4,5].map(item => {
-                    return difficulty >= item ? (<FilledStar key={`star-${item}`} />) : (<OutlinedStar key={`star-${item}`} />)
+                {[1, 2, 3, 4, 5].map(item => {
+                    return difficulty >= item ? (<FilledStar key={`star-${item}`} />) : (<OutlinedStar key={`star-${item}`} />);
                 })}
             </Box>
         </Box>
-    )
+    );
 };
 
 export default DifficultyLevel;

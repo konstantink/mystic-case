@@ -38,11 +38,11 @@ const useStyles = makeStyles((theme: Theme) => ({
         borderRadius: theme.spacing(3),
         position: "relative",
         zIndex: 10,
-        [theme.breakpoints.up('xl')]: {
+        [theme.breakpoints.up("xl")]: {
             height: 970,
             overflow: "hidden",
             width: 1728,
-        }
+        },
     },
     playButtonContainer: {
         height: theme.spacing(20),
@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         height: 51,
         width: 41,
         zIndex: 100,
-    }
+    },
 }));
 
 const VideoIntroduction = () => {
@@ -94,7 +94,7 @@ const VideoIntroduction = () => {
             <Box component="div" className={clsx(classes.root, classes.textContainer)}>
                 <Typography variant="h2" className={classes.text1}>
                     What's&nbsp;
-                    <Typography variant="h2" component="span" className={clsx(classes.text1, {[classes.text2]: true})}>
+                    <Typography variant="h2" component="span" className={clsx(classes.text1, { [classes.text2]: true })}>
                         inside Mystic Case?
                     </Typography>
                 </Typography>
@@ -103,32 +103,34 @@ const VideoIntroduction = () => {
                 </Typography>
             </Box>
             <Box component="div" className={classes.videoContainer}>
-                {video ? <iframe 
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/n5AJcAFg54Q?modestbranding=0&controls=2&iv_load_policy=3&autoplay=1"
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                >
-                </iframe> : <React.Fragment>
-                    <Box component="div" style={{ cursor: "pointer", height: "100%", opacity: 0, position: "absolute", width: "100%", zIndex: 1000 }} onClick={() => swapVideo(true)}></Box>
-                    <Box component="div" className={classes.playButtonContainer}>
-                        <Box component="div" className={classes.playButton}>
-                            <Box component="div" className={classes.circle}></Box>
-                            <Box component="div" className={classes.triangle}>
-                                <svg width="41" height="51" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.14751 1.4726C3.48461 -0.221974 0 1.69088 0 4.84724V46.2738C0 49.4302 3.4846 51.3431 6.1475 49.6485L38.697 28.9352C41.167 27.3634 41.167 23.7577 38.697 22.1859L6.14751 1.4726Z" fill="#3A3185"/>
-                                </svg>
+                {video
+                    ? <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/n5AJcAFg54Q?modestbranding=0&controls=2&iv_load_policy=3&autoplay=1"
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    >
+                    </iframe>
+                    : <React.Fragment>
+                        <Box component="div" style={{ cursor: "pointer", height: "100%", opacity: 0, position: "absolute", width: "100%", zIndex: 1000 }} onClick={() => swapVideo(true)}></Box>
+                        <Box component="div" className={classes.playButtonContainer}>
+                            <Box component="div" className={classes.playButton}>
+                                <Box component="div" className={classes.circle}></Box>
+                                <Box component="div" className={classes.triangle}>
+                                    <svg width="41" height="51" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.14751 1.4726C3.48461 -0.221974 0 1.69088 0 4.84724V46.2738C0 49.4302 3.4846 51.3431 6.1475 49.6485L38.697 28.9352C41.167 27.3634 41.167 23.7577 38.697 22.1859L6.14751 1.4726Z" fill="#3A3185"/>
+                                    </svg>
+                                </Box>
                             </Box>
                         </Box>
-                    </Box>
-                    <img src="http://i3.ytimg.com/vi/n5AJcAFg54Q/hqdefault.jpg" className={classes.image}/>
-                </React.Fragment> }
+                        <img src="http://i3.ytimg.com/vi/n5AJcAFg54Q/hqdefault.jpg" className={classes.image}/>
+                    </React.Fragment> }
             </Box>
         </Box>
     );
-}
+};
 
 export default VideoIntroduction;

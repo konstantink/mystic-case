@@ -12,7 +12,6 @@ import { ArrowLeft, ArrowRight } from "../icons/Arrows";
 import { AvatarGirl1, AvatarGirl2, AvatarMan1, AvatarMan2, AvatarMan3 } from "../icons/Avatars";
 import { FunctionComponent } from "react";
 
-
 const feedbacks = [{
     avatar: AvatarMan1,
     name: "Andrew",
@@ -38,8 +37,7 @@ const feedbacks = [{
     name: "Jen",
     city: "Llandrindod Wells, UK",
     comment: "We really enjoyed our very first Mystic Case and can't wait for the next one. It took us slightly longer than the 2 hours and we did use some of the clues provided but we all thoroughly enjoyed it. The story of the case was really well thought out and we can't wait to see what else is in store. Also I mentioned we would be playing it for my birthday and the thoughtfulness of the team by including a birthday card was lovely. At first the price may seem expensive but honestly it is worth it and you won't regret it. For a fun family night or maybe a date night, I highly recommend. Thank you Mystic Case",
-}]
-
+}];
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -53,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         position: "relative",
     },
     feedbackContainer: {
-        display: "grid", 
+        display: "grid",
         gridTemplateColumns: "96px 1fr 96px",
         gridRowGap: theme.spacing(3),
         marginTop: theme.spacing(15),
@@ -85,22 +83,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     first: {
         bottom: theme.spacing(12),
-        height: theme.spacing(45), //535,
+        height: theme.spacing(45), // 535,
         left: theme.spacing(-3.5),
         transform: "matrix(0.89, 0.46, -0.46, 0.89, 0, 0)",
         zIndex: 10,
-        width: theme.spacing(59.5), //430
+        width: theme.spacing(59.5), // 430
         "& img": {
             objectPosition: "20% 50%",
         },
     },
     second: {
-        height: theme.spacing(57.5), //535,
+        height: theme.spacing(57.5), // 535,
         left: theme.spacing(70.5),
         top: theme.spacing(5),
         transform: "matrix(0.95, -0.3, 0.3, 0.95, 0, 0)",
         zIndex: 15,
-        width: theme.spacing(43), //430
+        width: theme.spacing(43), // 430
         "& img": {
             objectFit: "none",
             objectPosition: "50% 60%",
@@ -108,19 +106,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     third: {
         bottom: theme.spacing(5),
-        height: theme.spacing(43), //535,
+        height: theme.spacing(43), // 535,
         right: theme.spacing(52.5),
         transform: "matrix(0.99, -0.14, 0.14, 0.99, 0, 0)",
         zIndex: 15,
-        width: theme.spacing(57.5), //430
+        width: theme.spacing(57.5), // 430
     },
     forth: {
         top: theme.spacing(6),
-        height: theme.spacing(59.5), //535,
+        height: theme.spacing(59.5), // 535,
         right: theme.spacing(0),
         transform: "matrix(0.95, -0.31, 0.31, 0.95, 0, 0)",
         zIndex: 15,
-        width: theme.spacing(43), //430
+        width: theme.spacing(43), // 430
         "& img": {
             objectFit: "none",
             objectPosition: "50% 65%",
@@ -213,7 +211,7 @@ const useFeedbackStyles = makeStyles((theme: Theme) => ({
         textTransform: "uppercase",
         "& $city": {
             marginLeft: theme.spacing(2),
-        }
+        },
     },
     city: {
         color: "#938CD1",
@@ -242,13 +240,13 @@ interface FeedbackProps {
     comment: string;
 }
 
-const Feedback = ({avatar, name, from, comment}: FeedbackProps) => {
+const Feedback = ({ avatar, name, from, comment }: FeedbackProps) => {
     const classes = useFeedbackStyles();
 
     return (
         <Box component="div" className={classes.root} display="grid" gridTemplateColumns="140px 1fr">
             <Box component="div" className={classes.avatarContainer}>
-                {React.createElement(avatar, {className: classes.avatar})}
+                {React.createElement(avatar, { className: classes.avatar })}
             </Box>
             <Box component="div" display="flex" flexDirection="column" paddingLeft="80px">
                 <Typography variant="body1" className={classes.name}>
@@ -271,7 +269,7 @@ interface DotProps {
 }
 
 const Dot = ({ active, onClick }: DotProps) => (
-    <Box 
+    <Box
         component="div"
         display="inline-block"
         border="1px solid #FEFEFE"
@@ -279,10 +277,10 @@ const Dot = ({ active, onClick }: DotProps) => (
         width={16}
         height={16}
         onClick={onClick}
-        style={active ? {background: "#FEFEFE"} : {background: "transparent"}}
+        style={active ? { background: "#FEFEFE" } : { background: "transparent" }}
     >
     </Box>
-)
+);
 
 const buttonTheme = createTheme({
     palette: {
@@ -290,11 +288,11 @@ const buttonTheme = createTheme({
             main: "rgba(147,140,209,0.3)",
         },
     },
-})
+});
 
 const FeedbackSection = () => {
     const classes = useStyles();
-    const [activeItem, setActiveItem] = React.useState<number>(0)
+    const [activeItem, setActiveItem] = React.useState<number>(0);
     const { carouselFragment, thumbsFragment, ...api } = useSpringCarousel({
         withThumbs: true,
         withLoop: true,
@@ -302,7 +300,7 @@ const FeedbackSection = () => {
             id: `feedback_${idx}`,
             renderItem: <Feedback avatar={feedback.avatar} name={feedback.name} from={feedback.city} comment={feedback.comment} />,
             renderThumb: <Dot active={idx === activeItem} onClick={() => api.slideToItem(`feedback_${idx}`)}/>,
-        }))
+        })),
     });
 
     React.useEffect(() => {
@@ -312,18 +310,18 @@ const FeedbackSection = () => {
 
         return () => {
             window.clearInterval(interval);
-        }
+        };
     }, [api]);
 
     api.useListenToCustomEvent((data) => {
         switch (data.eventName) {
-            case "onSlideStartChange":
-                setActiveItem(data.nextItem);
-                break;
-            default:
-                break;
+        case "onSlideStartChange":
+            setActiveItem(data.nextItem);
+            break;
+        default:
+            break;
         }
-    })
+    });
 
     return (
         <Box component="div" className={classes.root}>
@@ -382,7 +380,7 @@ const FeedbackSection = () => {
                 </Box>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default FeedbackSection;

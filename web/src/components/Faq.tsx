@@ -6,12 +6,11 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography"
+import Typography from "@mui/material/Typography";
 import { Theme, styled } from "@mui/material/styles";
-import { createStyles, makeStyles, WithStyles, withStyles } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
 
-
-import { Collapse, Expand } from "../icons/Expand"; 
+import { Collapse, Expand } from "../icons/Expand";
 
 interface Question {
     question: string,
@@ -52,7 +51,7 @@ const name2Url: {[k in string]: string} = {
     "@mysticcase.fb": "https://www.facebook.com/mysticcase.fb/",
     "@mystic_case": "https://www.instagram.com/mystic_case/",
     "contact@mystic-case.co.uk": "mailto:contact@mystic-case.co.uk",
-}
+};
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -89,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     link: {
         color: "#5456B1",
         font: "inherit",
-    }
+    },
 }));
 
 const Accordion = styled(MuiAccordion)({
@@ -99,7 +98,7 @@ const Accordion = styled(MuiAccordion)({
     },
 });
 
-const AccordionSummary =styled(MuiAccordionSummary)({});
+const AccordionSummary = styled(MuiAccordionSummary)({});
 
 const iconStyles = {
     "& > .e": {
@@ -125,32 +124,34 @@ const iconStyles = {
 
 const Icon = styled(() => (
     <div>
-        <Expand  className="e" />
+        <Expand className="e" />
         <Collapse className="c" />
     </div>
-))(iconStyles)
+))(iconStyles);
 
 const FAQSection = () => {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState<string | false>(false);
 
-    const onChange = (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
+    const onChange = (panel: string) => (event: React.ChangeEvent<object>, newExpanded: boolean) => {
         setExpanded(newExpanded ? panel : false);
-    }
+    };
 
-    const formatMentionText = (text: string, values: Array<string>, regex: RegExp): string | Array<string | JSX.Element> => { 
-        if (!values.length)
+    const formatMentionText = (text: string, values: Array<string>, regex: RegExp): string | Array<string | JSX.Element> => {
+        if (!values.length) {
             return text;
+        }
 
         return text.split(regex).map((item, idx) => {
-            if (values.includes(item))
+            if (values.includes(item)) {
                 return (
                     <Link key={`regex-${idx}`} href={name2Url[item]} color="inherit" underline="none" variant="caption" className={classes.link} target="_blank" rel="noreferrer">
                         {item}
                     </Link>
-                )
+                );
+            }
             return item;
-        })
+        });
     };
 
     return (
@@ -169,7 +170,7 @@ const FAQSection = () => {
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography variant="body2" className={classes.answer}>
-                                    {formatMentionText(item.answer, Object.keys(name2Url), new RegExp(/((?:\w+)?@[\w\-.]+)/))}
+                                    {formatMentionText(item.answer, Object.keys(name2Url), /((?:\w+)?@[\w\-.]+)/)}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
@@ -178,7 +179,7 @@ const FAQSection = () => {
                 ))}
             </Container>
         </Box>
-    )
+    );
 };
 
 export default FAQSection;

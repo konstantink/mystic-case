@@ -7,14 +7,11 @@ import { Theme } from "@mui/material/styles";
 import { createStyles, WithStyles, withStyles } from "@mui/styles";
 import { animated, config, useTransition } from "@react-spring/web";
 
-
 export interface Requirement {
     icon: React.ReactElement;
     text: string;
     delay: number;
-};
-
-type RequirementViewProps = WithStyles<typeof styles> & Requirement;
+}
 
 const styles = (theme: Theme) => createStyles({
     container: {
@@ -22,24 +19,26 @@ const styles = (theme: Theme) => createStyles({
         display: "flex",
         flexDirection: "column",
     },
-    icon: { 
+    icon: {
         marginBottom: theme.spacing(6),
         "& svg": {
-            height: 160, 
+            height: 160,
             width: 160,
         },
     },
-})
+});
+
+type RequirementViewProps = WithStyles<typeof styles> & Requirement;
 
 const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: RequirementViewProps) => {
     const [show, setShow] = React.useState(false);
     const [ref, inView] = useInView({
         triggerOnce: true,
-        rootMargin: '80px 0px',
+        rootMargin: "80px 0px",
     });
     const transitions = useTransition(show, {
         from: { opacity: 0, transform: "translate3d(0, 100px, 0)" },
-        enter: { opacity: 1, transform: "translate3d(0, 0px, 0)", delay: delay },
+        enter: { opacity: 1, transform: "translate3d(0, 0px, 0)", delay },
         // delay: delay,
         config: { ...config.molasses, duration: 750 },
         // onRest: () => setShow(false),
@@ -48,7 +47,7 @@ const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: Requ
     React.useEffect(() => {
         // console.log("Inview", inView)
         setShow(inView);
-    }, [inView])
+    }, [inView]);
 
     return (
         <div ref={ref} className={classes.container}>
@@ -63,7 +62,7 @@ const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: Requ
                 </animated.div>
             ))}
         </div>
-    )
+    );
 });
 
-export default RequirementView
+export default RequirementView;

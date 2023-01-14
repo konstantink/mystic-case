@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
 // import { RouterState } from "connected-react-router";
-import jwt_decode, { JwtPayload } from "jwt-decode";
+import jwt_decode, { JwtPayload } from "jwt-decode"; // eslint-disable-line
 import * as React from "react";
 import { useLocation } from "react-router";
 // import { useSelector } from "react-redux";
@@ -16,11 +16,11 @@ interface User {
 export interface AuthContextType {
     user: User;
     loading: boolean;
-    error?: AxiosResponse<any> | null;
+    error?: AxiosResponse<FailureResponse> | null;
     login: (username: string, password: string) => void
     signUp: (username: string, email: string, password: string) => void;
     logout: () => void;
-};
+}
 
 export interface Payload extends JwtPayload {
     admin?: boolean;
@@ -30,7 +30,7 @@ export interface Payload extends JwtPayload {
 
 const AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 
-export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Element => {
+export const AuthProvider = ({ children }: React.PropsWithChildren): JSX.Element => {
     const [user, setUser] = React.useState<User>({} as User);
     const [error, setError] = React.useState<AxiosResponse<FailureResponse> | null>();
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -40,7 +40,7 @@ export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Ele
 
     React.useEffect(() => {
         if (error) setError(null);
-    }, [location])
+    }, [location]);
 
     React.useEffect(() => {
         (async () => {
@@ -56,16 +56,16 @@ export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Ele
             } catch (exc) {
                 console.log("failed to retrieve user info");
             }
-        })()
+        })();
     }, []);
 
     const login = async (username: string, password: string) => {
         setLoading(true);
 
         try {
-            const response = await authApi.tryLogin({username, password});
-            setUser({username, password})
-            if (response.success){
+            const response = await authApi.tryLogin({ username, password });
+            setUser({ username, password });
+            if (response.success) {
                 const claims = jwt_decode<Payload>(response.access_token);
                 localStorage.setItem("at", response.access_token);
                 localStorage.setItem("rt", response.refresh_token);
@@ -79,17 +79,17 @@ export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Ele
         }
     };
 
-    const signUp = async(username: string, email: string, password: string) => {
-
+    const signUp = async (username: string, email: string, password: string) => {
+        console.log("Sign Up", username, password, email);
     };
 
-    const logout = async() => {
+    const logout = async () => {
         try {
-            const response = await authApi.tryLogout()
+            const response = await authApi.tryLogout();
             if (response.success) {
                 setUser({} as User);
             }
-        } catch(exc) {
+        } catch (exc) {
             console.log("logout failed", exc);
         }
     };
@@ -105,12 +105,12 @@ export const AuthProvider = ({children }: React.PropsWithChildren<any>): JSX.Ele
         }),
         [user, loading, error]
     );
-    
+
     return (
         <AuthContext.Provider value={memoedValues}>
             {children}
         </AuthContext.Provider>
-    )
+    );
 };
 
 export const useAuth = (): AuthContextType => {

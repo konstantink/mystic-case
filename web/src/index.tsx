@@ -1,17 +1,16 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
+import React from "react";
+import { createRoot } from "react-dom/client";
 
-import { createBrowserHistory } from 'history';
+// import { createBrowserHistory } from "history";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import App from './App';
-import { AuthProvider } from "./hooks/useAuth";
-//import * as serviceWorker from './serviceWorker';
+import App from "./App";
+// import * as serviceWorker from './serviceWorker';
 
-import './index.css';
+import "../public/index.css";
 
-const history = createBrowserHistory();
+// const history = createBrowserHistory();
 // const store = createStore(combineReducers({
 //     router: connectRouter(history),
 // }));
@@ -28,8 +27,8 @@ const theme = createTheme({
             styleOverrides: {
                 input: {
                     fontFamily: "Pangram",
-                }
-            }
+                },
+            },
         },
         MuiFormHelperText: {
             styleOverrides: {
@@ -41,18 +40,19 @@ const theme = createTheme({
     },
 });
 
-const root = createRoot(document.getElementById('root')!);
-root.render(<React.StrictMode>
-        <ThemeProvider theme={theme}>
-            {/* <Provider store={store}> */}
-                <AuthProvider>
-                    <App history={history}/>
-                </AuthProvider>
-            {/* </Provider> */}
-        </ThemeProvider>
-    </React.StrictMode>
-
-);
+const rootElement = document.getElementById("root");
+if (rootElement) {
+    const root = createRoot(rootElement);
+    root.render(
+        <React.StrictMode>
+            <ThemeProvider theme={theme}>
+                {/* <Provider store={store}> */}
+                <App />
+                {/* </Provider> */}
+            </ThemeProvider>
+        </React.StrictMode>
+    );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
