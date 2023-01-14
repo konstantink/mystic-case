@@ -1,40 +1,34 @@
 import * as React from "react";
 import Marquee from "react-fast-marquee";
 
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { Theme } from "@mui/material/styles";
-import { createStyles, WithStyles, withStyles } from "@mui/styles";
+import Box, { BoxProps } from "@mui/material/Box";
+import MuiTypography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 
-const styles = (theme: Theme) => createStyles({
-    root: {
-        backgroundColor: "#FFD644",
-        display: "flex",
-        justifyContent: "space-around",
-        padding: theme.spacing(3, 0),
-        width: "100%",
-    },
-    text: {
-        color: "#242424",
-        fontFamily: "Monument Extended",
-        fontSize: `${theme.spacing(8)}px`,
-        fontWeight: 400,
-        letterSpacing: "4px",
-        lineHeight: "76.8px",
-        textTransform: "uppercase",
-    },
-});
+const Typography = styled(MuiTypography)(({ theme }) => `
+    color: #242424;
+    font-family: "Monument Extended";
+    font-size: ${theme.spacing(8)};
+    font-weight: 400;
+    letter-spacing: 4px;
+    line-height: 76.8px;
+    text-transform: uppercase;
+`);
 
-type StripeProps = WithStyles<typeof styles>;
-
-const Stripe = withStyles(styles)(({ classes, children }: React.PropsWithChildren<StripeProps>) => (
-    <Box className={classes.root} component="div">
+const Stripe = styled(({ className, children }: React.PropsWithChildren<BoxProps>) => (
+    <Box className={className} component="div">
         <Marquee play direction="left" gradient={false}>
-            <Typography className={classes.text} variant="h2">
+            <Typography variant="h2">
                 {children}
             </Typography>
         </Marquee>
     </Box>
-));
+))(({ theme }) => `
+    background-color: #FFD644;
+    display: flex;
+    justify-content: space-around;
+    padding: ${theme.spacing(3, 0)};
+    width: 100%;
+`);
 
 export default Stripe;

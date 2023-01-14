@@ -11,7 +11,7 @@ import { withStyles, WithStyles } from "@mui/styles";
 import * as api from "../api/api";
 import Description from "./Description";
 import FAQSection from "./Faq";
-import FeatureView, { Feature } from "./Feature";
+import FeaturesSection, { Feature } from "./Feature";
 import FeedbackSection from "./Feedback";
 import Footer from "./Footer";
 import Menu from "./Menu";
@@ -196,33 +196,33 @@ const requirementStyles = (theme: Theme) => createStyles({
     },
 });
 
-const featuresStyles = (theme: Theme) => createStyles({
-    root: {
-        display: "flex",
-        flexDirection: "column",
-        padding: theme.spacing(20, 12),
-    },
-    container: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    interactiveTextContainer: {
-        // padding: theme.spacing(0, 34, 15),
-        paddingBottom: theme.spacing(15),
-    },
-    interactiveText: {
-        color: "#FEFEFE",
-        fontFamily: "Pangram",
-        fontSize: "56px",
-        fontWeight: 600,
-        letterSpacing: "0.4px",
-        lineHeight: `${theme.spacing(8)}px`,
-        // marginLeft: "auto",
-        maxWidth: theme.spacing(120.5),
-        textTransform: "capitalize",
-    },
-});
+// const featuresStyles = (theme: Theme) => createStyles({
+//     root: {
+//         display: "flex",
+//         flexDirection: "column",
+//         padding: theme.spacing(20, 12),
+//     },
+//     container: {
+//         display: "flex",
+//         flexDirection: "row",
+//         justifyContent: "space-between",
+//     },
+//     interactiveTextContainer: {
+//         // padding: theme.spacing(0, 34, 15),
+//         paddingBottom: theme.spacing(15),
+//     },
+//     interactiveText: {
+//         color: "#FEFEFE",
+//         fontFamily: "Pangram",
+//         fontSize: "56px",
+//         fontWeight: 600,
+//         letterSpacing: "0.4px",
+//         lineHeight: `${theme.spacing(8)}px`,
+//         // marginLeft: "auto",
+//         maxWidth: theme.spacing(120.5),
+//         textTransform: "capitalize",
+//     },
+// });
 
 type HomeLayoutProps = WithStyles<typeof styles>;
 
@@ -236,10 +236,6 @@ interface LogoProps {
 
 interface RequirementsSectionProps extends WithStyles<typeof requirementStyles> {
     requirements: Array<Requirement>;
-}
-
-interface FeaturesSectionProps extends WithStyles<typeof featuresStyles> {
-    content: Array<Feature>;
 }
 
 export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
@@ -269,32 +265,6 @@ const RequirementsSection = withStyles(requirementStyles)(({ classes, requiremen
             {requirements.map((item, idx) => (
                 <RequirementView key={`requirement-view-${idx}`} {...item} />
             ))}
-        </Box>
-    );
-});
-
-const FeaturesSection = withStyles(featuresStyles)(({ classes, content }: FeaturesSectionProps) => {
-    return (
-        <Box component="div" className={classes.root}>
-            {/* <Box component="div" className={classes.interactiveTextContainer}> */}
-            <Grid container className={classes.interactiveTextContainer} spacing={5}>
-                <Grid item xs={4}></Grid>
-                <Grid item xs={8}>
-                    <Typography variant="h2" className={classes.interactiveText}>
-                        <span style={{ color: "#FFD644" }}>Mystic case</span> is an interactive game you can play on the table
-                    </Typography>
-                </Grid>
-            </Grid>
-            {/* </Box> */}
-            {/* <Box component="div" className={classes.container}> */}
-            <Grid container spacing={5}>
-                {content.map((item, idx) => (
-                    <Grid key={`feature-key-${idx}`} item xs={4}>
-                        <FeatureView key={`feature-view-${idx}`} {...item} />
-                    </Grid>
-                ))}
-            </Grid>
-            {/* </Box> */}
         </Box>
     );
 });
