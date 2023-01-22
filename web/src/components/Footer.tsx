@@ -3,74 +3,79 @@ import { Link } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Theme } from "@mui/material/styles";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 import NotificationForm from "./NotificationForm";
 
-const useStyles = makeStyles((theme: Theme) => ({
-    container: {
-        background: "#231E52",
-        display: "grid",
-        gridTemplateColumns: "30% 10% 40% 1fr",
-        padding: theme.spacing(15, 12),
-        rowGap: theme.spacing(7.5),
-    },
-    link: {
-        marginBottom: theme.spacing(3),
-        "& a": {
-            color: "#FEFEFE",
-            fontFamily: "Pangram",
-            fontSize: "32px",
-            fontWeight: 700,
-            letterSpacing: "0.4%",
-            lineHeight: "40px",
-            textDecoration: "none",
-        },
-    },
-    copy: {
-        color: "#938CD180",
-        fontFamily: "Pangram",
-        fontSize: "18px",
-        fontWeight: 400,
-        letterSpacing: "0.3px",
-        lineHeight: "28px",
-    },
-}));
+const FooterContainer = styled(Box)(({ theme }) => `
+    background: #231E52;
+    display: flex;
+    justify-content: center;
+    padding: ${theme.spacing(15, 12)};
+    width: 100%;
 
-const Footer = () => {
-    const classes = useStyles();
+    & .footer-container {
+        display: grid;
+        grid-template-columns: 30% 10% 40% 1fr;
+        max-width: calc(1920px - 2 * ${theme.spacing(12)});
+        row-gap: ${theme.spacing(7.5)};
+        width: 100%;
+    }
 
-    return (
-        <Box component="div" className={classes.container}>
+    & .footer-link {
+        margin-bottom: ${theme.spacing(3)};
+        & a {
+            color: #FEFEFE;
+            font-family: Pangram;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.4%;
+            line-height: 40px;
+            text-decoration: none;
+        }
+    }
+
+    & .footer-copy {
+        color: #938CD180;
+        font-family: Pangram;
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        line-height: 28px;
+    }
+`);
+
+const Footer = () => (
+    <FooterContainer component="div">
+        <Box component="div" className="footer-container">
             <Box component="div">
                 <NotificationForm />
             </Box>
             <Box component="div"></Box>
             <Box component="div" display="flex" flexDirection="column">
-                <Typography variant="body1" className={classes.link}>
+                <Typography variant="body1" className="footer-link">
                     <Link to="/shop">Shop</Link>
                 </Typography>
-                <Typography variant="body1" className={classes.link}>
-                    <Link to="/contacts" className={classes.link}>Contacts</Link>
+                <Typography variant="body1" className="footer-link">
+                    <Link to="/contacts" className="footer-link">Contacts</Link>
                 </Typography>
-                <Typography variant="body1" className={classes.link}>
-                    <Link to="/" className={classes.link}>Shipping &amp; Returns</Link>
+                <Typography variant="body1" className="footer-link">
+                    <Link to="/" className="footer-link">Shipping &amp; Returns</Link>
                 </Typography>
-                <Typography variant="body1" className={classes.link}>
-                    <Link to="/" className={classes.link}>Public Offer</Link>
+                <Typography variant="body1" className="footer-link">
+                    <Link to="/" className="footer-link">Public Offer</Link>
                 </Typography>
             </Box>
             <Box component="div">
                 !
             </Box>
             <Box component="div">
-                <Typography variant="body2" className={classes.copy}>
-                    Mystic Case &copy; 2021. All rights reserved.
+                <Typography variant="body2" className="footer-copy">
+                    Mystic Case &copy; 2023. All rights reserved.
                 </Typography>
             </Box>
         </Box>
-    );
-};
+    </FooterContainer>
+);
 
 export default Footer;

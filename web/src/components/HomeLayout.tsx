@@ -17,7 +17,7 @@ import Footer from "./Footer";
 import Menu from "./Menu";
 import PlanetMysticCase from "./PlanetMysticCase";
 import { FeaturedProductsList } from "./Product";
-import RequirementView, { Requirement } from "./Requirement";
+import RequirementsSection, { Requirement } from "./Requirement";
 import ShopnowButton from "./ShopnowButton";
 import Stripe from "./Stripe";
 import Star from "./Star";
@@ -171,59 +171,6 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
-const requirementStyles = (theme: Theme) => createStyles({
-    container: {
-        backgroundColor: "#231E52",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        padding: theme.spacing(20, 12),
-        // width: "100%",
-
-        "& h5": {
-            align: "center",
-            color: "rgb(255, 255, 255)",
-            fontFamily: "Pangram",
-            fontSize: "32px",
-            fontWeight: 700,
-            letterSpacing: "0.4px",
-            lineHeight: "40px",
-        },
-
-        "& h2": {
-            fontFamily: "Balsamiq Sans,Roboto,Arial",
-        },
-    },
-});
-
-// const featuresStyles = (theme: Theme) => createStyles({
-//     root: {
-//         display: "flex",
-//         flexDirection: "column",
-//         padding: theme.spacing(20, 12),
-//     },
-//     container: {
-//         display: "flex",
-//         flexDirection: "row",
-//         justifyContent: "space-between",
-//     },
-//     interactiveTextContainer: {
-//         // padding: theme.spacing(0, 34, 15),
-//         paddingBottom: theme.spacing(15),
-//     },
-//     interactiveText: {
-//         color: "#FEFEFE",
-//         fontFamily: "Pangram",
-//         fontSize: "56px",
-//         fontWeight: 600,
-//         letterSpacing: "0.4px",
-//         lineHeight: `${theme.spacing(8)}px`,
-//         // marginLeft: "auto",
-//         maxWidth: theme.spacing(120.5),
-//         textTransform: "capitalize",
-//     },
-// });
-
 type HomeLayoutProps = WithStyles<typeof styles>;
 
 interface HeaderProps extends WithStyles<typeof headerStyles> {
@@ -232,10 +179,6 @@ interface HeaderProps extends WithStyles<typeof headerStyles> {
 
 interface LogoProps {
     containerClass: string;
-}
-
-interface RequirementsSectionProps extends WithStyles<typeof requirementStyles> {
-    requirements: Array<Requirement>;
 }
 
 export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
@@ -256,16 +199,6 @@ export const Header = withStyles(headerStyles)(({ classes, invert = false }: Hea
                 <Menu invert={invert} />
             </header>
         </React.Fragment>
-    );
-});
-
-const RequirementsSection = withStyles(requirementStyles)(({ classes, requirements }: RequirementsSectionProps) => {
-    return (
-        <Box component="div" className={classes.container}>
-            {requirements.map((item, idx) => (
-                <RequirementView key={`requirement-view-${idx}`} {...item} />
-            ))}
-        </Box>
     );
 });
 
@@ -305,59 +238,61 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
             <Header />
             <main className={classes.mainRows}>
                 <div className="row-wrapper">
-                    <Grid container style={{ paddingBottom: 178, paddingLeft: 96, paddingRight: 96 }}>
-                        <Grid item xs={6} style={{ height: 637 }}>
-                            <Container className={classes.parallaxContainer}>
-                                {/* <GhostParallax /> */}
-                                <img src="/assets/images/box.png" alt="box" className={classes.boxImg} />
-                                <img src="/assets/images/left-ghost.png" alt="ghost_1" className={classes.leftGhostImg} />
-                                <img src="/assets/images/right-ghost.png" alt="ghost_2" className={classes.rightGhostImg} />
-                                <img src="/assets/images/back-ghost.png" alt="ghost_3" className={classes.backGhostImg} />
-                                <Container disableGutters className={classes.ellipse}> </Container>
-                                <Star height={64} width={56} left="42%" top={485} />
-                                <Star height={16} width={14} left="11%" top={520} />
-                                <Star height={48} width={42} left="26%" top={95} />
-                                <Star height={24} width={20} left="43%" top={-75} />
-                                <Star height={80} width={68} left="69%" top={-15} />
-                            </Container>
+                    <Box justifyContent="center" display="flex" sx={{ paddingBottom: 22, paddingLeft: 12, paddingRight: 12, width: "100%" }}>
+                        <Grid container sx={{ maxWidth: "calc(1920px - 2 * 96px)" }}>
+                            <Grid item xs={6} style={{ height: 637 }}>
+                                <Container className={classes.parallaxContainer}>
+                                    {/* <GhostParallax /> */}
+                                    <img src="/assets/images/box.png" alt="box" className={classes.boxImg} />
+                                    <img src="/assets/images/left-ghost.png" alt="ghost_1" className={classes.leftGhostImg} />
+                                    <img src="/assets/images/right-ghost.png" alt="ghost_2" className={classes.rightGhostImg} />
+                                    <img src="/assets/images/back-ghost.png" alt="ghost_3" className={classes.backGhostImg} />
+                                    <Container disableGutters className={classes.ellipse}> </Container>
+                                    <Star height={64} width={56} left="42%" top={485} />
+                                    <Star height={16} width={14} left="11%" top={520} />
+                                    <Star height={48} width={42} left="26%" top={95} />
+                                    <Star height={24} width={20} left="43%" top={-75} />
+                                    <Star height={80} width={68} left="69%" top={-15} />
+                                </Container>
+                            </Grid>
+                            <Grid item xs={6}
+                                sx={{
+                                    alignItems: "flex-start",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    paddingTop: 16,
+                                    "& h1": {
+                                        fontFamily: "Pangram",
+                                        fontSize: 72,
+                                        fontWeight: 700,
+                                        lineHeight: "74px",
+                                        letterSpacing: "0.4px",
+                                        textTransform: "capitalize",
+                                    },
+                                    "& p": {
+                                        fontFamily: "Pangram",
+                                        fontSize: 24,
+                                        fontWeight: "normal",
+                                        lineHeight: "36px",
+                                        letterSpacing: "0.3px",
+                                    },
+                                }}
+                            >
+                                <Typography variant="h1" sx={{ color: "#FFD644" }}>
+                                    Challenge your brain
+                                </Typography>
+                                <Typography variant="h1" sx={{ color: "#FFF" }} gutterBottom>
+                                    and spend quality time
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px" }}>
+                                    Try the brand new way to spend your leisure time at home in the most fun and challengeable way!
+                                </Typography>
+                                <ShopnowButton>
+                                    Shop now
+                                </ShopnowButton>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={6}
-                            sx={{
-                                alignItems: "flex-start",
-                                display: "flex",
-                                flexDirection: "column",
-                                paddingTop: 16,
-                                "& h1": {
-                                    fontFamily: "Pangram",
-                                    fontSize: 72,
-                                    fontWeight: 700,
-                                    lineHeight: "74px",
-                                    letterSpacing: "0.4px",
-                                    textTransform: "capitalize",
-                                },
-                                "& p": {
-                                    fontFamily: "Pangram",
-                                    fontSize: 24,
-                                    fontWeight: "normal",
-                                    lineHeight: "36px",
-                                    letterSpacing: "0.3px",
-                                },
-                            }}
-                        >
-                            <Typography variant="h1" sx={{ color: "#FFD644" }}>
-                                Challenge your brain
-                            </Typography>
-                            <Typography variant="h1" sx={{ color: "#FFF" }} gutterBottom>
-                                and spend quality time
-                            </Typography>
-                            <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px" }}>
-                                Try the brand new way to spend your leisure time at home in the most fun and challengeable way!
-                            </Typography>
-                            <ShopnowButton>
-                                Shop now
-                            </ShopnowButton>
-                        </Grid>
-                    </Grid>
+                    </Box>
                 </div>
                 <div className="row-wrapper">
                     <Stripe>

@@ -4,27 +4,25 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import MuiTextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { Theme, styled } from "@mui/material/styles";
-import { makeStyles } from "@mui/styles";
+import MuiTypography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 
 import { ArrowRight } from "../icons/Arrows";
 
-const useStyles = makeStyles((theme: Theme) => ({
-    text: {
-        color: "#FEFEFE",
-        fontFamily: "Pangram",
-        fontSize: "32px",
-        fontWeight: 700,
-        letterSpacing: "0.4%",
-        lineHeight: "40px",
-        marginBottom: theme.spacing(1),
-        "& > .yellow": {
-            color: "#FFD644",
-            font: "inherit",
-        },
-    },
-}));
+const Typography = styled(MuiTypography)(({ theme }) => `
+    color: #FEFEFE;
+    font-family: Pangram;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.4%;
+    line-height: 40px;
+    margin-bottom: ${theme.spacing(1)};
+
+    & > .yellow {
+        color: #FFD644;
+        font: inherit;
+    }
+`);
 
 const TextField = styled(MuiTextField)({
     "& .MuiInput-underline": {
@@ -54,40 +52,36 @@ const TextField = styled(MuiTextField)({
     },
 });
 
-const NotificationForm = () => {
-    const classes = useStyles();
-
-    return (
-        <Box component="div">
-            <Typography variant="body1" className={classes.text}>
-                Subscribe to get latest news about&nbsp;
-                <Typography variant="body1" className="yellow" component="span">
-                    our boxes
-                </Typography>
+const NotificationForm = () => (
+    <Box component="div">
+        <Typography variant="body1">
+            Subscribe to get latest news about&nbsp;
+            <Typography variant="body1" className="yellow" display="inline">
+                our boxes
             </Typography>
-            <form method="submit">
-                <TextField
-                    fullWidth
-                    placeholder="Enter your email address"
-                    margin="normal"
-                    type="text"
-                    value=""
-                    variant="standard"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    onClick={() => {} /* eslint-disable-line */}
-                                >
-                                    <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-            </form>
-        </Box>
-    );
-};
+        </Typography>
+        <form method="submit">
+            <TextField
+                fullWidth
+                placeholder="Enter your email address"
+                margin="normal"
+                type="text"
+                value=""
+                variant="standard"
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={() => {} /* eslint-disable-line */}
+                            >
+                                <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+            />
+        </form>
+    </Box>
+);
 
 export default NotificationForm;

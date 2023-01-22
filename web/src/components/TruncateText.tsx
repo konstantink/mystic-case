@@ -1,15 +1,17 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
+import { styled } from "@mui/material/styles";
+
 interface TruncateTextProps {
     truncateBy: "letters" | "words";
-    className: string;
+    className?: string;
     limit: number;
     showMore?: boolean;
     url?: string;
 }
 
-export default ({
+export default styled(({
     children,
     truncateBy = "words",
     limit,
@@ -46,4 +48,12 @@ export default ({
             </p>
         </React.Fragment>
     );
-};
+})(({ theme }) => `
+    color: #231E52;
+    font-family: Pangram;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    line-height: 30px;
+    margin-bottom: ${theme.spacing(4)};
+`);

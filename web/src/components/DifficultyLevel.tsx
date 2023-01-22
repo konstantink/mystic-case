@@ -1,9 +1,8 @@
 import * as React from "react";
 
 import Box from "@mui/material/Box";
-import { Theme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { makeStyles } from "@mui/styles";
 
 interface DifficultyLevelProps {
     difficulty: number;
@@ -21,42 +20,37 @@ const OutlinedStar = () => (
     </svg>
 );
 
-const useStyles = makeStyles((theme: Theme) => ({ // eslint-disable-line
-    container: {
-        alignItems: "flex-end",
-        display: "flex",
-        flexDirection: "column",
-        "& p": {
-            color: "#231E52",
-            fontFamily: "Pangram",
-            fontSize: 20,
-            fontWeight: 700,
-            lineHeight: "38px",
-            lineSpacing: "0.8px",
-            textTransform: "uppercase",
-        },
-    },
-    starsContainer: {
-        display: "flex",
-        flexDirection: "row",
-    },
-}));
+const DifficultyLevelContainer = styled(Box)`
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    & p {
+        color: #231E52;
+        font-family: Pangram;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 38px;
+        line-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+`;
 
-const DifficultyLevel = ({ difficulty }: DifficultyLevelProps) => {
-    const classes = useStyles();
+const StarsContainer = styled(Box)`
+    display: flex;
+    flex-direction: row;
+`;
 
-    return (
-        <Box component="div" className={classes.container}>
-            <Typography variant="body1">
-                Difficulty level
-            </Typography>
-            <Box component="div" className={classes.starsContainer}>
-                {[1, 2, 3, 4, 5].map(item => {
-                    return difficulty >= item ? (<FilledStar key={`star-${item}`} />) : (<OutlinedStar key={`star-${item}`} />);
-                })}
-            </Box>
-        </Box>
-    );
-};
+const DifficultyLevel = ({ difficulty }: DifficultyLevelProps) => (
+    <DifficultyLevelContainer component="div">
+        <Typography variant="body1">
+            Difficulty level
+        </Typography>
+        <StarsContainer component="div">
+            {[1, 2, 3, 4, 5].map(item => {
+                return difficulty >= item ? (<FilledStar key={`star-${item}`} />) : (<OutlinedStar key={`star-${item}`} />);
+            })}
+        </StarsContainer>
+    </DifficultyLevelContainer>
+);
 
 export default DifficultyLevel;

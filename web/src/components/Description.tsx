@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import * as React from "react";
 import { animated } from "react-spring";
 
@@ -9,79 +8,88 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
-import { Theme } from "@mui/material/styles";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 import ShopnowButton from "./ShopnowButton";
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(25, 12),
-    },
-    h1: {
-        color: "#FEFEFE",
-        fontFamily: "Pangram",
-        fontSize: 72,
-        fontWeight: 700,
-        letterSpacing: "0.4px",
-        lineHeight: "74px",
-        textTransform: "capitalize",
-    },
-    rightSide: {
-        alignItems: "flex-start",
-        display: "flex",
-        flexDirection: "column",
-        paddingTop: theme.spacing(5),
-    },
-    leftSide: {
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-    },
-    marginBottom80: {
-        marginBottom: theme.spacing(10),
-    },
-    marginBottom40: {
-        marginBottom: theme.spacing(5),
-    },
-    yellowH1: {
-        color: "#FFD644",
-    },
-    h4: {
-        color: "#FEFEFE",
-        fontFamily: "Pangram",
-        fontSize: 32,
-        fontWeight: 700,
-        letterSpacing: "0.4px",
-        lineHeight: "40px",
-    },
-    item: {
-        "& div:first-child": {
-            marginRight: theme.spacing(4),
-        },
-    },
-    imgContainer: {
-        "& img": {
-            borderRadius: theme.spacing(3),
-            height: "100%",
-            objectFit: "cover",
-            width: "100%",
-        },
-    },
-    backImg: {
-        transform: "rotate(-10.54deg)",
-        width: "90%",
-    },
-    frontImg: {
-        height: "65%",
-        top: "30%",
-        position: "absolute",
-        transform: "rotate(4.14deg)",
-        width: "80%",
-        zIndex: 10,
-    },
-}));
+const DescriptionSectionContainer = styled(Box)(({ theme }) => `
+    padding: ${theme.spacing(25, 12)};
+    max-width: calc(1920px - 2 * ${theme.spacing(12)});
+    
+    & .dsc-h1 {
+        color: #FEFEFE;
+        font-family: Pangram;
+        font-size: ${theme.spacing(9)};
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        line-height: 74px;
+        text-transform: capitalize;
+    }
+
+    & .dsc-right-side {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        padding-top: ${theme.spacing(5)};
+    }
+
+    & .dsc-left-side {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    & .dsc-margin-bottom80 {
+        margin-bottom: ${theme.spacing(10)};
+    }
+
+    & .dsc-margin-bottom40 {
+        margin-bottom: ${theme.spacing(5)};
+    }
+
+    & .dsc-yellow {
+        color: #FFD644;
+    }
+
+    & .dsc-h4 {
+        color: #FEFEFE;
+        font-family: Pangram;
+        font-size: ${theme.spacing(4)};
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        line-height: ${theme.spacing(5)};
+    }
+
+    & .dsc-item {
+        & div:first-of-type {
+            margin-right: ${theme.spacing(4)};
+        }
+    }
+
+    & .dsc-img-container {
+        & img {
+            border-radius: ${theme.spacing(3)};
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+    }
+
+    & .dsc-back-img {
+        transform: rotate(-10.54deg);
+        width: 90%;
+    }
+
+    & .dsc-front-img {
+        height: 65%;
+        top: 30%;
+        position: absolute;
+        transform: rotate(4.14deg);
+        width: 80%;
+        z-index: 10;
+    }
+`);
 
 const BulletIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -90,7 +98,6 @@ const BulletIcon = () => (
 );
 
 const Description = () => {
-    const classes = useStyles();
     const features = [
         "Exciting plot with logical and interactive tasks;",
         "Various objects and tool;",
@@ -99,32 +106,32 @@ const Description = () => {
     ];
 
     return (
-        <Box component="div" className={classes.root}>
+        <DescriptionSectionContainer component="div">
             <Grid container spacing={10}>
-                <Grid item xs={6} className={classes.leftSide}>
-                    <animated.div className={clsx(classes.imgContainer, classes.backImg)}>
+                <Grid item xs={6} className="dsc-left-side">
+                    <animated.div className="dsc-img-container dsc-back-img">
                         <img src="/assets/images/description_1.webp" alt="Collaboration" />
                     </animated.div>
-                    <animated.div className={clsx(classes.imgContainer, classes.frontImg)}>
+                    <animated.div className="dsc-img-container dsc-front-img">
                         <img src="/assets/images/description_2.webp" alt="Fun" />
                     </animated.div>
                 </Grid>
-                <Grid item xs={6} className={classes.rightSide}>
-                    <Typography variant="h2" className={clsx(classes.h1, classes.marginBottom80)}>
+                <Grid item xs={6} className="dsc-right-side">
+                    <Typography variant="h2" className="dsc-h1 dsc-margin-bottom80">
                         Your&nbsp;
-                        <Typography variant="h2" component="span" className={clsx(classes.h1, classes.yellowH1)}>
+                        <Typography variant="body1" display="inline" className="dsc-h1 dsc-yellow">
                             fun activity
                         </Typography>
                     </Typography>
-                    <List dense={false} className={classes.marginBottom80}>
+                    <List dense={false} className="dsc-margin-bottom80">
                         {features.map((item, idx) => (
-                            <ListItem key={`feature-item-${idx}`} disableGutters className={clsx(classes.item, classes.marginBottom40)}>
+                            <ListItem key={`feature-item-${idx}`} disableGutters className="dsc-item dsc-margin-bottom40">
                                 <ListItemIcon>
                                     <BulletIcon />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={item}
-                                    primaryTypographyProps={{ className: classes.h4 }}
+                                    primaryTypographyProps={{ className: "dsc-h4" }}
                                 />
                             </ListItem>
                         ))}
@@ -134,7 +141,7 @@ const Description = () => {
                     </ShopnowButton>
                 </Grid>
             </Grid>
-        </Box>
+        </DescriptionSectionContainer>
     );
 };
 

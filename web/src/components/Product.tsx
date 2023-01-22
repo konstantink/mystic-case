@@ -1,9 +1,9 @@
 import * as React from "react";
 
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
-import { Theme, styled } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import { animated, config, useSpring } from "@react-spring/web";
 
@@ -23,6 +23,10 @@ import DifficultyLevel from "./DifficultyLevel";
 //     images: Array<ProductImage>;
 // }
 
+type ClassNameProps = {
+    className?: string;
+}
+
 type ProductProps = ProductItem;
 
 interface FeaturedProductsListProps {
@@ -30,77 +34,122 @@ interface FeaturedProductsListProps {
     products: Array<ProductItem>;
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-    productContainer: {
-        marginBottom: theme.spacing(15),
-        position: "relative",
-        "& a, a:visited": {
-            color: "#231E52",
-            fontFamily: "Pangram",
-            fontSize: 20,
-            fontWeight: 700,
-            letterSpacing: "0.3px",
-            lineHeight: "30px",
-            textDecoration: "none",
-        },
-        "& a::after": {
-            content: "\" >\"",
-            color: "#231E52",
-        },
+const ProductContainer = styled(Box)(({ theme }) => `
+    margin-bottom: ${theme.spacing(15)};
+    position: relative;
+    & a, a:visited {
+        color: #231E52;
+        font-family: Pangram;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        line-height: 30px;
+        text-decoration: none;
+    }
+    & a::after {
+        content: " >";
+        color: ;#231E52;
     },
-    imageContainer: {
-        backgroundColor: "#3A3185",
-        borderRadius: theme.spacing(3),
-        height: 748,
-        marginBottom: theme.spacing(3),
-        padding: theme.spacing(6),
-        width: 748,
-    },
-    image: {
-        // background: "url("/assets/images/family.jpeg")",
-        borderRadius: theme.spacing(2),
-        height: 748,
-        // marginBottom: theme.spacing(3),
-        overflow: "hidden",
-        width: 748,
-        "& img": {
-            height: "100%",
-            objectFit: "cover",
-            width: "100%",
-        },
-    },
-    productNamePrice: {
-        color: "#231E52",
-        fontFamily: "Pangram",
-        fontSize: "32px",
-        fontWeight: 700,
-        letterSpacing: "0.4%",
-        lineHeight: "40px",
-    },
-    productDescription: {
-        color: "#231E52",
-        fontFamily: "Pangram",
-        fontSize: "20px",
-        fontWeight: 400,
-        letterSpacing: "0.3px",
-        lineHeight: "30px",
-        marginBottom: theme.spacing(4),
-    },
-    actionSection: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        // position: "absolute",
-        // marginBottom: theme.spacing(15),
-    },
-    buttonSection: {
-        display: "flex",
-        flexDirection: "row",
-        "& div:not(:last-child)": {
-            marginRight: theme.spacing(2),
-        },
-    },
-}));
+`);
+
+const ImageContainer = styled(Box)(({ theme }) => `
+    background-color: #3A3185;
+    border-radius: ${theme.spacing(3)};
+    height: 748px;
+    margin-bottom: ${theme.spacing(3)};
+    padding: ${theme.spacing(6)};
+    width: 748px;
+`);
+
+const Image = styled(Box)(({ theme }) => `
+    // background: url("/assets/images/family.jpeg");
+    border-radius: ${theme.spacing(2)};
+    height: 748px;
+    // margin-bottom: ${theme.spacing(3)};
+    overflow: hidden;
+    width: 748px;
+    & img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+`);
+
+const ProductPriceName = styled(Typography)`
+    color: #231E52;
+    font-family: Pangram;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.4%;
+    line-height: 40px;
+`;
+
+interface SomeProps {
+    backgroundColor?: string;
+    borderRadius?: string;
+    height?: number;
+    right?: number;
+    top?: number;
+    width?: number;
+}
+
+const LabelContainer = styled("div")<SomeProps>((props) => `
+    align-content: center;
+    align-items: center;
+    background-color: ${props.backgroundColor ? props.backgroundColor : "none"};
+    border-radius: ${props.borderRadius ? props.borderRadius : "0%"};
+    display: flex;
+    height: ${props.height}px;
+    justify-content: center;
+    position: absolute;
+    right: ${props.right}px;
+    text-align: center;
+    top: ${props.top}px;
+    width: ${props.width}px;
+    z-index: 9999;
+`);
+
+const ActionSection = styled(Box)`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+`;
+
+const ButtonSection = styled(Box)(({ theme }) => `
+    display: flex;
+    flex-direction: row;
+    & div:not(:last-child) {
+        margin-right: ${theme.spacing(2)};
+    }
+`);
+
+const Gear = styled(({ className }: ClassNameProps) => (
+    <div className={className}>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+))`
+    height: 156px;
+    margin: auto;
+    position: relative;
+    width: 156px;
+    & div {
+        background: #FFD644;
+        border-radius: 28px;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+    & div:first-of-type {
+        transform: rotate(120deg);
+    }
+    & div:nth-of-type(2) {
+        transform: rotate(240deg);
+    }
+`;
 
 const useNewLabelStyles = makeStyles(() => ({
     container: {
@@ -173,64 +222,31 @@ const NewLabel = () => {
     });
 
     return (
-        <div className={classes.container}>
+        <LabelContainer right={0} top={0} height={156} width={156}>
             <animated.div className={classes.spinner} style={springProps}>
-                <div className={classes.gear}>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
+                <Gear />
             </animated.div>
             <span className={classes.text}>New</span>
-        </div>
+        </LabelContainer>
     );
 };
 
-const useBestSellerLabelStyles = makeStyles(() => ({
-    container: {
-        backgroundColor: "#B3D138",
-        borderRadius: "50%",
-        alignItems: "center",
-        display: "flex",
-        height: 220,
-        position: "absolute",
-        top: -22,
-        right: -22,
-        textAlign: "center",
-        width: 220,
-        zIndex: 9999,
-    },
-    text: {
-        color: "#3A3185",
-        fontFamily: "Monument Extended",
-        fontSize: 30,
-        fontWeight: 700,
-        letterSpacing: "4px",
-        lineHeight: "30px",
-        textTransform: "uppercase",
-        transform: "rotate(-15deg)",
-    },
-}));
-
-const BestSellerLabel = () => {
-    const classes = useBestSellerLabelStyles();
-
-    return (
-        <div className={classes.container}>
-            {/* <div className={classes.spinner} style={springProps}>
-                <div className={classes.gear}>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div> */}
-            <span className={classes.text}>Best seller</span>
-        </div>
-    );
-};
+const BestSellerLabel = styled(({ className }: ClassNameProps) => (
+    <LabelContainer backgroundColor="#B3D138" borderRadius="50%" top={-22} right={-22} height={220} width={220}>
+        <span className={className}>Best seller</span>
+    </LabelContainer>
+))`
+    color: #3A3185;
+    font-family: "Monument Extended";
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    line-height: 30px;
+    text-transform: uppercase;
+    transform: rotate(-15deg);
+`;
 
 export const Product = ({ ...product }: ProductProps) => {
-    const classes = useStyles();
     const springProps = useSpring({
         from: { scale: 1.25 },
         to: { scale: 1 },
@@ -238,70 +254,72 @@ export const Product = ({ ...product }: ProductProps) => {
     });
 
     return (
-        <Box className={classes.productContainer}>
+        <ProductContainer component="div">
             {product.isNew && (<NewLabel />)}
             {product.isBestseller && (<BestSellerLabel />)}
-            <Box className={classes.imageContainer}>
-                <Box className={classes.image}>
+            <ImageContainer component="div">
+                <Image component="div">
                     <animated.img src={product.images ? product.images[0].url : ""} alt={product.images ? product.images[0].name : "product image"} style={springProps}/>
-                </Box>
-            </Box>
+                </Image>
+            </ImageContainer>
             <Box flexDirection="row" display="flex" justifyContent="space-between" marginBottom="16px">
-                <Typography variant="body1" className={classes.productNamePrice}>
+                <ProductPriceName variant="body1">
                     {product.name}
-                </Typography>
-                <Typography variant="body1" className={classes.productNamePrice}>
+                </ProductPriceName>
+                <ProductPriceName variant="body1">
                     {product.prices
-                        ? Intl.NumberFormat("en-GB", { style: "currency", currency: product.prices[0].currency }).format(typeof product.prices[0].price === "number" ? product.prices[0].price / 100 : parseFloat(product.prices[0].price))
+                        ? Intl.NumberFormat("en-GB", { style: "currency", currency: product.prices[0].currency }).format(typeof product.prices[0].price === "number" ? product.prices[0].price / 100 : parseFloat(product.prices[0].price) / 100)
                         : "N/A"}
-                </Typography>
+                </ProductPriceName>
             </Box>
             <TruncateText
                 truncateBy="words"
                 limit={20}
-                className={classes.productDescription}
                 showMore
                 url={"/"}
             >
                 {product.description}
             </TruncateText>
-            <Box component="div" className={classes.actionSection}>
-                <Box component="div" className={classes.buttonSection}>
+            <ActionSection component="div">
+                <ButtonSection component="div">
                     <BuyNowButton />
                     <AddToCartButton />
-                </Box>
+                </ButtonSection>
                 <DifficultyLevel difficulty={product.difficulty || 0} />
-            </Box>
-        </Box>
+            </ActionSection>
+        </ProductContainer>
     );
 };
 
 export const FeaturedProductsList = styled(({ className, products }: FeaturedProductsListProps) => (
-    <Grid className={className} container>
-        {products.sort((left: ProductItem, right: ProductItem) => {
-            if (left.isNew && !right.isNew) {
-                return -1;
-            } else if (!left.isNew && right.isNew) {
-                return 1;
-            } else if (left.isBestseller && !right.isBestseller) {
-                return -1;
-            } else if (!left.isBestseller && right.isBestseller) {
-                return 1;
-            } else if (left.isFeatured && !right.isFeatured) {
-                return -1;
-            } else if (!left.isFeatured && right.isFeatured) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }).map((item, idx) => (
-            <Grid key={`key-produc-${idx}`} item xs={6} style={{ maxWidth: 844 }}>
-                <Product {...item} />
-            </Grid>
-        ))}
-    </Grid>
+    <Box component="div" className={className}>
+        <Grid container disableEqualOverflow columnSpacing={5} sx={{ justifyContent: "center" }}>
+            {products.sort((left: ProductItem, right: ProductItem) => {
+                if (left.isNew && !right.isNew) {
+                    return -1;
+                } else if (!left.isNew && right.isNew) {
+                    return 1;
+                } else if (left.isBestseller && !right.isBestseller) {
+                    return -1;
+                } else if (!left.isBestseller && right.isBestseller) {
+                    return 1;
+                } else if (left.isFeatured && !right.isFeatured) {
+                    return -1;
+                } else if (!left.isFeatured && right.isFeatured) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+                // style={{ maxWidth: 844 }}
+            }).map((item, idx) => (
+                <Grid key={`key-produc-${idx}`} xs={6} style={{ maxWidth: 886 }}>
+                    <Product {...item} />
+                </Grid>
+            ))}
+        </Grid>
+    </Box>
 ))(({ theme }) => `
-    justifyContent: "space-between",
-    paddingLeft: ${theme.spacing(12)},
-    paddingRight: ${theme.spacing(12)}`
-);
+    // justify-content: space-between;
+    padding-left: ${theme.spacing(12)};
+    padding-right: ${theme.spacing(12)};
+`);

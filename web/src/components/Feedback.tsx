@@ -1,12 +1,10 @@
-import clsx from "clsx";
 import * as React from "react";
 import { useSpringCarousel } from "react-spring-carousel-js";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { createTheme, Theme } from "@mui/material/styles";
-import { makeStyles, ThemeProvider } from "@mui/styles";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 
 import { ArrowLeft, ArrowRight } from "../icons/Arrows";
 import { AvatarGirl1, AvatarGirl2, AvatarMan1, AvatarMan2, AvatarMan3 } from "../icons/Avatars";
@@ -39,199 +37,226 @@ const feedbacks = [{
     comment: "We really enjoyed our very first Mystic Case and can't wait for the next one. It took us slightly longer than the 2 hours and we did use some of the clues provided but we all thoroughly enjoyed it. The story of the case was really well thought out and we can't wait to see what else is in store. Also I mentioned we would be playing it for my birthday and the thoughtfulness of the team by including a birthday card was lovely. At first the price may seem expensive but honestly it is worth it and you won't regret it. For a fun family night or maybe a date night, I highly recommend. Thank you Mystic Case",
 }];
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        background: "#231E52",
-        padding: theme.spacing(21, 12),
-    },
-    stickersContainer: {
-        display: "flex",
-        flexDirection: "row",
-        height: theme.spacing(90),
-        position: "relative",
-    },
-    feedbackContainer: {
-        display: "grid",
-        gridTemplateColumns: "96px 1fr 96px",
-        gridRowGap: theme.spacing(3),
-        marginTop: theme.spacing(15),
-    },
-    imageContainer: {
-        border: "8px solid",
-        borderRadius: theme.spacing(3),
-        overflow: "hidden",
-        position: "absolute",
-    },
-    image: {
-        "& img": {
-            height: "100%",
-            objectFit: "cover",
-            width: "100%",
-        },
-    },
-    purpleBorder: {
-        borderColor: "#5B4DD1",
-    },
-    lightPurpleBorder: {
-        borderColor: "#938CD1",
-    },
-    lightGreenBorder: {
-        borderColor: "#B3D138",
-    },
-    yellowBorder: {
-        borderColor: "#FFD644",
-    },
-    first: {
-        bottom: theme.spacing(12),
-        height: theme.spacing(45), // 535,
-        left: theme.spacing(-3.5),
-        transform: "matrix(0.89, 0.46, -0.46, 0.89, 0, 0)",
-        zIndex: 10,
-        width: theme.spacing(59.5), // 430
-        "& img": {
-            objectPosition: "20% 50%",
-        },
-    },
-    second: {
-        height: theme.spacing(57.5), // 535,
-        left: theme.spacing(70.5),
-        top: theme.spacing(5),
-        transform: "matrix(0.95, -0.3, 0.3, 0.95, 0, 0)",
-        zIndex: 15,
-        width: theme.spacing(43), // 430
-        "& img": {
-            objectFit: "none",
-            objectPosition: "50% 60%",
-        },
-    },
-    third: {
-        bottom: theme.spacing(5),
-        height: theme.spacing(43), // 535,
-        right: theme.spacing(52.5),
-        transform: "matrix(0.99, -0.14, 0.14, 0.99, 0, 0)",
-        zIndex: 15,
-        width: theme.spacing(57.5), // 430
-    },
-    forth: {
-        top: theme.spacing(6),
-        height: theme.spacing(59.5), // 535,
-        right: theme.spacing(0),
-        transform: "matrix(0.95, -0.31, 0.31, 0.95, 0, 0)",
-        zIndex: 15,
-        width: theme.spacing(43), // 430
-        "& img": {
-            objectFit: "none",
-            objectPosition: "50% 65%",
-        },
-    },
-    textContainer: {
-        alignItems: "flex-end",
-        borderRadius: theme.spacing(3),
-        display: "flex",
-        height: theme.spacing(39),
-        padding: theme.spacing(3),
-        position: "absolute",
-        width: theme.spacing(39),
-    },
-    plot: {
-        background: "#938CD1",
-        left: theme.spacing(22.25),
-        top: theme.spacing(5.5),
-        transform: "matrix(1, -0.07, 0.07, 1, 0, 0)",
-        zIndex: 20,
-    },
-    hints: {
-        background: "#FFD644",
-        bottom: theme.spacing(7),
-        left: theme.spacing(54),
-        transform: "matrix(0.99, -0.12, 0.12, 0.99, 0, 0)",
-    },
-    clues: {
-        background: "#B3D138",
-        right: theme.spacing(49),
-        top: theme.spacing(3),
-        transform: "matrix(0.98, 0.22, -0.22, 0.98, 0, 0)",
-        zIndex: 20,
-    },
-    objects: {
-        background: "#5B4DD1",
-        bottom: theme.spacing(7),
-        right: theme.spacing(10),
-        transform: "matrix(0.99, 0.11, -0.11, 0.99, 0, 0)",
-        zIndex: 10,
-    },
-    text: {
-        color: "#000",
-        fontFamily: "Pangram",
-        fontSize: theme.spacing(4),
-        fontWeight: 900,
-        letterSpacing: "0.6px",
-        lineHeight: "32px",
-        textTransform: "uppercase",
-    },
-    navButtons: {
-        borderRadius: theme.spacing(6),
-        fontSize: theme.spacing(5),
-        height: theme.spacing(12),
-        width: theme.spacing(12),
-    },
-    dotsWrapper: {
-        "&>div": {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-        },
-        "&>div>div:not(:last-child)": {
-            marginRight: theme.spacing(1),
-        },
-    },
-}));
+const FeedbackSectionContainer = styled(Box)(({ theme }) => `
+    align-items: center;
+    background: #231E52;
+    display: flex;
+    filter: drop-shadow(2px -4px 6px black);
+    flex-direction: column;
+    padding: ${theme.spacing(21, 12)};
+    width: 100%;
 
-const useFeedbackStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(0, 25),
-        width: "100%",
-    },
-    avatar: {
-        height: "100%",
-        width: "100%",
-    },
-    avatarContainer: {
-        height: theme.spacing(17.5),
-        width: theme.spacing(17.5),
-    },
-    name: {
-        color: "#B3D138",
-        fontFamily: "Pangram",
-        fontSize: "24px",
-        fontWeight: 900,
-        letterSpacing: "0.3px",
-        lineHeight: "24px",
-        marginBottom: theme.spacing(2.5),
-        textTransform: "uppercase",
-        "& $city": {
-            marginLeft: theme.spacing(2),
-        },
-    },
-    city: {
-        color: "#938CD1",
-        fontFamily: "Pangram",
-        fontSize: "18px",
-        fontWeight: 400,
-        letterSpacing: "0.3px",
-        lineHeight: "28px",
-        textTransform: "none",
-    },
-    text: {
-        color: "#FEFEFE",
-        fontFamily: "Pangram",
-        fontSize: "24px",
-        fontWeight: 400,
-        letterSpacing: "0.3px",
-        lineHeight: "36px",
-        textTransform: "none",
-    },
-}));
+    & .fb-stickers-container {
+        display: flex;
+        flex-direction: row;
+        height: ${theme.spacing(90)};
+        max-width: calc(1920px - 2 * ${theme.spacing(12)});
+        position: relative;
+
+        & .fb-image-container {
+            border: 8px solid;
+            border-radius: ${theme.spacing(3)};
+            overflow: hidden;
+            position: absolute;
+        }
+
+        & .fb-image img {
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        & .fb-purple-border {
+            border-color: #5B4DD1;
+        }
+
+        & .fb-light-purple-border {
+            border-color: #938CD1
+        }
+
+        & .fb-light-green-border {
+            border-color: #B3D138;
+        }
+
+        & .fb-yellow-border {
+            border-color: #FFD644;
+        }
+
+        & .fb-first {
+            bottom: ${theme.spacing(12)};
+            height: ${theme.spacing(45)}; // 535,
+            left: ${theme.spacing(-3.5)};
+            transform: matrix(0.89, 0.46, -0.46, 0.89, 0, 0);
+            z-index: 10;
+            width: ${theme.spacing(59.5)}; // 430
+            & img {
+                object-position: 20% 50%;
+            }
+        }
+
+        & .fb-second {
+            height: ${theme.spacing(57.5)}; // 535,
+            left: ${theme.spacing(70.5)};
+            top: ${theme.spacing(5)};
+            transform: matrix(0.95, -0.3, 0.3, 0.95, 0, 0);
+            z-index: 15;
+            width: ${theme.spacing(43)}; // 430
+            & img {
+                object-fit: none;
+                object-position: 50% 60%;
+            }
+        }
+
+        & .fb-third {
+            bottom: ${theme.spacing(5)};
+            height: ${theme.spacing(43)}; // 535,
+            right: ${theme.spacing(52.5)};
+            transform: matrix(0.99, -0.14, 0.14, 0.99, 0, 0);
+            z-index: 15;
+            width: ${theme.spacing(57.5)}; // 430
+        }
+
+        & .fb-forth {
+            top: ${theme.spacing(6)};
+            height: ${theme.spacing(59.5)}; // 535,
+            right: ${theme.spacing(0)};
+            transform: matrix(0.95, -0.31, 0.31, 0.95, 0, 0);
+            z-index: 15;
+            width: ${theme.spacing(43)}; // 430
+            & img {
+                object-fit: none;
+                object-position: 50% 65%;
+            }
+        }
+
+        & .fb-text-container {
+            align-items: flex-end;
+            border-radius: ${theme.spacing(3)};
+            display: flex;
+            height: ${theme.spacing(39)};
+            padding: ${theme.spacing(3)};
+            position: absolute;
+            width: ${theme.spacing(39)};
+        }
+
+        & .fb-plot {
+            background: #938CD1;
+            left: ${theme.spacing(22.25)};
+            top: ${theme.spacing(5.5)};
+            transform: matrix(1, -0.07, 0.07, 1, 0, 0);
+            z-index: 20;
+        }
+
+        & .fb-hints {
+            background: #FFD644;
+            bottom: ${theme.spacing(7)};
+            left: ${theme.spacing(54)};
+            transform: matrix(0.99, -0.12, 0.12, 0.99, 0, 0);
+        }
+
+        & .fb-clues {
+            background: #B3D138;
+            right: ${theme.spacing(49)};
+            top: ${theme.spacing(3)};
+            transform: matrix(0.98, 0.22, -0.22, 0.98, 0, 0);
+            z-index: 20;
+        }
+
+        & .fb-objects {
+            background: #5B4DD1;
+            bottom: ${theme.spacing(7)};
+            right: ${theme.spacing(10)};
+            transform: matrix(0.99, 0.11, -0.11, 0.99, 0, 0);
+            z-index: 10;
+        }
+
+        & .fb-text {
+            color: #000;
+            font-family: Pangram;
+            font-size: ${theme.spacing(4)};
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            line-height: 32px;
+            text-transform: uppercase;
+        }
+    }
+
+    & .fb-feedback-container {
+        display: grid;
+        grid-template-columns: 96px 1fr 96px;
+        grid-row-gap: ${theme.spacing(3)};
+        margin-top: ${theme.spacing(15)};
+        max-width: calc(1920px - 2 * ${theme.spacing(12)});
+
+        .fb-nav-buttons {
+            border-radius: ${theme.spacing(6)};
+            font-size: ${theme.spacing(5)};
+            height: ${theme.spacing(12)};
+            width: ${theme.spacing(12)};
+        }
+
+        .fb-dots-wrapper {
+            &>div {
+                display: flex
+                flex-direction: row;
+                justify-content: center;
+            }
+            &>div>div:not(:last-of-type) {
+                margin-right: ${theme.spacing(1)};
+            }
+        }
+    }
+`);
+
+const FeedbackContainer = styled(Box)(({ theme }) => `
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    padding: ${theme.spacing(0, 25)};
+
+    .fb-c-avatar {
+        height: 100%;
+        width: 100%;
+    }
+
+    .fb-c-avatar-container {
+        height: ${theme.spacing(17.5)};
+        width: ${theme.spacing(17.5)}
+    }
+
+    .fb-c-name {
+        color: #B3D138;
+        font-family: Pangram;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 0.3px;
+        line-height: 24px;
+        margin-bottom: ${theme.spacing(2.5)};
+        text-transform: uppercase;
+        & .fb-c-city {
+            margin-left: ${theme.spacing(2)};
+        }
+    }
+
+    .fb-c-city {
+        color: #938CD1;
+        font-family: Pangram;
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        line-height: 28px;
+        text-transform: none;
+    }
+
+    .fb-c-text {
+        color: #FEFEFE;
+        font-family: Pangram;
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        line-height: 36px;
+        text-transform: none;
+    }
+`);
 
 interface FeedbackProps {
     avatar: FunctionComponent<{ className: string }>;
@@ -240,28 +265,24 @@ interface FeedbackProps {
     comment: string;
 }
 
-const Feedback = ({ avatar, name, from, comment }: FeedbackProps) => {
-    const classes = useFeedbackStyles();
-
-    return (
-        <Box component="div" className={classes.root} display="grid" gridTemplateColumns="140px 1fr">
-            <Box component="div" className={classes.avatarContainer}>
-                {React.createElement(avatar, { className: classes.avatar })}
-            </Box>
-            <Box component="div" display="flex" flexDirection="column" paddingLeft="80px">
-                <Typography variant="body1" className={classes.name}>
-                    {name}
-                    <Typography variant="body1" className={classes.city} component="span">
-                        ({from})
-                    </Typography>
-                </Typography>
-                <Typography variant="body2" className={classes.text}>
-                    {comment}
-                </Typography>
-            </Box>
+const Feedback = ({ avatar, name, from, comment }: FeedbackProps) => (
+    <FeedbackContainer component="div">
+        <Box component="div" className="fb-c-avatar-container">
+            {React.createElement(avatar, { className: "fb-c-avatar" })}
         </Box>
-    );
-};
+        <Box component="div" display="flex" flexDirection="column" paddingLeft="80px">
+            <Typography variant="body1" className="fb-c-name">
+                {name}
+                <Typography variant="body1" className="fb-c-city" component="span">
+                    ({from})
+                </Typography>
+            </Typography>
+            <Typography variant="body2" className="fb-c-text">
+                {comment}
+            </Typography>
+        </Box>
+    </FeedbackContainer>
+);
 
 interface DotProps {
     active?: boolean;
@@ -291,7 +312,6 @@ const buttonTheme = createTheme({
 });
 
 const FeedbackSection = () => {
-    const classes = useStyles();
     const [activeItem, setActiveItem] = React.useState<number>(0);
     const { carouselFragment, thumbsFragment, ...api } = useSpringCarousel({
         withThumbs: true,
@@ -324,62 +344,60 @@ const FeedbackSection = () => {
     });
 
     return (
-        <Box component="div" className={classes.root}>
-            <Box component="div" className={classes.stickersContainer}>
-                <Box component="div" className={clsx(classes.imageContainer, classes.image, classes.purpleBorder, classes.first)}>
-                    <img src="/assets/images/feedback_1.webp" alt="group_of_people" />
+        <ThemeProvider theme={buttonTheme}>
+            <FeedbackSectionContainer component="div">
+                <Box component="div" className="fb-stickers-container">
+                    <Box component="div" className="fb-image-container fb-image fb-purple-border fb-first">
+                        <img src="/assets/images/feedback_1.webp" alt="group_of_people" />
+                    </Box>
+                    <Box component="div" className="fb-text-container fb-plot">
+                        <Typography variant="body1" className="fb-text">
+                            Exciting plot with logical and interactive tasks
+                        </Typography>
+                    </Box>
+                    <Box component="div" className="fb-text-container fb-hints">
+                        <Typography variant="body1" className="fb-text">
+                            Detailed hints for every stage if you're stuck
+                        </Typography>
+                    </Box>
+                    <Box component="div" className="fb-image-container fb-image fb-light-green-border fb-second">
+                        <img src="/assets/images/feedback_2.png" alt="girl_1" />
+                    </Box>
+                    <Box component="div" className="fb-image-container fb-image fb-light-purple-border fb-third">
+                        <img src="/assets/images/feedback_3.png" alt="family" />
+                    </Box>
+                    <Box component="div" className="fb-text-container fb-clues">
+                        <Typography variant="body1" className="fb-text">
+                            Clues, cyphers, tasks, puzzles and codes
+                        </Typography>
+                    </Box>
+                    <Box component="div" className="fb-image-container fb-image fb-yellow-border fb-forth">
+                        <img src="/assets/images/feedback_4.png" alt="girl_2" />
+                    </Box>
+                    <Box component="div" className="fb-text-container fb-objects">
+                        <Typography variant="body1" className="fb-text">
+                            Various objects and tools
+                        </Typography>
+                    </Box>
                 </Box>
-                <Box component="div" className={clsx(classes.textContainer, classes.plot)}>
-                    <Typography variant="body1" className={classes.text}>
-                        Exciting plot with logical and interactive tasks
-                    </Typography>
-                </Box>
-                <Box component="div" className={clsx(classes.textContainer, classes.hints)}>
-                    <Typography variant="body1" className={classes.text}>
-                        Detailed hints for every stage if you're stuck
-                    </Typography>
-                </Box>
-                <Box component="div" className={clsx(classes.imageContainer, classes.image, classes.lightGreenBorder, classes.second)}>
-                    <img src="/assets/images/feedback_2.png" alt="girl_1" />
-                </Box>
-                <Box component="div" className={clsx(classes.imageContainer, classes.image, classes.lightPurpleBorder, classes.third)}>
-                    <img src="/assets/images/feedback_3.png" alt="family" />
-                </Box>
-                <Box component="div" className={clsx(classes.textContainer, classes.clues)}>
-                    <Typography variant="body1" className={classes.text}>
-                        Clues, cyphers, tasks, puzzles and codes
-                    </Typography>
-                </Box>
-                <Box component="div" className={clsx(classes.imageContainer, classes.image, classes.yellowBorder, classes.forth)}>
-                    <img src="/assets/images/feedback_4.png" alt="girl_2" />
-                </Box>
-                <Box component="div" className={clsx(classes.textContainer, classes.objects)}>
-                    <Typography variant="body1" className={classes.text}>
-                        Various objects and tools
-                    </Typography>
-                </Box>
-            </Box>
-            <Box component="div" className={classes.feedbackContainer}>
-                <ThemeProvider theme={buttonTheme}>
+                <Box component="div" className="fb-feedback-container">
                     <Box component="div" display="flex" alignItems="center">
-                        <Button onClick={api.slideToPrevItem} className={classes.navButtons} variant="contained" color="primary">
+                        <Button onClick={api.slideToPrevItem} className="fb-nav-buttons" variant="contained" color="primary">
                             <ArrowLeft viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit" />
                         </Button>
                     </Box>
-                </ThemeProvider>
-                {carouselFragment}
-                <ThemeProvider theme={buttonTheme}>
+                    {carouselFragment}
                     <Box component="div" display="flex" alignItems="center">
-                        <Button onClick={api.slideToNextItem} className={classes.navButtons} variant="contained" color="primary">
+                        <Button onClick={api.slideToNextItem} className="fb-nav-buttons" variant="contained" color="primary">
                             <ArrowRight viewBox="0 0 40 22" fill="#FFFFFF" height={22} width={40} fontSize="inherit"/>
                         </Button>
                     </Box>
-                </ThemeProvider>
-                <Box component="div" gridColumn={2} width="100%" className={classes.dotsWrapper}>
-                    {thumbsFragment}
+                    <Box component="div" gridColumn={2} width="100%" className="fb-dots-wrapper">
+                        {thumbsFragment}
+                    </Box>
                 </Box>
-            </Box>
-        </Box>
+            </FeedbackSectionContainer>
+        </ThemeProvider>
     );
 };
 

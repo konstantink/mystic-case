@@ -3,8 +3,7 @@ import { useInView } from "react-intersection-observer";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Theme } from "@mui/material/styles";
-import { createStyles, WithStyles, withStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 import { animated, config, useTransition } from "@react-spring/web";
 
 export interface Requirement {
@@ -13,24 +12,24 @@ export interface Requirement {
     delay: number;
 }
 
-const styles = (theme: Theme) => createStyles({
-    container: {
-        alignItems: "center",
-        display: "flex",
-        flexDirection: "column",
-    },
-    icon: {
-        marginBottom: theme.spacing(6),
-        "& svg": {
-            height: 160,
-            width: 160,
-        },
-    },
-});
+interface RequirementsSectionProps {
+    className?: string;
+    requirements: Array<Requirement>;
+}
 
-type RequirementViewProps = WithStyles<typeof styles> & Requirement;
+const IconContainer = styled(Box)(({ theme }) => `
+    margin-bottom: ${theme.spacing(6)};
+    & svg {
+        height: 160px;
+        width: 160px;
+    }
+`);
 
-const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: RequirementViewProps) => {
+interface RequirementViewProps extends Requirement {
+    className?: string;
+}
+
+const RequirementView = styled(({ className, icon, text, delay }: RequirementViewProps) => {
     const [show, setShow] = React.useState(false);
     const [ref, inView] = useInView({
         triggerOnce: true,
@@ -50,10 +49,10 @@ const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: Requ
     }, [inView]);
 
     return (
-        <div ref={ref} className={classes.container}>
-            <Box component="div" className={classes.icon}>
+        <div ref={ref} className={className}>
+            <IconContainer component="div">
                 {show && icon}
-            </Box>
+            </IconContainer>
             {transitions((styles, item) => item && (
                 <animated.div style={styles}>
                     <Typography variant="h5">
@@ -63,6 +62,41 @@ const RequirementView = withStyles(styles)(({ classes, icon, text, delay }: Requ
             ))}
         </div>
     );
-});
+})`
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+`;
 
-export default RequirementView;
+const RequirementsSection = styled(({ className, requirements }: RequirementsSectionProps) => (
+    <Box component="div" className={className}>
+        {requirements.map((item, idx) => (
+            <RequirementView key={`requirement-view-${idx}`} {...item} />
+        ))}
+    </Box>
+))(({ theme }) => `
+    background-color: #231E52;
+    display: flex;
+    filter: drop-shadow(2px 4px 6px black);
+    flex-direction: row;
+    justify-content: space-around;
+    // max-width: calc(1920px - 2 * ${theme.spacing(12)});
+    padding: ${theme.spacing(20, 12)};
+    width: 100%;
+
+    & h5 {
+        align: center;
+        color: rgb(255, 255, 255);
+        font-family: Pangram;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        line-height: 40px;
+    }
+
+    & h2 {
+        font-family: "Balsamiq Sans",Roboto,Arial;
+    }
+`);
+
+export default RequirementsSection;

@@ -56,6 +56,11 @@ a, a:visited {
   text-decoration: none;
 }
 
+.row-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
 @font-face {
   font-family: "Monument Extended";
   src: url("//db.onlinewebfonts.com/t/55d433372d270829c51e2577a78ef12d.woff") format("woff");

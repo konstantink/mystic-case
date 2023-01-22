@@ -16,44 +16,6 @@ interface FeaturesSectionProps {
     content: Array<Feature>;
 }
 
-// const featureStyles = (theme: Theme) => createStyles({
-//     container: {
-//         display: "flex",
-//         flexDirection: "column",
-//         width: 549,
-//     },
-//     image: {
-//         // background: "url('/assets/images/family.jpeg')",
-//         borderRadius: theme.spacing(3),
-//         height: 594,
-//         marginBottom: theme.spacing(3),
-//         overflow: "hidden",
-//         width: "100%",
-//         "& img": {
-//             height: "100%",
-//             objectFit: "cover",
-//             width: "100%",
-//         },
-//     },
-//     header: {
-//         color: "#B3D138",
-//         fontFamily: "Pangram",
-//         fontSize: `${theme.spacing(4)}px`,
-//         fontWeight: 700,
-//         letterSpacing: "0.4%",
-//         lineHeight: "48px",
-//         marginBottom: theme.spacing(1),
-//     },
-//     text: {
-//         color: "#FEFEFE",
-//         fontFamily: "Pangram",
-//         fontSize: `${theme.spacing(3)}px`,
-//         fontWeight: 400,
-//         letterSpacing: "0.3px",
-//         lineHeight: "36px",
-//     },
-// });
-
 type FeatureProps = {
     className?: string;
 } & Feature;
@@ -125,33 +87,28 @@ const FeatureView = styled(({ className, name, text, imageUrl }: FeatureProps) =
     width: 549px;
 `;
 
-const FeaturesSection = styled(({ className, content }: FeaturesSectionProps) => {
-    return (
-        <Box component="div" className={className}>
-            {/* <Box component="div" className={classes.interactiveTextContainer}> */}
-            <InteractiveTextGrid container className={"className"} spacing={5}>
-                <Grid xs={4}></Grid>
-                <Grid xs={8}>
-                    <InteractiveText variant="h2">
-                        <span style={{ color: "#FFD644" }}>Mystic case</span> is an interactive game you can play on the table
-                    </InteractiveText>
-                </Grid>
-            </InteractiveTextGrid>
-            {/* </Box> */}
-            {/* <Box component="div" className={classes.container}> */}
-            <Grid container spacing={5}>
-                {content.map((item, idx) => (
-                    <Grid key={`feature-key-${idx}`} xs={4}>
-                        <FeatureView key={`feature-view-${idx}`} {...item} />
-                    </Grid>
-                ))}
+const FeaturesSection = styled(({ className, content }: FeaturesSectionProps) => (
+    <Box component="div" className={className}>
+        <InteractiveTextGrid container className={"className"} columnSpacing={5}>
+            <Grid xs={4}></Grid>
+            <Grid xs={8}>
+                <InteractiveText variant="h2">
+                    <span style={{ color: "#FFD644" }}>Mystic case</span> is an interactive game you can play on the table
+                </InteractiveText>
             </Grid>
-            {/* </Box> */}
-        </Box>
-    );
-})(({ theme }) => `
+        </InteractiveTextGrid>
+        <Grid container columnSpacing={5}>
+            {content.map((item, idx) => (
+                <Grid key={`feature-key-${idx}`} xs={4}>
+                    <FeatureView key={`feature-view-${idx}`} {...item} />
+                </Grid>
+            ))}
+        </Grid>
+    </Box>
+))(({ theme }) => `
     display: flex;
     flex-direction: column;
+    max-width: calc(1920px - 2 * ${theme.spacing(12)});
     padding: ${theme.spacing(20, 12)};
 `);
 
