@@ -94,8 +94,8 @@ func main() {
 	// - Credentials share
 	// - Preflight requests cached for 12 hours
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000", "http://mysticcase.io:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000", "http://mysticcase.io:3000", "http://mysticcase.io"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "x-mystic-case-request-id", "x-mystic-case-session-id", "authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
