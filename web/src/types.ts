@@ -92,6 +92,11 @@ export interface FailureResponse {
     error: string;
 }
 
+export interface User {
+    username: string;
+    email: string;
+}
+
 export interface AuthParams {
     username: string,
     password: string,

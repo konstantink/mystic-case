@@ -2,7 +2,7 @@ import * as React from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 
 import AdminApp from "./AdminApp";
-// import * as mcApi from "./api/api";
+// // import * as mcApi from "./api/api";
 import Home from "./containers/Home";
 import Shop from "./containers/Shop";
 import SignIn from "./containers/SignIn";
@@ -48,7 +48,8 @@ export const routes: Array<RouteObject> = [{
     path: "/admin",
     element: <AdminApp />,
     children: adminRoutes,
-}];
+}
+];
 
 // export default [
 //     ...mainRoutes,

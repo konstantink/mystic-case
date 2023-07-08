@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import * as uuid from "uuid";
 
+import { StorageHelper } from "@mysticcase/storage-helper";
 import { tryRefreshToken } from "./auth";
 import {
     FeaturedProductsResponse,
@@ -23,16 +24,18 @@ const SESSION_ID = String(uuid.v1());
 const getSessionID = () => SESSION_ID;
 const getRequestID = () => String(uuid.v1());
 
+const storageHelper = new StorageHelper("sessionStorage");
+
 const getInstance = async (params: AxiosInstanceParams): Promise<AxiosInstance> => {
     const version = params.version ? params.version : "v1";
     const instance = axios.create({
-        baseURL: `http://mysticcase.io:8085/api/${version}`,
+        baseURL: `${window.location.protocol}//${window.location.host}/api/${version}`,
         timeout: 1000,
         withCredentials: true,
     });
 
     instance.interceptors.request.use((config: AxiosRequestConfig): AxiosRequestConfig => {
-        const accessToken = localStorage.getItem("at") || "";
+        const accessToken = storageHelper.getString("access_token") || "";
         if (!config.headers) {
             config.headers = {};
         }

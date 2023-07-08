@@ -31,10 +31,26 @@ export const tryRefreshToken = async (params: {refresh_token: string}): Promise<
     return response.data;
 };
 
+// export const getAnonymousToken = async (): Promise<AnonymousTokenResponse> => {
+//     const instance = await axiosInstance;
+
+//     const response = await instance.get("/token/anonymous");
+
+//     return response.data;
+// };
+
 export const checkUser = async () => {
     const instance = await axiosInstance;
 
     const response = await instance.get("/u/whoami");
+
+    return response.data;
+};
+
+export const checkToken = async () => {
+    const instance = await axiosInstance;
+
+    const response = await instance.get("u/whoami");
 
     return response.data;
 };

@@ -1,19 +1,12 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-// import { createBrowserHistory } from "history";
-
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import App from "./App";
-// import * as serviceWorker from './serviceWorker';
 
 import "../public/index.css";
 
-// const history = createBrowserHistory();
-// const store = createStore(combineReducers({
-//     router: connectRouter(history),
-// }));
 const theme = createTheme({
     components: {
         MuiInputLabel: {
@@ -42,13 +35,12 @@ const theme = createTheme({
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
+    console.log("Creating root element");
     const root = createRoot(rootElement);
     root.render(
         <React.StrictMode>
             <ThemeProvider theme={theme}>
-                {/* <Provider store={store}> */}
                 <App />
-                {/* </Provider> */}
             </ThemeProvider>
         </React.StrictMode>
     );
