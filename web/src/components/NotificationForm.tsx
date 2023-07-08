@@ -4,12 +4,14 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import MuiTextField from "@mui/material/TextField";
-import MuiTypography from "@mui/material/Typography";
+import MuiTypography, { TypographyProps } from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
 import { ArrowRight } from "../icons/Arrows";
 
-const Typography = styled(MuiTypography)(({ theme }) => `
+const Typography = styled(({ className, ...restProps }: TypographyProps) => (
+    <MuiTypography className={className} component="span" {...restProps} />
+))(({ theme }) => `
     color: #FEFEFE;
     font-family: Pangram;
     font-size: 32px;
@@ -56,7 +58,7 @@ const NotificationForm = () => (
     <Box component="div">
         <Typography variant="body1">
             Subscribe to get latest news about&nbsp;
-            <Typography variant="body1" className="yellow" display="inline">
+            <Typography variant="body2" className="yellow" display="inline">
                 our boxes
             </Typography>
         </Typography>

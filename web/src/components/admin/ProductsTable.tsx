@@ -74,7 +74,7 @@ export default ({ products }: {products: Array<ProductItem>}) => {
                         : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={4}
+                                    colSpan={5}
                                     sx={{
                                         color: "rgba(0,0,0,.35)",
                                         fontFamily: "inherit",

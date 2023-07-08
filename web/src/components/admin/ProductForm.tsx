@@ -40,7 +40,8 @@ import {
     Price,
     PriceType,
     ProductItem,
-    ProductImage
+    ProductImage,
+    ProductFailiureResponse
 } from "../../types";
 
 interface PriceFieldProps {
@@ -660,7 +661,7 @@ export default ({ product }: ProductFormProps) => {
         if (response.success) {
             navigate("/admin/products");
         } else {
-            setErrors(response.errors);
+            setErrors((response as ProductFailiureResponse).errors);
         }
     };
 

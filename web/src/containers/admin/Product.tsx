@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 
 import { getProduct } from "../../api/api";
 import ProductForm from "../../components/admin/ProductForm";
-import { Errors, ProductItem } from "../../types";
+import { Errors, ProductFailiureResponse, ProductItem } from "../../types";
 
 type ProductState = {
     product: ProductItem | undefined;
@@ -87,7 +87,7 @@ export default () => {
                     dispatch({
                         type: ProductActions.LoadingProductDone,
                         success: false,
-                        error: response.errors,
+                        error: (response as ProductFailiureResponse).errors,
                     });
                 }
             })();

@@ -27,10 +27,6 @@ const Products = () => {
         <Box sx={{ padding: "16px 24px", width: "100%" }}>
             <NewProductButton />
             <ProductsTable products={products} />
-            {/* {products.map((item, idx) => (
-                <div key={idx}>{item}</div>
-            ))} */}
-
         </Box>
     );
 };

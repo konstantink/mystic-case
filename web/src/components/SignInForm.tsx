@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 
 // import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -17,7 +17,6 @@ import { createStyles, WithStyles, withStyles } from "@mui/styles";
 
 // import { AuthParams, tryLogin } from "../api";
 import { useAuth } from "../hooks/useAuth";
-import { AuthParams } from "../types";
 
 const styles = (theme: Theme) => createStyles({
     avatar: {
@@ -182,38 +181,32 @@ const FormattedForm = styled("form")({
 });
 
 const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classes }) => {
-    // const usernameRef = React.useRef<HTMLInputElement>(null);
-    // const passwordRef = React.useRef<HTMLInputElement>(null);
-    const { login } = useAuth();
-
-    const [credentials, setCredential] = React.useState<AuthParams>({
-        username: "",
-        password: "",
-    });
-
-    const onChange: React.ChangeEventHandler<HTMLInputElement> = e => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setCredential(state => ({
-            ...state,
-            [name]: value,
-        }));
-    };
+    const usernameRef = React.useRef<HTMLInputElement>(null);
+    const passwordRef = React.useRef<HTMLInputElement>(null);
+    const [params] = useSearchParams();
+    const { login, user } = useAuth();
+    const to = params.get("to") || "/";
 
     const onSubmit: React.FormEventHandler<HTMLFormElement | HTMLButtonElement> = async e => {
         e.preventDefault();
-        login(credentials.username, credentials.password);
-        // try {
-        //     const data = await tryLogin(credentials);
-        //     console.log(data);
-        //     if (data.success) {
-        //         localStorage.setItem("at", data.access_token);
-        //         localStorage.setItem("rt", data.refresh_token);
-        //     }
-        // } catch (exc) {
-        //     console.log("failed", exc);
-        // }
+
+        const username = usernameRef.current?.value;
+        const password = passwordRef.current?.value;
+
+        try {
+            if (username && password) {
+                login(username, password);
+            }
+        } catch (err) {
+            console.log("===> Can't login user", err);
+        }
     };
+
+    if (user.authenticated) {
+        return (
+            <Navigate to={to} />
+        );
+    }
 
     return (
         <React.Fragment>
@@ -238,10 +231,10 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     margin="normal"
                     type="text"
                     required
-                    value={credentials.username}
+                    // value={credentials.username}
                     variant="outlined"
                     inputProps={{
-                        name: "username",
+                        ref: usernameRef,
                     }}
                     InputProps={{
                         sx: theme => ({
@@ -266,7 +259,6 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                             },
                         },
                     }}
-                    onChange={onChange}
                 />
                 <TextField
                     className={classes.textField}
@@ -275,10 +267,10 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                     margin="normal"
                     required
                     type="password"
-                    value={credentials.password}
+                    // value={credentials.password}
                     variant="outlined"
                     inputProps={{
-                        name: "password",
+                        ref: passwordRef,
                     }}
                     InputProps={{
                         sx: theme => ({
@@ -303,7 +295,6 @@ const SignInForm: React.FunctionComponent<WithStyles<typeof styles>> = ({ classe
                             },
                         },
                     }}
-                    onChange={onChange}
                 />
                 <RememberForgot />
                 <ColorButton
