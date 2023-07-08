@@ -96,9 +96,11 @@ func generatePairOfTokens(user models.User) (tokens *models.TokensPair, err erro
 
 	// Creating Access Token
 	atClaims := jwt.MapClaims{}
-	atClaims["authorized"] = true
+	// atClaims["authorized"] = true
 	atClaims["sub"] = user.ID
+	atClaims["aud"] = "http://mysticcase.io/api/v1"
 	atClaims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+	atClaims["username"] = user.Username
 	atClaims["admin"] = user.IsAdmin
 	atClaims["uuid"] = tokens.AccessToken.ID
 	atClaims["exp"] = tokens.AccessToken.ExpiresAt

@@ -43,7 +43,7 @@ func GetFeaturedProductsList(c *gin.Context) {
 		"isBestseller": true,
 		"images": []gin.H{{
 			"id":   1,
-			"url":  "https://cdn.filestackcontent.com/security=p:eyJleHBpcnkiOjE2MjQyMzcxOTl9,s:6849b3e8c81081db48621ac9bfba1065e6084bfe50d40a7c03e1e5531ea2579b/resize=w:1000,h:1000,fit:max/output=format:jpg/quality=v:70/N4SvVujsQCOJucdlH8Mc",
+			"url":  "https://storage.googleapis.com/mystic-case.co.uk/google-merchants-images/gm-jigsaw.jpeg",
 			"name": "Haunted Castle box",
 		}},
 	}, {
@@ -60,7 +60,7 @@ func GetFeaturedProductsList(c *gin.Context) {
 		"isBestseller": false,
 		"images": []gin.H{{
 			"id":   1,
-			"url":  "https://cdn.filestackcontent.com/security=p:eyJleHBpcnkiOjE2MjQyMzcxOTl9,s:6849b3e8c81081db48621ac9bfba1065e6084bfe50d40a7c03e1e5531ea2579b/resize=w:1000,h:1000,fit:max/output=format:jpg/quality=v:70/BZQ3i8TjQSQpIlSxbhXK",
+			"url":  "https://storage.googleapis.com/mystic-case.co.uk/google-merchants-images/gm-jigsaw.jpeg",
 			"name": "UFO Crash box",
 		}},
 	}, {
@@ -78,7 +78,7 @@ func GetFeaturedProductsList(c *gin.Context) {
 		"isBestseller": false,
 		"images": []gin.H{{
 			"id":   1,
-			"url":  "https://cdn.filestackcontent.com/security=p:eyJleHBpcnkiOjE2MjQyMzcxOTl9,s:6849b3e8c81081db48621ac9bfba1065e6084bfe50d40a7c03e1e5531ea2579b/resize=w:1000,h:1000,fit:max/output=format:jpg/quality=v:70/Z1t6nRaTNOOEyV6MHkVN",
+			"url":  "https://storage.googleapis.com/mystic-case.co.uk/google-merchants-images/gm-jigsaw.jpeg",
 			"name": "Simulation Theory box",
 		}},
 	}, {
@@ -95,7 +95,7 @@ func GetFeaturedProductsList(c *gin.Context) {
 		"isBestseller": false,
 		"images": []gin.H{{
 			"id":   1,
-			"url":  "https://cdn.filestackcontent.com/security=p:eyJleHBpcnkiOjE2MjQyMzcxOTl9,s:6849b3e8c81081db48621ac9bfba1065e6084bfe50d40a7c03e1e5531ea2579b/resize=w:1000,h:1000,fit:max/output=format:jpg/quality=v:70/z5c29Et1REGj0XcRfCOM",
+			"url":  "https://storage.googleapis.com/mystic-case.co.uk/google-merchants-images/gm-jigsaw.jpeg",
 			"name": "School of Magic box",
 		}},
 	}}})
@@ -115,7 +115,7 @@ func FetchProductsHandlerFunc(c *gin.Context) {
 	}
 
 	models.DB.Scopes(models.WithoutDeleted, models.Personalised(userID)).
-		Preload("Prices", models.DB.Where("deleted_at IS NULL")).
+		Preload("Prices").Preload("Prices.Interval").
 		Where("deleted_at IS NULL").
 		Find(&products)
 
@@ -130,6 +130,7 @@ func FetchProductHandlerFunc(c *gin.Context) {
 	log.Print(cfmt.Sinfof("[DEBUG] found user %s", userID))
 	models.DB.Scopes(models.WithoutDeleted, models.Personalised(userID)).
 		Preload("Prices").
+		Preload("Prices.Interval").
 		Find(&product, "id = ?", c.Param("productId"))
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "product": product})
@@ -152,7 +153,7 @@ func PatchProductHandlerFunc(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")
 
-	err := models.GetProductByID(product, c.Param("product_id"), userID.(string))
+	err := models.GetProductByID(&product, c.Param("productId"), userID.(string))
 	if err != nil {
 		log.Print(cfmt.Serrorf("[ERROR] can't find product %s", err.Error()))
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
@@ -171,9 +172,18 @@ func PatchProductHandlerFunc(c *gin.Context) {
 	// if
 	if len(updatedProduct.Prices) > 0 {
 		// for _, price := range product.Prices {
-		// 	for _, newPrice := range updatedProduct.Prices {
-		// 		if
-		// 	}
+		for _, updatedPrice := range updatedProduct.Prices {
+			log.Println("[DEBUG]: Before:", updatedPrice)
+			//var price models.Price
+			// err := models.DB.Model(&updatedPrice).First(&updatedPrice).Error
+			err := models.DB.Model(&updatedPrice).Omit(clause.Associations).Error
+			if err != nil {
+				log.Print(cfmt.Serrorf("[ERROR] can't update price %s", err.Error()))
+				c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
+				return
+			}
+			log.Println("[DEBUG]: After:", updatedPrice)
+		}
 		// }
 	}
 
@@ -194,12 +204,12 @@ func ProductHandlerFunc(c *gin.Context) {
 
 	userID, exists := c.Get("user_id")
 	if !exists {
-		log.Print(cfmt.Serrorf("[ERROR] request is not authorized"))
+		log.Print(cfmt.Serrorf("[ERROR] request is not authenticated"))
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "user is not authenticated"})
 		return
 	}
 
-	// models.GetUserByID(&user, userID)
+	models.GetUserByID(&user, userID.(string))
 
 	if !user.IsAdmin {
 		log.Print(cfmt.Serrorf("[ERROR] user is not authorized"))
@@ -215,7 +225,7 @@ func ProductHandlerFunc(c *gin.Context) {
 	}
 	// log.Print(newProduct)
 
-	newProduct.UserID = userID.(uuid.UUID)
+	newProduct.UserID = uuid.FromStringOrNil(userID.(string))
 	errors, valid := models.Validate(newProduct)
 	if !valid {
 		log.Print(cfmt.Warningf("[WARNING] something is invalid"))

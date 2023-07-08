@@ -7,12 +7,20 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 	"github.com/mingrammer/cfmt"
 	"github.com/mystic-case/back/models"
 )
+
+type basicInfo struct {
+	IP        string
+	Referer   string
+	UserAgent string
+}
 
 func extractFromHeader(c *gin.Context) (string, error) {
 	authHeader := c.GetHeader("Authorization")
@@ -26,6 +34,18 @@ func extractFromHeader(c *gin.Context) (string, error) {
 	}
 
 	return authHeaderParts[1], nil
+}
+
+func extractFromCookie(c *gin.Context) (string, error) {
+	return c.Cookie("mc_uid")
+}
+
+func extractBasicInfo(c *gin.Context) basicInfo {
+	return basicInfo{
+		IP:        c.GetHeader("Host"),
+		Referer:   c.GetHeader("Referer"),
+		UserAgent: c.GetHeader("User-Agent"),
+	}
 }
 
 func validateToken(token *jwt.Token) (bool, error) {
@@ -94,6 +114,27 @@ func AuthMiddleware() func(*gin.Context) {
 		c.Set("user_id", parsedToken.Claims.(jwt.MapClaims)["sub"].(string))
 
 		c.Next()
+	}
+}
+
+func UserMiddleware() func(*gin.Context) {
+	return func(c *gin.Context) {
+		sessionID, err := extractFromCookie(c)
+		if err != nil {
+			info := extractBasicInfo(c)
+			log.Print(cfmt.Sinfof("[INFO] new user access: ip:%s referer:%s user-agent:%s", info.IP, info.Referer, info.UserAgent))
+		}
+
+		c.Set("mc_uid", sessionID)
+
+		c.Next()
+
+		// if err != nil {
+		log.Print(cfmt.Sinfo("[INFO] setting cookie"))
+		session, _ := uuid.NewV4()
+		c.SetSameSite(http.SameSiteLaxMode)
+		c.SetCookie("mc_uid", session.String(), int(time.Hour*24*7), "/", "mysticcase.io", false, false)
+		// }
 	}
 }
 
