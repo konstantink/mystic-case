@@ -24,18 +24,6 @@ ALTER TABLE public.products OWNER TO mysticcase;
 -- Create index for slug field
 CREATE INDEX IF NOT EXISTS products_slug_idx ON public.products USING btree (slug);
 
--- Create table Interval
-CREATE TABLE IF NOT EXISTS public.intervals (
-    id uuid PRIMARY KEY,
-    recurring VARCHAR(10) NOT NULL,
-    count INTEGER NOT NULL,
-    deleted_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-ALTER TABLE public.intervals OWNER TO mysticcase;
-
 -- Create table Price
 CREATE TABLE IF NOT EXISTS public.prices (
     id uuid PRIMARY KEY,
@@ -45,18 +33,33 @@ CREATE TABLE IF NOT EXISTS public.prices (
     currency VARCHAR(3) NOT NULL,
     type SMALLINT NOT NULL,
     active BOOLEAN DEFAULT true,
-    interval_id uuid,
+    is_default BOOLEAN DEFAULT false,
     product_id uuid,
     deleted_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
 
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES public.users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_interval FOREIGN KEY(interval_id) REFERENCES public.intervals(id) ON DELETE SET NULL,
     CONSTRAINT fk_product FOREIGN KEY(product_id) REFERENCES public.products(id) ON DELETE CASCADE
 );
 
 ALTER TABLE public.prices OWNER TO mysticcase;
+
+-- Create table Interval
+CREATE TABLE IF NOT EXISTS public.intervals (
+    id uuid PRIMARY KEY,
+    recurring VARCHAR(10) NOT NULL,
+    display_recurring VARCHAR(10) NOT NULL,
+    count INTEGER NOT NULL,
+    price_id uuid,
+    deleted_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+
+    CONSTRAINT fk_price FOREIGN KEY(price_id) REFERENCES public.prices(id) ON DELETE CASCADE
+);
+
+ALTER TABLE public.intervals OWNER TO mysticcase;
 
 -- Create table Images
 CREATE TABLE IF NOT EXISTS public.images (
