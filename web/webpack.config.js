@@ -8,7 +8,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // eslint-disab
 
 module.exports = {
     mode: prod ? "production" : "development",
-    // context: path.resolve(__dirname),
+    context: path.resolve(__dirname),
     entry: [
         "./src/index.tsx"
     ],
@@ -84,13 +84,14 @@ module.exports = {
         ],
     },
     resolve: {
-        // alias: {
+        alias: {
+            // "@mysticcase": path.resolve(__dirname, "src"),
         //     "@mui/styled-engine": "@mui/styled-engine-sc"
-        // },
+        },
         extensions: [".ts", ".tsx", ".js", ".json"],
     },
     devtool: prod ? undefined : "source-map",
-    // devServer: {
+    devServer: {
     //     allowedHosts: [
     //         "mysticcase.io",
     //         "localhost",
@@ -99,9 +100,9 @@ module.exports = {
     //     client: {
     //         logging: "verbose",
     //     },
-    //     historyApiFallback: true,
+        historyApiFallback: true,
     //     liveReload: true,
-    // },
+    },
     plugins: [
         new ESLintPlugin({
             extensions: ["js", "jsx", "json", "ts", "tsx"],
