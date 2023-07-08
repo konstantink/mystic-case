@@ -17,6 +17,7 @@ import (
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/gofrs/uuid"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/mingrammer/cfmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
@@ -104,6 +105,7 @@ func init() {
 		dbName = "mysticcase_dev"
 	}
 
+	log.Print(cfmt.Sinfof("[DEBUG] connecting to %q db", dbName))
 	dsn = fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		"127.0.0.1", 5432, "mysticcase", dbName, "pass321")
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -132,6 +134,7 @@ func init() {
 
 func migrateDB() {
 	// m, err := migrate.New("file://migrations", DB.)
+	// DB.AutoMigrate(&User{}, &Product{}, &Price{}, &Interval{})
 }
 
 // BaseModel base struct for all models that just uses UUID primary key

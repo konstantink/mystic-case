@@ -12,7 +12,7 @@ import (
 	uut "github.com/mystic-case/back/models"
 )
 
-var _ = FDescribe("Product", func() {
+var _ = Describe("Product", func() {
 	It("Creates a product record with correct required parameters", func() {
 		uut.DB.Transaction(func(tx *gorm.DB) error {
 			var testProduct = uut.Product{

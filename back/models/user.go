@@ -16,15 +16,15 @@ import (
 type User struct {
 	BaseModel
 	// ID        uuid.UUID `gorm:"type:uuid;primary_key"`
-	Username  string `gorm:"type:varchar(32)" json:"username"`
-	FirstName string `gorm:"type:varchar(24)" json:"firstName"`
-	LastName  string `gorm:"type:varchar(24)" json:"lastName"`
-	Email     string `gorm:"type:varchar(32)" json:"email" validate:"email"` // valid:"email~Provide correct email address"
-	Password  string
-	IsAdmin   bool `gorm:"type:boolean" json:"isAdmin"`
-	Tokens    []Token
+	Username  string  `gorm:"type:varchar(32)" json:"username"`
+	FirstName string  `gorm:"type:varchar(24)" json:"firstName"`
+	LastName  string  `gorm:"type:varchar(24)" json:"lastName"`
+	Email     string  `gorm:"type:varchar(32)" json:"email" validate:"email"` // valid:"email~Provide correct email address"
+	Password  string  `json:"-"`
+	IsAdmin   bool    `gorm:"type:boolean" json:"isAdmin"`
+	Tokens    []Token `json:"-"`
 	// Sessions  []Session
-	// Products  Products `json:"-"`
+	Products Products `json:"-" gorm:"constraint:OnDelete:CASCADE"`
 }
 
 func (u User) String() string {

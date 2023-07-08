@@ -22,8 +22,8 @@ type ModelErrors map[string]interface{}
 type Product struct {
 	BaseModel
 
-	Name         string     `validate:"required" json:"name"`
-	Slug         string     `validate:"required" json:"slug"`
+	Name         string     `json:"name" validate:"required"`
+	Slug         string     `json:"slug" validate:"required"`
 	Description  string     `json:"description" gorm:"type:text"`
 	Title        string     `json:"title"`
 	Difficulty   *int8      `json:"difficulty"`
@@ -35,9 +35,11 @@ type Product struct {
 	Images       []Image    `json:"images,omitempty" gorm:"many2many:products_images"`
 	SKU          NullString `json:"sku"`
 	Variations   Variations `json:"variations,omitempty"`
-	UserID       uuid.UUID  `json:"-"`
-	User         User       `json:"-"`
+	UserID       uuid.UUID  `json:"-" validate:"-"`
+	User         User       `json:"-" validate:"-"`
 }
+
+type Products []Product
 
 func (p Product) String() string {
 	return fmt.Sprintf("<Product: n=%s; t=%s; if=%t, ib=%t, in=%t, ip=%t, p=%s>",
@@ -68,12 +70,13 @@ func CreateProduct(tx *gorm.DB, newProduct *Product) (ModelErrors, error) {
 		for idx := range newProduct.Prices {
 			newProduct.Prices[idx].ProductID = newProduct.ID
 			newProduct.Prices[idx].UserID = newProduct.UserID
+			CreatePrice(tx, &newProduct.Prices[idx])
 		}
 
-		err = tx.Omit(clause.Associations).Create(newProduct.Prices).Error
-		if err != nil {
-			log.Print(cfmt.Errorf("[ERROR] failed to create prices: %s", err.Error()))
-		}
+		// err = tx.Omit(clause.Associations).Create(newProduct.Prices).Error
+		// if err != nil {
+		// 	log.Print(cfmt.Errorf("[ERROR] failed to create prices: %s", err.Error()))
+		// }
 	}
 
 	// Check if we have any variations for the product
@@ -96,8 +99,8 @@ func CreateProduct(tx *gorm.DB, newProduct *Product) (ModelErrors, error) {
 
 // GetProductByID to fetch Product from DB by the product ID
 // for the specific user
-func GetProductByID[T string | uuid.UUID](dest any, productID, userID T) error {
-	err := DB.First(&dest, "id = ?", productID).Where("used_id = ?", userID).Error
+func GetProductByID[T string | uuid.UUID](dest *Product, productID, userID T) error {
+	err := DB.Model(dest).First(dest, "id = ?", productID).Where("used_id = ?", userID).Error
 	if err != nil {
 		log.Print(cfmt.Swarningf("[WARNING] can't find product %s", productID))
 		return err
