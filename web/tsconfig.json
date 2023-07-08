@@ -17,14 +17,24 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "sourceMap": true,
+        "strictNullChecks": false,
         "isolatedModules": true,
         "noEmit": false,
         "jsx": "react-jsx",
         // "paths": {
         //   "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
         // },
+        "paths": {
+            "@mysticcase/services/auth": ["./src/services/auth/index.ts"],
+            "@mysticcase/storage-helper": ["./src/services/storage/index.ts"],
+            "@mysticcase/*": ["./src/*"],
+        }
       },
       "include": [
-          "src"
+          "src",
+      ],
+      "exclude": [
+          "node_modules",
+          "dist",
       ]
 }
