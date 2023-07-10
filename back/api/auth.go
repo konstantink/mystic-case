@@ -314,14 +314,14 @@ func WhoamIHandlerFunc(c *gin.Context) {
 	if userID, exists := c.Get("user_id"); exists {
 		err := models.GetUserByID(&user, userID.(string))
 		if err != nil {
-			log.Print(cfmt.Warning("[WARNING] user not found"))
+			log.Print(cfmt.Swarning("[WARNING] user not found"))
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"success": false, "error": "user not found"})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
 	} else {
-		log.Print(cfmt.Warning("[WARNING] user not found"))
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"success": false, "error": "can't get user from request"})
+		log.Print(cfmt.Swarning("[WARNING] user not found"))
+		c.JSON(http.StatusOK, gin.H{"success": true, "user": "anonymous"})
 	}
 }

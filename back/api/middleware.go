@@ -131,9 +131,10 @@ func UserMiddleware() func(*gin.Context) {
 
 		// if err != nil {
 		log.Print(cfmt.Sinfo("[INFO] setting cookie"))
+		c.Header("access-control-expose-headers", "Set-Cookie")
 		session, _ := uuid.NewV4()
 		c.SetSameSite(http.SameSiteLaxMode)
-		c.SetCookie("mc_uid", session.String(), int(time.Hour*24*7), "/", "mysticcase.io", false, false)
+		c.SetCookie("mc_uid", session.String(), int(time.Hour*24*7), "/", "", false, false)
 		// }
 	}
 }
