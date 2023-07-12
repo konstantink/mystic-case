@@ -5,6 +5,7 @@ const prod = process.env.NODE_ENV === "production";
 const ESLintPlugin = require("eslint-webpack-plugin"); // eslint-disable-line @typescript-eslint/no-var-requires
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // eslint-disable-line @typescript-eslint/no-var-requires
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // eslint-disable-line @typescript-eslint/no-var-requires
+// const { CheckerPlugin } = require('awesome-typescript-loader');
 
 module.exports = {
     mode: prod ? "production" : "development",
@@ -15,7 +16,7 @@ module.exports = {
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
-        publicPath: "/",
+        publicPath: "../assets",
     },
     target: "web",
     module: {
@@ -86,6 +87,9 @@ module.exports = {
     resolve: {
         alias: {
             // "@mysticcase": path.resolve(__dirname, "src"),
+            "@mysticcase/services/auth": path.resolve(__dirname, "src/services/auth/index.ts"),
+            "@mysticcase/storage-helper": path.resolve(__dirname, "src/services/storage/index.ts"),
+            "@mysticcase": path.resolve(__dirname, "src"),
         //     "@mui/styled-engine": "@mui/styled-engine-sc"
         },
         extensions: [".ts", ".tsx", ".js", ".json"],
@@ -116,6 +120,7 @@ module.exports = {
             },
             inject: true,
         }),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin(),
+        // new CheckerPlugin()
     ],
 };

@@ -96,7 +96,7 @@ export class AuthHandler {
         console.log("getUser");
         // this.storageHelper.getObject("user");
         // const user = this.authClient.getUser();
-        // return Promise.resolve({ username: "name", email: "name@example.org" } as User);
+        return Promise.resolve({ username: "name", email: "name@example.org" } as User);
     };
 
     public getToken = async (forceRefreshToken = false) => {
