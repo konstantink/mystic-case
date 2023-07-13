@@ -16,7 +16,7 @@ module.exports = {
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
-        publicPath: "../assets",
+        // publicPath: "../assets",
     },
     target: "web",
     module: {
@@ -31,18 +31,6 @@ module.exports = {
                 exclude: /node_modules/,
                 use: ["ts-loader"],
             },
-            // {
-            //     test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-            //     use: [
-            //         {
-            //             loader: "url-loader",
-            //             options: {
-            //             limit: 10000,
-            //             mimetype: "application/font-woff"
-            //             }
-            //         }
-            //     ]
-            // },
             {
                 test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
                 use: [
@@ -96,14 +84,14 @@ module.exports = {
     },
     devtool: prod ? undefined : "source-map",
     devServer: {
-    //     allowedHosts: [
-    //         "mysticcase.io",
-    //         "localhost",
-    //         "127.0.0.1",
-    //     ],
-    //     client: {
-    //         logging: "verbose",
-    //     },
+        allowedHosts: [
+            "mysticcase.io",
+            "localhost",
+            "127.0.0.1",
+        ],
+        client: {
+            logging: "verbose",
+        },
         historyApiFallback: true,
     //     liveReload: true,
     },
