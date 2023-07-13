@@ -1,0 +1,46 @@
+upstream backend {
+    server ${MYSTIC_CASE_DOMAIN}:${MYSTIC_CASE_BACKEND_PORT};
+}
+
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name ${MYSTIC_CASE_DOMAIN} www.${MYSTIC_CASE_DOMAIN};
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location /assets/ {
+        root /media/mystic-case/public;
+    }
+
+    location /api/ {
+        proxy_pass http://backend;
+    }
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+
+#server {
+#    listen 443 ssl;
+#    server_name mysticcase.io;
+#    keepalive_timeout 70;
+
+#    ssl_certificate /Users/user/mysticcase.io/key.crt;
+#    ssl_certificate_key /Users/user/mysticcase.io/private.key;
+#    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#    ssl_ciphers HIGH:!aNULL:!MD5;
+
+#    root /usr/share/nginx;
+#    index index.html;
+
+#    location /assets/ {
+#        root /Users/user/git/mystic-case/web/public;
+#    }
+
+#    location /api/ {
+#        proxy_pass http://backend;
+#    }
+#}

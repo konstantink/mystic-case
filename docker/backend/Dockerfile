@@ -1,0 +1,1 @@
+FROM --platform=amd64 golang1.20.6-alpine3.17 as builder
