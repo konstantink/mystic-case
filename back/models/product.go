@@ -190,6 +190,7 @@ type Variation struct {
 type Variations []Variation
 
 func (variant Variation) Validate() (errors ModelErrors, valid bool) {
+	errors = make(ModelErrors)
 	err := validator.Struct(variant)
 	valid = true
 	if err != nil {

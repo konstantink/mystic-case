@@ -36,10 +36,10 @@ const (
 
 const (
 	Daily   IntervalType = "day"
-	Weekly               = "week"
-	Monthly              = "month"
-	Yearly               = "year"
-	Custom               = "custom"
+	Weekly  IntervalType = "week"
+	Monthly IntervalType = "month"
+	Yearly  IntervalType = "year"
+	Custom  IntervalType = "custom"
 )
 
 // Interval object represents the frequency of the payments to he

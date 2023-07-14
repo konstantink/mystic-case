@@ -26,8 +26,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
 	"gorm.io/driver/postgres"
-	// import everything from postgres dialect
-	_ "gorm.io/driver/postgres"
 )
 
 // DB is a connection to your database to be used
@@ -98,7 +96,7 @@ func init() {
 		err       error
 		envConfig EnvConfig
 	)
-	err = envconfig.Process("mysticcase", &envConfig)
+	_ = envconfig.Process("mysticcase", &envConfig)
 	if envConfig.Env == "test" {
 		dbName = "mysticcase_test"
 	} else {
@@ -107,7 +105,7 @@ func init() {
 
 	log.Print(cfmt.Sinfof("[DEBUG] connecting to %q db", dbName))
 	dsn = fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		"127.0.0.1", 5432, "mysticcase", dbName, "pass321")
+		"postgres_mc", 5432, "mysticcase", dbName, "example")
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),

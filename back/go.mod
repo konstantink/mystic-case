@@ -1,8 +1,8 @@
 module github.com/mystic-case/back
 
-replace github.com/mystic-case/back/models => ./models
+// replace github.com/mystic-case/back/models => ./models
 
-replace github.com/mystic-case/back/api => ./api
+// replace github.com/mystic-case/back/api => ./api
 
 go 1.19
 
@@ -23,7 +23,7 @@ require (
 	github.com/onsi/ginkgo v1.12.0
 	github.com/onsi/gomega v1.9.0
 	github.com/pkg/errors v0.9.1
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.11.0
 	gorm.io/datatypes v1.0.2
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/gorm v1.21.15
@@ -59,9 +59,9 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/stretchr/testify v1.7.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
-	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
