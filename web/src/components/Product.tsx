@@ -55,19 +55,19 @@ const ProductContainer = styled(Box)(({ theme }) => `
 const ImageContainer = styled(Box)(({ theme }) => `
     background-color: #3A3185;
     border-radius: ${theme.spacing(3)};
-    height: 748px;
+    max-height: 748px;
     margin-bottom: ${theme.spacing(3)};
     padding: ${theme.spacing(6)};
-    width: 748px;
+    max-width: 748px;
 `);
 
 const Image = styled(Box)(({ theme }) => `
     // background: url("/assets/images/family.jpeg");
     border-radius: ${theme.spacing(2)};
-    height: 748px;
+    height: 100%;
     // margin-bottom: ${theme.spacing(3)};
     overflow: hidden;
-    width: 748px;
+    width: 100%;
     & img {
         height: 100%;
         object-fit: cover;

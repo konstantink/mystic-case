@@ -63,39 +63,39 @@ a, a:visited {
 
 @font-face {
   font-family: "Monument Extended";
-  src: url("http://mysticcase.io/assets/fonts/MonumentExtended-Regular.woff")format("woff");
+  src: url("../../assets/public/assets/fonts/MonumentExtended-Regular.woff")format("woff");
   font-weight: normal;
 }
 
 @font-face {
   font-family: "Monument Extended";
-  src: url("http://mysticcase.io/assets/fonts/MonumentExtended-Ultrabold.woff")format("woff");
+  src: url("../../assets/public/assets/fonts/MonumentExtended-Ultrabold.woff")format("woff");
   font-weight: bold;
 }
 
 @font-face {
   font-family: "Pangram";
-  src: url('http://mysticcase.io/assets/fonts/Pangram-Regular.woff') format("woff");
+  src: url('../../assets/public/assets/fonts/Pangram-Regular.woff') format("woff");
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('http://mysticcase.io/assets/fonts/Pangram-Bold.woff') format('woff');
+  src: url('../../assets/public/assets/fonts/Pangram-Bold.woff') format('woff');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('http://mysticcase.io/assets/fonts/Pangram-Black.woff') format('woff');
+  src: url('../../assets/public/assets/fonts/Pangram-Black.woff') format('woff');
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('http://mysticcase.io/assets/fonts/Pangram-Black.woff') format('woff');
+  src: url('../../assets/public/assets/fonts/Pangram-Black.woff') format('woff');
   font-weight: 900;
   font-style: normal;
 }

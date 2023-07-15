@@ -15,8 +15,8 @@ module.exports = {
     ],
     output: {
         filename: "[name].js",
-        path: path.resolve(__dirname, "dist"),
-        // publicPath: "../assets",
+        path: path.resolve(__dirname, "dist/js"),
+        publicPath: prod ? "/assets/" : "/",
     },
     target: "web",
     module: {
@@ -62,6 +62,7 @@ module.exports = {
                         loader: "file-loader",
                         options: {
                             name: "[name].[ext]",
+                            outputPath: path.resolve(__dirname, "dist/images"),
                         },
                     }
                 ],
@@ -74,11 +75,9 @@ module.exports = {
     },
     resolve: {
         alias: {
-            // "@mysticcase": path.resolve(__dirname, "src"),
             "@mysticcase/services/auth": path.resolve(__dirname, "src/services/auth/index.ts"),
             "@mysticcase/storage-helper": path.resolve(__dirname, "src/services/storage/index.ts"),
             "@mysticcase": path.resolve(__dirname, "src"),
-        //     "@mui/styled-engine": "@mui/styled-engine-sc"
         },
         extensions: [".ts", ".tsx", ".js", ".json"],
     },
@@ -89,6 +88,13 @@ module.exports = {
             "localhost",
             "127.0.0.1",
         ],
+        static: {
+            directory: path.resolve(__dirname, "../assets/public/assets"),
+            publicPath: "/assets/"
+        },
+        proxy: {
+            "/api": "http://127.0.0.1:8085",
+        },
         client: {
             logging: "verbose",
         },
