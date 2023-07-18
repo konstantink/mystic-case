@@ -18,7 +18,6 @@ import Menu from "./Menu";
 import PlanetMysticCase from "./PlanetMysticCase";
 import { FeaturedProductsList } from "./Product";
 import RequirementsSection, { Requirement } from "./Requirement";
-// import ShopnowButton from "./ShopnowButton";
 import { ButtonLink } from "@mysticcase/ui";
 import Stripe from "./Stripe";
 import Star from "./Star";
@@ -28,38 +27,7 @@ import FamilyIcon from "../icons/Family";
 import FriendsIcon from "../icons/Friends";
 import { ProductItem } from "../types";
 
-// import Button from "./ui/common/Button";
 import { Header } from "@mysticcase/layout/Header";
-
-const headerStyles = (theme: Theme) => createStyles({
-    logoContainer: {
-        // backgroundBlendMode: "multiply",
-        // backgroundColor: "#FFF",
-        // backgroundImage: "url(/assets/logo.png)",
-        width: 117,
-        height: 80,
-        objectFit: "cover",
-        "& img": {
-            height: "100%",
-            width: "100%",
-        },
-        // paddingLeft: 30,
-        // paddingTop: 20,
-    },
-    purple: {
-        filter: "brightness(1)",
-    },
-    white: {
-        filter: "brightness(0) invert(1)",
-    },
-    header: {
-        display: "flex",
-        justifyContent: "space-between",
-        padding: theme.spacing(6, 12, 0),
-        zIndex: 10,
-        // position: "absolute"
-    },
-});
 
 const styles = (theme: Theme) => createStyles({
     rootContainer: {
@@ -176,35 +144,6 @@ const styles = (theme: Theme) => createStyles({
 });
 
 type HomeLayoutProps = WithStyles<typeof styles>;
-
-interface HeaderProps extends WithStyles<typeof headerStyles> {
-    invert?: boolean;
-}
-
-interface LogoProps {
-    containerClass: string;
-}
-
-export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: LogoProps) => {
-    return (
-        <div className={containerClass}>
-            <img src="/assets/logo.png" alt="logo" />
-        </div>
-    );
-};
-
-export const DeprecatedHeader = withStyles(headerStyles)(({ classes, invert = false }: HeaderProps) => {
-    return (
-        <React.Fragment>
-            <header className={classes.header}>
-                <Box component="div">
-                    <Logo containerClass={clsx(classes.logoContainer, invert ? classes.purple : classes.white)}/>
-                </Box>
-                <Menu invert={invert} />
-            </header>
-        </React.Fragment>
-    );
-});
 
 const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeLayoutProps) => {
     // const ref = React.useRef<IParallax>(null);
