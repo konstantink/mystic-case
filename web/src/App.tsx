@@ -1,10 +1,12 @@
 import * as React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import { StyledEngineProvider } from "@mui/material/styles";
 
 import "./App.css";
 import { routes } from "./routes";
 import { AuthProvider } from "./hooks/useAuth";
-import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
 
@@ -14,7 +16,9 @@ const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
-                <RouterProvider router={router} />
+                <StyledEngineProvider injectFirst>
+                    <RouterProvider router={router} />
+                </StyledEngineProvider>
             </AuthProvider>
         </QueryClientProvider>
     );

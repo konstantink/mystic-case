@@ -68,16 +68,18 @@ module.exports = {
                 ],
             },
             {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader"],
-            }
+                test: /\.s?[ac]ss$/,
+                use: [prod ? MiniCssExtractPlugin.loader : "style-loader", "css-loader", "sass-loader"],
+            },
         ],
     },
     resolve: {
         alias: {
             "@mysticcase/services/auth": path.resolve(__dirname, "src/services/auth/index.ts"),
             "@mysticcase/storage-helper": path.resolve(__dirname, "src/services/storage/index.ts"),
+            "@mysticcase/ui": path.resolve(__dirname, "src/components/ui"),
             "@mysticcase": path.resolve(__dirname, "src"),
+            "@styles": path.resolve(__dirname, "../assets/public/assets/styles"),
         },
         extensions: [".ts", ".tsx", ".js", ".json"],
     },

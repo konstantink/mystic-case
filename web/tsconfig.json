@@ -28,12 +28,12 @@
         "paths": {
             "@mysticcase/services/auth": ["src/services/auth/index.ts"],
             "@mysticcase/storage-helper": ["src/services/storage/index.ts"],
+            "@mysticcase/ui": ["src/components/ui"],
             "@mysticcase/*": ["src/*"],
+            "@styles": ["../assets/public/assets/styles"],
         }
     },
-    "awesomeTypescriptLoaderOptions": {
-        /* ... */
-    },
+    "files": ["src/cssmodule.d.ts"],
     "include": [
         "src",
     ],

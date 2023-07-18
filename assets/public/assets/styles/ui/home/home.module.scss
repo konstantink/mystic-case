@@ -1,0 +1,16 @@
+@use "@styles/ui/common/mixins.module.scss";
+
+.shopnow-btn {
+// .MuiButton-outlined {
+    border-radius: 80px !important;
+    padding: 24px 40px !important;
+    position: relative;
+
+    @include mixins.big-font;
+
+    line-height: 32px;
+    letter-spacing: 0.6px;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}

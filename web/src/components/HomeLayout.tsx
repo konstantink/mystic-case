@@ -18,7 +18,8 @@ import Menu from "./Menu";
 import PlanetMysticCase from "./PlanetMysticCase";
 import { FeaturedProductsList } from "./Product";
 import RequirementsSection, { Requirement } from "./Requirement";
-import ShopnowButton from "./ShopnowButton";
+// import ShopnowButton from "./ShopnowButton";
+import { ButtonLink } from "@mysticcase/ui";
 import Stripe from "./Stripe";
 import Star from "./Star";
 import VideoIntroduction from "./VideoIntroduction";
@@ -26,6 +27,9 @@ import ClockIcon from "../icons/Clock";
 import FamilyIcon from "../icons/Family";
 import FriendsIcon from "../icons/Friends";
 import { ProductItem } from "../types";
+
+// import Button from "./ui/common/Button";
+import { Header } from "@mysticcase/layout/Header";
 
 const headerStyles = (theme: Theme) => createStyles({
     logoContainer: {
@@ -189,7 +193,7 @@ export const Logo: React.FunctionComponent<LogoProps> = ({ containerClass }: Log
     );
 };
 
-export const Header = withStyles(headerStyles)(({ classes, invert = false }: HeaderProps) => {
+export const DeprecatedHeader = withStyles(headerStyles)(({ classes, invert = false }: HeaderProps) => {
     return (
         <React.Fragment>
             <header className={classes.header}>
@@ -287,16 +291,19 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                                 <Typography variant="body1" sx={{ color: "#FEFEFE", marginBottom: 5, maxWidth: "589px" }}>
                                     Try the brand new way to spend your leisure time at home in the most fun and challengeable way!
                                 </Typography>
-                                <ShopnowButton>
+                                {/* <Button disableRipple>
                                     Shop now
-                                </ShopnowButton>
+                                </Button> */}
+                                <ButtonLink to="/shop">
+                                    Shop now
+                                </ButtonLink>
                             </Grid>
                         </Grid>
                     </Box>
                 </div>
                 <div className="row-wrapper">
                     <Stripe>
-                        Escape room in a box right at home
+                        Escape room in a box right at home&nbsp;
                     </Stripe>
                 </div>
                 <div className="row-wrapper">
@@ -316,9 +323,9 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                     <Typography variant="h2" style={{ color: "#231E52", fontFamily: "Pangram", fontSize: 56, fontWeight: "bold", lineHeight: "64px", letterSpacing: "0.4px", marginBottom: 40, maxWidth: 705, textAlign: "center", textTransform: "capitalize" }}>
                         Want to see more? Check out our shop page
                     </Typography>
-                    <ShopnowButton>
-                        Shop now
-                    </ShopnowButton>
+                    <ButtonLink to="/shop">
+                        Choose a box
+                    </ButtonLink>
                 </div>
                 <div className="row-wrapper">
                     <VideoIntroduction />

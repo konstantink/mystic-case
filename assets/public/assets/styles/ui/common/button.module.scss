@@ -1,0 +1,39 @@
+@use "@styles/mixins.module.scss";
+@use "@styles/variables.module.scss";
+
+.mc-button-link {
+    background: variables.$main-btn-color;
+    border-radius: 80px;
+    padding: 24px 40px;
+    position: relative;
+
+    & a, a:visited {
+        color: #3A3185;
+
+        @include mixins.big-font;
+    }
+}
+
+.mc-button-link-fill {
+    border-radius: 80px;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+// .MuiButtonBase-outlined-root {
+//     background-color: variables.$outlined-btn-color;
+//     border-radius: 80px !important;
+//     padding: 24px 40px !important;
+//     position: relative;
+
+//     @include mixins.big-font;
+
+//     line-height: 32px;
+//     letter-spacing: 0.6px;
+//     text-decoration: none;
+//     text-transform: uppercase;
+//     white-space: nowrap;
+// }

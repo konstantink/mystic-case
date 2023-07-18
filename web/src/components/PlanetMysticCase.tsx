@@ -5,7 +5,8 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
-import ShopnowButton from "./ShopnowButton";
+// import ShopnowButton from "./ShopnowButton";
+import { ButtonLink } from "@mysticcase/ui";
 
 const PlanetMysticCase = styled(({ className }: { className?: string; }) => (
     <Box component="div" className={className}>
@@ -20,9 +21,9 @@ const PlanetMysticCase = styled(({ className }: { className?: string; }) => (
                 <Typography variant="body1" className="pmc-text">
                     Each box from Planet series contains a magnet with a piece of a planet. Collect all 9 magnets to gather you own Mystic Case planet!
                 </Typography>
-                <ShopnowButton>
+                <ButtonLink to="/shop">
                     Choose a box
-                </ShopnowButton>
+                </ButtonLink>
             </Grid>
             <Grid xs={6} className="pmc-left-side">
                 <Box component="div" className="pmc-ellipse"></Box>

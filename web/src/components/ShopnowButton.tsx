@@ -27,13 +27,13 @@ const ShopnowButton = styled(({ className, children }: BoxProps) => (
     // height: ${theme.spacing(10)};
     padding: ${theme.spacing(3, 5)};
     position: relative;
-    
+
     & a {
         color: #3A3185;
         font-family: Pangram;
         font-size: ${theme.spacing(4)};
         font-weight: 900;
-        line-height: "${theme.spacing(4)}px";
+        line-height: "${theme.spacing(4)}";
         letter-spacing: 0.6px;
         text-decoration: none;
         text-transform: uppercase;

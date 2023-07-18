@@ -2,7 +2,7 @@ import * as React from "react";
 
 import Box from "@mui/material/Box";
 
-import { Header } from "../HomeLayout";
+import { Header } from "@mysticcase/layout/Header";
 import Loading from "../../icons/Loading";
 import { ProductItem } from "../../types";
 

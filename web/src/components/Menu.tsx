@@ -8,6 +8,8 @@ import { Theme } from "@mui/material/styles";
 import { createStyles, makeStyles, WithStyles, withStyles } from "@mui/styles";
 import { animated, config, useTransition } from "@react-spring/web";
 
+// import { AnimatedFacebookLogo } from "@mysticcase/ui";
+
 const menuStyles = (theme: Theme) => createStyles({ // eslint-disable-line
     root: {
         display: "flex",
