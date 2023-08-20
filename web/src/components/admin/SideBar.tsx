@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import * as React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -14,8 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { createStyles, withStyles, WithStyles } from "@mui/styles";
 
 // import AdminRoute from "../../containers/admin/AdminRoute";
-import { Logo } from "../HomeLayout";
-import clsx from "clsx";
+import { Logo } from "@mysticcase/ui";
 
 const drawerWidth = 240;
 
@@ -57,7 +57,7 @@ export default withStyles(styles)(({ children, classes }: React.PropsWithChildre
                 variant="permanent"
             >
                 <Toolbar style={{ display: "flex", justifyContent: "center" }}>
-                    <Logo containerClass={clsx(classes.logoContainer, classes.purple)}/>
+                    <Logo className={clsx(classes.logoContainer, classes.purple)}/>
                 </Toolbar>
                 <Divider />
                 <nav aria-label="main">

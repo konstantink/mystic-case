@@ -2,8 +2,9 @@ import React from "react";
 
 import Box from "@mui/material/Box";
 
+import { AnimatedLogo, FacebookLogo, InstagramLogo } from "@mysticcase/ui";
+
 import AnimatedMenuItem from "./AnimatedMenuItem";
-import { AnimatedLogo, FacebookLogo, InstagramLogo } from "./Logo";
 
 import styles from "@styles/layout/header.module.scss";
 

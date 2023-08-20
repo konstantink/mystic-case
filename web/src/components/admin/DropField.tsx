@@ -32,7 +32,7 @@ import {
     UploadSuccessResponse
 } from "../../types";
 
-const move = <T = number>(array: Array<T>, moveIndex: number, toIndex: number) => {
+const move = <T=number>(array: Array<T>, moveIndex: number, toIndex: number) => {
     /* #move - Moves an array item from one position in an array to another.
        Note: This is a pure function so a new array will be returned, instead
        of altering the array argument.

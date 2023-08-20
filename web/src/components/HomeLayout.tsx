@@ -1,10 +1,9 @@
-import clsx from "clsx";
 import React from "react";
 
 import { createStyles, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+// import Container from "@mui/material/Container";
+import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 import { withStyles, WithStyles } from "@mui/styles";
 
@@ -14,13 +13,12 @@ import FAQSection from "./Faq";
 import FeaturesSection, { Feature } from "./Feature";
 import FeedbackSection from "./Feedback";
 import Footer from "./Footer";
-import Menu from "./Menu";
 import PlanetMysticCase from "./PlanetMysticCase";
 import { FeaturedProductsList } from "./Product";
 import RequirementsSection, { Requirement } from "./Requirement";
-import { ButtonLink } from "@mysticcase/ui";
+import { ButtonLink, MainScene } from "@mysticcase/ui";
 import Stripe from "./Stripe";
-import Star from "./Star";
+// import Star from "./Star";
 import VideoIntroduction from "./VideoIntroduction";
 import ClockIcon from "../icons/Clock";
 import FamilyIcon from "../icons/Family";
@@ -182,27 +180,16 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
             <main className={classes.mainRows}>
                 <div className="row-wrapper">
                     <Box justifyContent="center" display="flex" sx={{ paddingBottom: 22, paddingLeft: 12, paddingRight: 12, width: "100%" }}>
-                        <Grid container sx={{ maxWidth: "calc(1920px - 2 * 96px)" }}>
-                            <Grid item xs={6} style={{ height: 637 }}>
-                                <Container className={classes.parallaxContainer}>
-                                    {/* <GhostParallax /> */}
-                                    <img src="/assets/images/box.png" alt="box" className={classes.boxImg} />
-                                    <img src="/assets/images/left-ghost.png" alt="ghost_1" className={classes.leftGhostImg} />
-                                    <img src="/assets/images/right-ghost.png" alt="ghost_2" className={classes.rightGhostImg} />
-                                    <img src="/assets/images/back-ghost.png" alt="ghost_3" className={classes.backGhostImg} />
-                                    <Container disableGutters className={classes.ellipse}> </Container>
-                                    <Star height={64} width={56} left="42%" top={485} />
-                                    <Star height={16} width={14} left="11%" top={520} />
-                                    <Star height={48} width={42} left="26%" top={95} />
-                                    <Star height={24} width={20} left="43%" top={-75} />
-                                    <Star height={80} width={68} left="69%" top={-15} />
-                                </Container>
+                        <Grid container sx={{ maxWidth: "calc(1920px - 2 * 96px)" }} spacing={1}>
+                            <Grid xs={6} style={{ height: 637 }}>
+                                <MainScene />
                             </Grid>
-                            <Grid item xs={6}
+                            <Grid xs={6}
                                 sx={{
                                     alignItems: "flex-start",
                                     display: "flex",
                                     flexDirection: "column",
+                                    justifyContent: "center",
                                     paddingTop: 16,
                                     "& h1": {
                                         fontFamily: "Pangram",
