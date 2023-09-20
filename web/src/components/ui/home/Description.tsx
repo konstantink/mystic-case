@@ -8,88 +8,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
 
-import ShopnowButton from "./ShopnowButton";
+import { ButtonLink } from "@mysticcase/ui";
 
-const DescriptionSectionContainer = styled(Box)(({ theme }) => `
-    padding: ${theme.spacing(25, 12)};
-    max-width: calc(1920px - 2 * ${theme.spacing(12)});
-    
-    & .dsc-h1 {
-        color: #FEFEFE;
-        font-family: Pangram;
-        font-size: ${theme.spacing(9)};
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        line-height: 74px;
-        text-transform: capitalize;
-    }
-
-    & .dsc-right-side {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        padding-top: ${theme.spacing(5)};
-    }
-
-    & .dsc-left-side {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-    & .dsc-margin-bottom80 {
-        margin-bottom: ${theme.spacing(10)};
-    }
-
-    & .dsc-margin-bottom40 {
-        margin-bottom: ${theme.spacing(5)};
-    }
-
-    & .dsc-yellow {
-        color: #FFD644;
-    }
-
-    & .dsc-h4 {
-        color: #FEFEFE;
-        font-family: Pangram;
-        font-size: ${theme.spacing(4)};
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        line-height: ${theme.spacing(5)};
-    }
-
-    & .dsc-item {
-        & div:first-of-type {
-            margin-right: ${theme.spacing(4)};
-        }
-    }
-
-    & .dsc-img-container {
-        & img {
-            border-radius: ${theme.spacing(3)};
-            height: 100%;
-            object-fit: cover;
-            width: 100%;
-        }
-    }
-
-    & .dsc-back-img {
-        transform: rotate(-10.54deg);
-        width: 90%;
-    }
-
-    & .dsc-front-img {
-        height: 65%;
-        top: 30%;
-        position: absolute;
-        transform: rotate(4.14deg);
-        width: 80%;
-        z-index: 10;
-    }
-`);
+import styles from "@styles/ui/home/home.module.scss";
 
 const BulletIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,51 +19,51 @@ const BulletIcon = () => (
     </svg>
 );
 
-const Description = () => {
+export const Description = () => {
     const features = [
         "Exciting plot with logical and interactive tasks;",
         "Various objects and tool;",
-        "Clues, cyphers, tasks, puzzles and codes",
+        "Clues, cyphers, tasks, puzzles and codes;",
         "Detailed hints for every stage if you're stuck."
     ];
 
     return (
-        <DescriptionSectionContainer component="div">
+        <Box className={styles["mc-desc-container"]} component="div">
             <Grid container spacing={10}>
-                <Grid item xs={6} className="dsc-left-side">
-                    <animated.div className="dsc-img-container dsc-back-img">
+                <Grid item xs={6} className={styles["mc-dsc-left-side"]}>
+                    <animated.div className={`${styles["mc-dsc-img-container"]} ${styles["mc-dsc-back-img"]}`}>
                         <img src="/assets/images/description_1.webp" alt="Collaboration" />
                     </animated.div>
-                    <animated.div className="dsc-img-container dsc-front-img">
+                    <animated.div className={`${styles["mc-dsc-img-container"]} ${styles["mc-dsc-front-img"]}`}>
                         <img src="/assets/images/description_2.webp" alt="Fun" />
                     </animated.div>
                 </Grid>
-                <Grid item xs={6} className="dsc-right-side">
-                    <Typography variant="h2" className="dsc-h1 dsc-margin-bottom80">
+                <Grid item xs={6} className={styles["mc-dsc-right-side"]}>
+                    <Typography variant="h2" className={`${styles["mc-dsc-h1"]} ${styles["mc-dsc-margin-bottom80"]}`}>
                         Your&nbsp;
-                        <Typography variant="body1" display="inline" className="dsc-h1 dsc-yellow">
+                        <Typography variant="body1" display="inline" className={`${styles["mc-dsc-h1"]} ${styles["mc-color-yellow"]}`}>
                             fun activity
                         </Typography>
                     </Typography>
-                    <List dense={false} className="dsc-margin-bottom80">
+                    <List dense={false} className={styles["mc-dsc-margin-bottom80"]}>
                         {features.map((item, idx) => (
-                            <ListItem key={`feature-item-${idx}`} disableGutters className="dsc-item dsc-margin-bottom40">
+                            <ListItem key={`feature-item-${idx}`} disableGutters className={`${styles["mc-dsc-item"]} ${styles["mc-dsc-margin-bottom40"]}`}>
                                 <ListItemIcon>
                                     <BulletIcon />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={item}
-                                    primaryTypographyProps={{ className: "dsc-h4" }}
+                                    primaryTypographyProps={{ className: styles["mc-dsc-h4"] }}
                                 />
                             </ListItem>
                         ))}
                     </List>
-                    <ShopnowButton>
+                    <ButtonLink to="/shop">
                         Shop now
-                    </ShopnowButton>
+                    </ButtonLink>
                 </Grid>
             </Grid>
-        </DescriptionSectionContainer>
+        </Box>
     );
 };
 

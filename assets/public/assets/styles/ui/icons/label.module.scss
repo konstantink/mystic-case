@@ -1,0 +1,84 @@
+@use "@styles/mixins.module.scss";
+@use "@styles/variables.module.scss";
+
+.mc-label-new-container, .mc-label-bestseller-container {
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 9999;
+}
+
+.mc-label-new-container, .mc-label-bestseller-container {
+    height: 222px;
+    right: -22px;
+    top: -22px;
+    width: 214px;
+}
+
+.mc-label-bestseller-container {
+    background-color: variables.$lime;
+    border-radius: 50%;
+}
+
+.mc-label-new-spinner, .mc-label-new-container, .mc-label-bestseller-container {
+    display: flex;
+    position: absolute;
+}
+
+.mc-label-new-spin {
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(180deg);
+        }
+    }
+
+    animation: {
+        name: spin;
+        duration: 5s;
+        iteration-count: infinite;
+        timing-function: linear;
+    }
+}
+
+.mc-label-new-text {
+    @include mixins.font(40px, normal, 4px, 48px, uppercase, variables.$black, "Monument Extended");
+    margin: {
+        right: -4px;
+    }
+    transform: rotate(-15deg);
+    z-index: 10;
+}
+
+.mc-label-new-gear {
+    height: 156px;
+    margin: auto;
+    position: relative;
+    width: 156px;
+    & div {
+        background: variables.$yellow;
+        border-radius: 28px;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+    & div:first-of-type {
+        transform: rotate(120deg);
+    }
+    & div:nth-of-type(2) {
+        transform: rotate(240deg);
+    }
+}
+
+.mc-label-bestseller-text {
+    @include mixins.font(30px, 700, 4px, 30px, uppercase, variables.$purple, "Monument Extended");
+    margin: {
+        right: -4px;
+    }
+    transform: rotate(-15deg);
+}

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 import MuiBox, { BoxProps } from "@mui/material/Box";
 import MuiTypography from "@mui/material/Typography";
-// import { styled } from "@mui/material/styles";
 
 import styles from "@styles/ui/common/button.module.scss";
 

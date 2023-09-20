@@ -12,11 +12,11 @@ import Description from "./Description";
 import FAQSection from "./Faq";
 import FeaturesSection, { Feature } from "./Feature";
 import FeedbackSection from "./Feedback";
-import Footer from "./Footer";
+import Footer from "../layout/Footer";
 import PlanetMysticCase from "./PlanetMysticCase";
 import { FeaturedProductsList } from "./Product";
 import RequirementsSection, { Requirement } from "./Requirement";
-import { ButtonLink, MainScene } from "@mysticcase/ui";
+import { ButtonLink, GhostScene } from "@mysticcase/ui";
 import Stripe from "./Stripe";
 // import Star from "./Star";
 import VideoIntroduction from "./VideoIntroduction";
@@ -182,7 +182,7 @@ const HomeLayout: React.FunctionComponent<HomeLayoutProps> = ({ classes }: HomeL
                     <Box justifyContent="center" display="flex" sx={{ paddingBottom: 22, paddingLeft: 12, paddingRight: 12, width: "100%" }}>
                         <Grid container sx={{ maxWidth: "calc(1920px - 2 * 96px)" }} spacing={1}>
                             <Grid xs={6} style={{ height: 637 }}>
-                                <MainScene />
+                                <GhostScene />
                             </Grid>
                             <Grid xs={6}
                                 sx={{

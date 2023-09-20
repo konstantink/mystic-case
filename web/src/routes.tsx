@@ -3,7 +3,8 @@ import { Navigate, RouteObject } from "react-router-dom";
 
 import AdminApp from "./AdminApp";
 // // import * as mcApi from "./api/api";
-import Home from "./containers/Home";
+import HomePage from "./pages/home/HomePage";
+// import HomePage from "./containers/Home";
 import Shop from "./containers/Shop";
 import SignIn from "./containers/SignIn";
 import SignUp from "./containers/SignUp";
@@ -40,7 +41,7 @@ export const routes: Array<RouteObject> = [{
     element: <SignUp />,
 }, {
     path: "/",
-    element: <Home />,
+    element: <HomePage />,
 }, {
     path: "/shop",
     element: <Shop />,

@@ -1,0 +1,44 @@
+.mc-notificationform-text {
+    color: #FEFEFE;
+    font-family: Pangram;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    line-height: 40px;
+    margin-bottom: 8px;
+
+    & .mc-notificationform-text-yellow {
+        color: #FFD644;
+        font: inherit;
+    }
+}
+
+.mc-notificationform-text-input {
+
+    & :global .MuiInput-underline {
+        // border: 10px solid red;
+
+        &:before {
+            border-bottom: 2px solid #938CD160;
+        }
+        &:hover:before, &:after {
+            border-bottom: 4px solid #938CD1;
+        }
+        & :global .Mui-focused:after {
+            box-shadow: 1px 5px 8px rgb(147 140 209 / 90%);
+            // border-bottom: 4px solid #FEFEFE;
+            transform: scaleX(1);
+        }
+    }
+
+    & :global .MuiInput-underline input {
+        // color: #938CD1;
+        color: #FEFEFE;
+        font-family: Pangram;
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        line-height: 36px;
+        padding-bottom: 16px;
+    }
+}

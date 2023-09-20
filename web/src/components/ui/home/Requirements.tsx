@@ -3,8 +3,9 @@ import { useInView } from "react-intersection-observer";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
 import { animated, config, useTransition } from "@react-spring/web";
+
+import styles from "@styles/ui/home/requirements.module.scss";
 
 export interface Requirement {
     icon: React.ReactElement;
@@ -12,24 +13,16 @@ export interface Requirement {
     delay: number;
 }
 
-interface RequirementsSectionProps {
+interface RequirementsProps {
     className?: string;
     requirements: Array<Requirement>;
 }
-
-const IconContainer = styled(Box)(({ theme }) => `
-    margin-bottom: ${theme.spacing(6)};
-    & svg {
-        height: 160px;
-        width: 160px;
-    }
-`);
 
 interface RequirementViewProps extends Requirement {
     className?: string;
 }
 
-const RequirementView = styled(({ className, icon, text, delay }: RequirementViewProps) => {
+const RequirementView = ({ icon, text, delay }: RequirementViewProps) => {
     const [show, setShow] = React.useState(false);
     const [ref, inView] = useInView({
         triggerOnce: true,
@@ -49,10 +42,10 @@ const RequirementView = styled(({ className, icon, text, delay }: RequirementVie
     }, [inView]);
 
     return (
-        <div ref={ref} className={className}>
-            <IconContainer component="div">
+        <div ref={ref} className={styles["mc-requirements-requirement-view"]}>
+            <Box className={styles["mc-requirements-icon-container"]} component="div">
                 {show && icon}
-            </IconContainer>
+            </Box>
             {transitions((styles, item) => item && (
                 <animated.div style={styles}>
                     <Typography variant="h5">
@@ -62,41 +55,14 @@ const RequirementView = styled(({ className, icon, text, delay }: RequirementVie
             ))}
         </div>
     );
-})`
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-`;
+};
 
-const RequirementsSection = styled(({ className, requirements }: RequirementsSectionProps) => (
-    <Box component="div" className={className}>
+export const Requirements = ({ requirements }: RequirementsProps) => (
+    <Box component="div" className={styles["mc-requirements-container"]}>
         {requirements.map((item, idx) => (
             <RequirementView key={`requirement-view-${idx}`} {...item} />
         ))}
     </Box>
-))(({ theme }) => `
-    background-color: #231E52;
-    display: flex;
-    filter: drop-shadow(2px 4px 6px black);
-    flex-direction: row;
-    justify-content: space-around;
-    // max-width: calc(1920px - 2 * ${theme.spacing(12)});
-    padding: ${theme.spacing(20, 12)};
-    width: 100%;
+);
 
-    & h5 {
-        align: center;
-        color: rgb(255, 255, 255);
-        font-family: Pangram;
-        font-size: 32px;
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        line-height: 40px;
-    }
-
-    & h2 {
-        font-family: "Balsamiq Sans",Roboto,Arial;
-    }
-`);
-
-export default RequirementsSection;
+export default Requirements;

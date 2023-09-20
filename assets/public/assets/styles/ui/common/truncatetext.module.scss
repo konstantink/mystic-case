@@ -1,0 +1,9 @@
+@use "@styles/mixins.module.scss";
+
+.mc-truncate-text-text {
+    @include mixins.font(20px, 400, 0.3px, 30px, none);
+    
+    margin: {
+        bottom: 32px;
+    }
+}

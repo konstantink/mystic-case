@@ -6,7 +6,7 @@ import { Stars } from "@mysticcase/ui";
 
 import styles from "@styles/ui/home/main-scene.module.scss";
 
-export const MainScene = () => {
+export const GhostScene = () => {
     return (
         <Container disableGutters className={styles["mc-main-scene-container"]}>
             <img src="/assets/images/small_box.png" alt="box" className={styles["mc-main-scene-box-img"]} />
@@ -18,3 +18,5 @@ export const MainScene = () => {
         </Container>
     );
 };
+
+export default GhostScene;

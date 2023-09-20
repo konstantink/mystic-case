@@ -1,0 +1,17 @@
+@use "@styles/mixins.module.scss";
+@use "@styles/variables.module.scss";
+
+.mc-products-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.mc-products-h2 {
+    @include mixins.font(72px, 700, 0.4px, 74px, none, variables.$dark-purple);
+    padding: {
+        bottom: 120px;
+    };
+    text-align: center;
+    text-transform: capitalize;
+}

@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "baseUrl": "./",
-        "target": "es5",
+        "target": "ESNext",
         "lib": [
+            "esnext",
             "dom",
             "dom.iterable",
-            "esnext"
         ],
         "allowJs": true,
         "skipLibCheck": true,
@@ -20,25 +20,34 @@
         "sourceMap": true,
         "strictNullChecks": false,
         "isolatedModules": true,
-        "noEmit": false,
+        "noEmit": true,
         "jsx": "react-jsx",
         // "paths": {
         //   "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
         // },
+        "plugins": [
+            {
+                "name": "typescript-plugin-css-modules",
+                "classnameTransform": "asis",
+            }
+        ],
         "paths": {
             "@mysticcase/services/auth": ["src/services/auth/index.ts"],
             "@mysticcase/storage-helper": ["src/services/storage/index.ts"],
             "@mysticcase/ui": ["src/components/ui"],
+            "@mysticcase/ui/*": ["src/components/ui/*"],
             "@mysticcase/*": ["src/*"],
             "@styles": ["../assets/public/assets/styles"],
         }
     },
-    "files": ["src/cssmodule.d.ts"],
+    // "files": ["src/cssmodule.d.ts"],
     "include": [
         "src",
     ],
     "exclude": [
         "node_modules",
         "dist",
+        "vite.config.js",
+        "src/cssmodule.d.ts",
     ]
 }

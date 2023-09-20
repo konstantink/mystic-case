@@ -1,0 +1,68 @@
+@use "@styles/variables.module.scss";
+
+.mc-features-grid {
+    padding-bottom: 120px;
+}
+
+.mc-features-interactive-text {
+    color: variables.$white;
+    font-family: Pangram;
+    font-size: 56px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    line-height: 64px;
+    // margin-left: auto;
+    max-width: 964px;
+    text-transform: capitalize;
+}
+
+.mc-features-image-box {
+    // background: url('/assets/images/family.jpeg');
+    border-radius: 24px;
+    height: 594px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    width: 100%;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+.mc-features-header-text {
+    color: variables.$lime;
+    font-family: Pangram;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.4%;
+    line-height: 48px;
+    margin-bottom: 8px;
+}
+
+.mc-features-feature-text {
+    color: variables.$white;
+    font-family: Pangram;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    line-height: 36px;
+}
+
+.mc-features-feature-view {
+    display: flex;
+    flex-direction: column;
+    width: 549px;
+}
+
+.mc-features-container {
+    display: flex;
+    flex-direction: column;
+    // max-width: calc(1920px - 2 * ${theme.spacing(12)});
+    padding: 160px 0;
+}
+
+.mc-features-yellow-text {
+    color: variables.$yellow;
+}

@@ -48,7 +48,7 @@ const ProductContainer = styled(Box)(({ theme }) => `
     }
     & a::after {
         content: " >";
-        color: ;#231E52;
+        color: #231E52;
     },
 `);
 
@@ -310,7 +310,6 @@ export const FeaturedProductsList = styled(({ className, products }: FeaturedPro
                 } else {
                     return 0;
                 }
-                // style={{ maxWidth: 844 }}
             }).map((item, idx) => (
                 <Grid key={`key-produc-${idx}`} xs={6} style={{ maxWidth: 886 }}>
                     <Product {...item} />

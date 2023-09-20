@@ -3,7 +3,8 @@ import React from "react";
 
 import Box from "@mui/material/Box";
 
-import { Menu, Logo } from "@mysticcase/ui";
+import { Menu } from "@mysticcase/ui";
+import Logo from "@mysticcase/icons/Logo";
 
 import styles from "@styles/layout/header.module.scss";
 
@@ -23,3 +24,5 @@ export const Header = ({ invert = false }: HeaderProps) => {
         </React.Fragment>
     );
 };
+
+export default Header;

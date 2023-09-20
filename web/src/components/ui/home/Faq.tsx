@@ -9,7 +9,9 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
-import { Collapse, Expand } from "../icons/Expand";
+import { Collapse, Expand } from "@mysticcase/icons/Expand";
+
+import styles from "@styles/ui/home/home.module.scss";
 
 interface Question {
     question: string,
@@ -61,12 +63,13 @@ const Accordion = styled(MuiAccordion)({
 
 const AccordionSummary = styled(MuiAccordionSummary)({});
 
-const Icon = styled(({ className }: { className?: string }) => (
-    <Box component="div" className={className}>
+const Icon = () => ( // styled(({ className }: { className?: string }) => (
+    <Box component="div" className={styles["mc-faq-icon"]}>
         <Expand className="e" />
         <Collapse className="c" />
     </Box>
-))`
+);
+/* )`
     & .e {
         display: block;
     }
@@ -82,57 +85,9 @@ const Icon = styled(({ className }: { className?: string }) => (
     .Mui-expanded & > .e {
         display: none;
     }
-`;
+`; */
 
-const FAQContainer = styled(Box)(({ theme }) => `
-    background: #FEFEFE;
-    display: flex;
-    justify-content: center;
-    padding: ${theme.spacing(20, 12)};
-    width: 100%;
-
-    .faq-root {
-        max-width: calc(1920px - 2 * ${theme.spacing(12)});
-    }
-
-    .faq-title {
-        color: #231E52;
-        font-family: Pangram;
-        font-size: ${theme.spacing(9)};
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        line-height: 74px;
-    }
-
-    .faq-question-container {
-        padding-top: ${theme.spacing(15.5)};
-    }
-
-    .faq-question {
-        color: #231E52;
-        font-family: Pangram;
-        font-size: ${theme.spacing(5)};
-        font-weight: 700;
-        letter-spacing: 0.4px;
-        line-height: 56px;
-    }
-
-    .faq-answer {
-        color: #666666;
-        font-family: Pangram;
-        font-size: ${theme.spacing(3)};
-        font-weight: 400;
-        letter-spacing: 0.3px;
-        line-height: 36px;
-    }
-
-    .faq-link {
-        color: #5456B1;
-        font: inherit;
-    }
-`);
-
-const FAQSection = () => {
+export const FAQ = () => {
     const [expanded, setExpanded] = React.useState<string | false>(false);
 
     const onChange = (panel: string) => (event: React.ChangeEvent<object>, newExpanded: boolean) => {
@@ -147,7 +102,7 @@ const FAQSection = () => {
         return text.split(regex).map((item, idx) => {
             if (values.includes(item)) {
                 return (
-                    <Link key={`regex-${idx}`} href={name2Url[item]} color="inherit" underline="none" variant="caption" className="faq-link" target="_blank" rel="noreferrer">
+                    <Link key={`regex-${idx}`} href={name2Url[item]} color="inherit" underline="none" variant="caption" className={styles["mc-faq-link"]} target="_blank" rel="noreferrer">
                         {item}
                     </Link>
                 );
@@ -157,22 +112,22 @@ const FAQSection = () => {
     };
 
     return (
-        <FAQContainer component="div">
-            <Box component="div" className="faq-root">
-                <Typography variant="h2" className="faq-title" align="center">
+        <Box component="div">
+            <Box component="div" className={styles["mc-faq-root"]}>
+                <Typography variant="h2" className={styles["mc-faq-title"]} align="center">
                     FAQ
                 </Typography>
-                <Container className="faq-question-container">
+                <Container className={styles["mc-faq-question-container"]}>
                     {questions.map((item, idx) => (
                         <React.Fragment key={`key-faq-section-${idx}`}>
                             <Accordion square expanded={expanded === item.id} onChange={onChange(item.id)}>
                                 <AccordionSummary aria-controls={`${item.id}-content`} id={`${item.id}-header`} expandIcon={<Icon />}>
-                                    <Typography variant="body1" className="faq-question">
+                                    <Typography variant="body1" className={styles["mc-faq-question"]}>
                                         {item.question}
                                     </Typography>
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Typography variant="body2" className="faq-answer">
+                                    <Typography variant="body2" className={styles["mc-faq-answer"]}>
                                         {formatMentionText(item.answer, Object.keys(name2Url), /((?:\w+)?@[\w\-.]+)/)}
                                     </Typography>
                                 </AccordionDetails>
@@ -182,8 +137,8 @@ const FAQSection = () => {
                     ))}
                 </Container>
             </Box>
-        </FAQContainer>
+        </Box>
     );
 };
 
-export default FAQSection;
+export default FAQ;

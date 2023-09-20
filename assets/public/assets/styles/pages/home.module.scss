@@ -1,0 +1,63 @@
+@use "@styles/mixins.module.scss";
+@use "@styles/variables.module.scss";
+
+.mc-home-page {
+    background-color: variables.$purple;
+    color: variables.$white;
+}
+
+.mc-stripe-row {
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.mc-requirements-row {
+    @include mixins.mc-bg(variables.$dark-purple);
+    @include mixins.mc-zero-padding-bottom;
+    @include mixins.mc-shadow-bottom;
+}
+
+.mc-products-row {
+    @include mixins.mc-bg(variables.$light-white);
+    padding: {
+        bottom: 120px;
+        top: 160px;
+    }
+}
+
+.mc-video-introduction-row {
+    @include mixins.mc-bg(variables.$dark-purple);
+    @include mixins.mc-shadow-top;
+    padding: {
+        bottom: 160px;
+        top: 160px;
+    }
+}
+
+.mc-pmc-row {
+    padding: {
+        top: 160px;
+    }
+}
+
+.mc-dsc-row {
+    padding: 200px 96px;
+}
+
+.mc-feedback-row {
+    align-items: center;
+    background: variables.$dark-purple;
+    display: flex;
+    filter: drop-shadow(2px -4px 6px black);
+    flex-direction: column;
+    padding: 168px 96px;
+}
+
+.mc-faq-row {
+    background: variables.$white;
+    display: flex;
+    justify-content: center;
+    padding: 160px 96px;
+    // width: 100%;
+}

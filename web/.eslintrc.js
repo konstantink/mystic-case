@@ -13,6 +13,7 @@ module.exports = {
     plugins: ["@typescript-eslint"],
     root: true,
     ignorePatterns: [
+        "vite.config.js",
         "webpack.config.js",
         ".eslintrc.js"
     ],

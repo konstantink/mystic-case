@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import { styled } from "@mui/material/styles";
+import styles from "@styles/ui/common/truncatetext.module.scss";
 
 interface TruncateTextProps {
     truncateBy: "letters" | "words";
@@ -11,49 +11,48 @@ interface TruncateTextProps {
     url?: string;
 }
 
-export default styled(({
+type TruncateBy = "words" | "letters";
+
+const truncateText = (text: string, truncateBy: TruncateBy, limit: number) => {
+    if (truncateBy === "words") {
+        const truncated = text.split(" ", limit);
+        return `${truncated.join(" ")}... `;
+    }
+    return text;
+};
+
+export const TruncateText = ({
     children,
     truncateBy = "words",
     limit,
-    className,
     showMore = false,
     url = "/",
 }: React.PropsWithChildren<TruncateTextProps>) => {
-    const [text, setText] = React.useState<string>("");
+    // const [text, setText] = React.useState<string>("");
 
-    React.useEffect(() => {
-        if (children) {
-            if (Array.isArray(children)) { // setText(children);
-                const input = (children as Array<string>).reduce((prev: string, curr: string) => (`${prev} ${curr}`), "");
-                setText(input);
-            } else {
-                setText(children as string);
-            }
-        }
-    }, [children]);
+    // React.useEffect(() => {
+    //     if (children) {
+    //         if (Array.isArray(children)) { // setText(children);
+    //             const input = (children as Array<string>).reduce((prev: string, curr: string) => (`${prev} ${curr}`), "");
+    //             setText(input);
+    //         } else {
+    //             setText(children as string);
+    //         }
+    //     }
+    // }, [children]);
 
-    const truncateText = () => {
-        if (truncateBy === "words") {
-            const truncated = text.split(" ", limit);
-            return `${truncated.join(" ")}... `;
-        }
-        return text;
-    };
+    const text = children && Array.isArray(children)
+        ? (children as Array<string>).reduce((prev: string, curr: string) => (`${prev} ${curr}`), "")
+        : children as string;
 
     return (
         <React.Fragment>
-            <p className={className}>
-                {truncateText()}
+            <p className={styles["mc-truncate-text-text"]}>
+                {truncateText(text, truncateBy, limit)}
                 {showMore ? (<Link to={url}>Read More</Link>) : ""}
             </p>
         </React.Fragment>
     );
-})(({ theme }) => `
-    color: #231E52;
-    font-family: Pangram;
-    font-size: 20px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-    line-height: 30px;
-    margin-bottom: ${theme.spacing(4)};
-`);
+};
+
+export default TruncateText;

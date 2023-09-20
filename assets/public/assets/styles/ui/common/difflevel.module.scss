@@ -1,0 +1,22 @@
+@use "@styles/variables.module.scss";
+
+.mc-difflevel-container {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+
+    & p {
+        color: variables.$dark-purple;
+        font-family: Pangram;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 38px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+}
+
+.mc-difflevel-stars-container {
+    display: flex;
+    flex-direction: row;
+}

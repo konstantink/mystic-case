@@ -1,3 +1,11 @@
+:root {
+  --yellow: #FFD644;
+  --lime: #B3D138;
+  --light-white: #FFF;
+  --white: #FEFEFE;
+  --dark-purple: #231E52;
+}
+
 body {
   /* background: rgb(58, 49, 133); */
   margin: 0;
@@ -63,39 +71,39 @@ a, a:visited {
 
 @font-face {
   font-family: "Monument Extended";
-  src: url("../../assets/public/assets/fonts/MonumentExtended-Regular.woff")format("woff");
+  src: url("/assets/fonts/MonumentExtended-Regular.woff")format("woff");
   font-weight: normal;
 }
 
 @font-face {
   font-family: "Monument Extended";
-  src: url("../../assets/public/assets/fonts/MonumentExtended-Ultrabold.woff")format("woff");
+  src: url("/assets/fonts/MonumentExtended-Ultrabold.woff")format("woff");
   font-weight: bold;
 }
 
 @font-face {
   font-family: "Pangram";
-  src: url('../../assets/public/assets/fonts/Pangram-Regular.woff') format("woff");
+  src: url("/assets/fonts/Pangram-Regular.woff") format("woff");
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('../../assets/public/assets/fonts/Pangram-Bold.woff') format('woff');
+  src: url("/assets/fonts/Pangram-Bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('../../assets/public/assets/fonts/Pangram-Black.woff') format('woff');
+  src: url("/assets/fonts/Pangram-Black.woff") format("woff");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Pangram';
-  src: url('../../assets/public/assets/fonts/Pangram-Black.woff') format('woff');
+  src: url("/assets/fonts/Pangram-Black.woff") format("woff");
   font-weight: 900;
   font-style: normal;
 }
@@ -107,4 +115,13 @@ code {
 
 #root {
   height: 100%;
+}
+
+.mc-logo-fil1 {
+  fill: #003399;
+}
+
+.mc-logo-fil0 {
+  fill: #003399;
+  fill-rule:nonzero;
 }
