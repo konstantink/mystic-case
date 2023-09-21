@@ -1,32 +1,22 @@
 import React from "react";
 
-import { createStyles, Theme } from "@material-ui/core";
-import { withStyles, WithStyles } from "@material-ui/styles";
+import { styled } from "@mui/material/styles";
 
-import WelcomeLayout from "../components/WelcomeLayout";
+import { WelcomeLayout } from "../components/WelcomeLayout";
 import SignInForm from "../components/SignInForm";
 
+const SignIn: React.FunctionComponent<{ className?: string }> = ({ className }) => (
+    <React.Fragment>
+        <div className={className}>
+            <WelcomeLayout>
+                <SignInForm />
+            </WelcomeLayout>
+        </div>
+    </React.Fragment>
+);
 
-interface SignInProps extends WithStyles<typeof styles> { };
-
-const styles = (theme: Theme) => createStyles({
-    root: {
-        height: "100vh",
-        margin: "auto",
-        display: "flex",
-    }
-})
-
-const SignIn: React.FunctionComponent<SignInProps> = ({ classes }: SignInProps) => {
-    return (
-        <React.Fragment>
-            <div className={classes.root}>
-                <WelcomeLayout>
-                    <SignInForm />
-                </WelcomeLayout>
-            </div>
-        </React.Fragment>
-    )
-}
-
-export default withStyles(styles)(SignIn);
+export default styled(SignIn)(() => ({
+    height: "100vh",
+    margin: "auto",
+    display: "flex",
+}));

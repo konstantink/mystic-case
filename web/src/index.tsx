@@ -1,36 +1,52 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import { createRoot } from "react-dom/client";
 
-import { connectRouter } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
-import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import App from "./App";
 
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import "./index.css";
 
-import './index.css';
+const theme = createTheme({
+    components: {
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    fontFamily: "Pangram",
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                input: {
+                    fontFamily: "Pangram",
+                },
+            },
+        },
+        MuiFormHelperText: {
+            styleOverrides: {
+                root: {
+                    fontFamily: "Pangram",
+                },
+            },
+        },
+    },
+});
 
-const history = createBrowserHistory();
-const store = createStore(combineReducers({
-    router: connectRouter(history),
-}));
-const theme = createMuiTheme({});
-
-ReactDOM.render(
-    <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <Provider store={store}>
-                <App history={history}/>
-            </Provider>
-        </ThemeProvider>
-    </React.StrictMode>,
-    document.getElementById('root')
-);
+const rootElement = document.getElementById("root");
+if (rootElement) {
+    console.log("Creating root element");
+    const root = createRoot(rootElement);
+    root.render(
+        <React.StrictMode>
+            <ThemeProvider theme={theme}>
+                <App />
+            </ThemeProvider>
+        </React.StrictMode>
+    );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// serviceWorker.unregister();

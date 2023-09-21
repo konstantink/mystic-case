@@ -1,17 +1,16 @@
-import * as React from "react"
+import * as React from "react";
 
-import SvgIcon from "@material-ui/core/SvgIcon";
+import SvgIcon from "@mui/material/SvgIcon";
 import { animated, useSpring } from "@react-spring/web";
 
 import { BackgroundPart } from "./Clock";
-
 
 const PeoplePart = ({ delay }: {delay: number}) => {
     const props = useSpring({
         from: { scale: 0, rotate: -90 },
         to: { scale: 1, rotate: 0 },
         config: { duration: 750 },
-        delay: delay,
+        delay,
     });
 
     return (
@@ -87,7 +86,7 @@ const PeoplePart = ({ delay }: {delay: number}) => {
                 </g>
             </defs>
 
-            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box", ...props}}>
+            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box", ...props }}>
                 <use href="#centre" x="30" y="30" />
                 <g>
                     <use href="#left-guy-body" x="34.2" y="81.05"/>
@@ -165,14 +164,14 @@ const PeoplePart = ({ delay }: {delay: number}) => {
                 </g>
             </animated.g>
         </React.Fragment>
-    )
-}
+    );
+};
 
 const FriendsIcon = ({ delay }: {delay: number}) => (
-        <SvgIcon viewBox="0 0 160 160">
-            <BackgroundPart delay={delay} />
-            <PeoplePart delay={delay} />
-        </SvgIcon>
-    );
+    <SvgIcon viewBox="0 0 160 160">
+        <BackgroundPart delay={delay} />
+        <PeoplePart delay={delay} />
+    </SvgIcon>
+);
 
 export default FriendsIcon;

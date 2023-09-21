@@ -1,0 +1,88 @@
+@use "@styles/variables.module.scss";
+
+.mc-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 48px 96px 0;
+    z-index: 10;
+}
+
+.mc-purple {
+    filter: brightness(1);
+}
+
+.mc-white {
+    filter: brightness(0) invert(1);
+}
+
+.mc-logo-purple {
+    background-color: #3A3185;
+    & svg > path {
+        fill: #fff;
+    }
+}
+
+.mc-logo-white {
+    background-color: #fff;
+    & svg > path {
+        fill: #3A3185;
+    }
+}
+
+.mc-header-menu-root {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    & a {
+        text-decoration: none;
+    }
+}
+
+.mc-header-menu-item-bordered {
+    border: 4px solid variables.$light-purple;
+    border-radius: 999px;
+    padding: 12px 32px;
+    position: relative;
+}
+
+.mc-header-menu-item-bordered-fill {
+    border-radius: 999px;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.mc-header-menu-item-container {
+    padding: 0 24px;
+    white-space: nowrap;
+    & a {
+        color: inherit; // "#fefefe",
+        font-family: "Pangram";
+        font-size: 21px;
+        font-weight: 700;
+        line-height: 38px;
+        letter-spacing: 0.8px;
+        text-decoration: none;
+    }
+}
+
+.mc-header-menu-logo-root {
+    align-items: center;
+    background-color: #fff;
+    border-radius: 48px;
+    display: flex;
+    height: 48px;
+    justify-content: center;
+    width: 48px;
+
+    & svg {
+        color: #3A3185;
+    }
+
+    &:not(:last-child) {
+        margin-left: 48px;
+        margin-right: 24px;
+    }
+}

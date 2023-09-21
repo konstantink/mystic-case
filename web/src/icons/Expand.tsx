@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
+import { SvgIconProps } from "@mui/material/SvgIcon";
 
 export const Expand = (rest: SvgIconProps) => (
     <svg width="38" height="38" viewBox="0 0 38 38" fill="none" {...rest}>

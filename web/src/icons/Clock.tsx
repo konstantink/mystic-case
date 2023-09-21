@@ -1,18 +1,18 @@
-import * as React from "react"
+import * as React from "react";
 import { animated, useSpring } from "react-spring";
 
-import { SvgIcon } from "@material-ui/core";
+import { SvgIcon } from "@mui/material";
 
 export const BackgroundPart = ({ delay }: {delay: number}) => {
     const props = useSpring({
         from: { scale: 0 },
         to: { scale: 1 },
         config: { duration: 500 },
-        delay: delay,
-    })
+        delay,
+    });
     return (
         <animated.circle style={{ transformOrigin: "center", transformBox: "fill-box", ...props }} cx="80" cy="80" r="80" fill="#938CD1"/>
-    )
+    );
 };
 
 const ClockPart = ({ delay }: {delay: number}) => {
@@ -20,7 +20,7 @@ const ClockPart = ({ delay }: {delay: number}) => {
         from: { scale: 0, rotate: -90 },
         to: { scale: 1, rotate: 0 },
         config: { duration: 750 },
-        delay: delay,
+        delay,
     });
 
     return (
@@ -41,7 +41,7 @@ const ClockPart = ({ delay }: {delay: number}) => {
                 <path id="clock-center" d="M5.00037 9.02784C7.22482 9.02784 9.0281 7.22457 9.0281 5.00012C9.0281 2.77568 7.22482 0.972412 5.00037 0.972412C2.77593 0.972412 0.972656 2.77568 0.972656 5.00012C0.972656 7.22457 2.77593 9.02784 5.00037 9.02784Z" fill="#365E7D"/>
             </defs>
 
-            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box",...props}}>
+            <animated.g style={{ transformOrigin: "center", transformBox: "fill-box", ...props }}>
                 <use xlinkHref="#clock-border" x="30" y="30"/>
                 <use xlinkHref="#clock-border-shadow" x="77.34" y="30"/>
                 <use xlinkHref="#clock-face" x="41.04" y="41.04"/>
@@ -60,8 +60,7 @@ const ClockPart = ({ delay }: {delay: number}) => {
             </animated.g>
         </React.Fragment>
     );
-}
-
+};
 
 const ClockIcon = ({ delay }: {delay: number}) => (
     <SvgIcon viewBox="0 0 160 160">

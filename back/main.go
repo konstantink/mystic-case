@@ -1,13 +1,11 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/adam-hanna/sessions"
-	"github.com/adam-hanna/sessions/auth"
-	"github.com/adam-hanna/sessions/store"
-	"github.com/adam-hanna/sessions/transport"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -20,23 +18,24 @@ type EnvConfig struct {
 	Env string
 }
 
-func initSessionsManager() {
-	seshStore := store.New(store.Options{})
-	seshAuth, err := auth.New(auth.Options{
-		Key: []byte("2ldKfvHU8qO0oFN2nPTyAXT6tfwHbu62YB1mU/XGFSrgrrmJFViapDsd8keQDbX6wSd3jOpwwHbI9UXZzf97Eg=="),
-	})
+// func initSessionsManager() {
+// 	// seshStore := store.New(store.Options{})
+// 	seshStore := &api.SessionStore{}
+// 	seshAuth, err := auth.New(auth.Options{
+// 		Key: []byte("2ldKfvHU8qO0oFN2nPTyAXT6tfwHbu62YB1mU/XGFSrgrrmJFViapDsd8keQDbX6wSd3jOpwwHbI9UXZzf97Eg=="),
+// 	})
 
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	seshTran := transport.New(transport.Options{
-		HTTPOnly: true,
-		Secure:   false, // Should depend on environment: prod or dev
-	})
+// 	seshTran := transport.New(transport.Options{
+// 		HTTPOnly: true,
+// 		Secure:   false, // Should depend on environment: prod or dev
+// 	})
 
-	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * time.Hour})
-}
+// 	sesh = sessions.New(seshStore, seshAuth, seshTran, sessions.Options{ExpirationDuration: 24 * time.Hour})
+// }
 
 // func issueSession(c *gin.Context, sesh *sessions.Service, u *models.User) error {
 // 	csrf, err := generateKey()
@@ -66,7 +65,7 @@ func initSessionsManager() {
 func main() {
 	var router = gin.Default()
 
-	initSessionsManager()
+	// initSessionsManager()
 
 	// initRoutes(router)
 
@@ -95,9 +94,10 @@ func main() {
 	// - Credentials share
 	// - Preflight requests cached for 12 hours
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "x-mystic-case-request-id", "x-mystic-case-session-id"},
+		// AllowOrigins:     []string{"http://127.0.0.1:3000", "http://localhost:3000", "http://mysticcase.io:3000", "http://mysticcase.io", "http://172.20.0.4"},
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "x-mystic-case-request-id", "x-mystic-case-session-id", "authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		// AllowOriginFunc: func(origin string) bool {
@@ -105,6 +105,7 @@ func main() {
 		// },
 		MaxAge: 12 * time.Hour,
 	}))
+	router.MaxMultipartMemory = 2 << 20
 	initRoutes(router)
-	router.Run("127.0.0.1:8085")
+	router.Run(fmt.Sprintf("%s:8085", os.Getenv("MYSTIC_CASE_DOMAIN")))
 }

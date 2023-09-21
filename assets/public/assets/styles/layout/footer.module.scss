@@ -1,0 +1,60 @@
+@use "@styles/variables.module.scss";
+
+.mc-footer-row {
+    background: #231E52;
+    display: flex;
+    justify-content: center;
+    padding: 120px 96px;
+}
+
+.mc-footer-container {
+    display: grid;
+    grid-template-columns: 30% 10% 40% 1fr;
+    // max-width: calc(1920px - 2 * ${theme.spacing(12)});
+    row-gap: 60px;
+    width: 100%;
+}
+
+.mc-footer-link {
+    margin-bottom: 24px;
+    a {
+        color: #FEFEFE;
+        font-family: Pangram;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.4%;
+        line-height: 40px;
+        text-decoration: none;
+    }
+}
+
+.mc-footer-copy {
+    color: #938CD180;
+    font-family: Pangram;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    line-height: 28px;
+}
+
+.mc-footer-logo-wrapper {
+    align-items: center;
+    background-color: variables.$light-white;
+    border-radius: 96px;
+    display: flex;
+    height: 96px;
+    justify-content: center;
+    width: 96px;
+
+    & svg {
+        color: variables.$purple;
+        height: 48px;
+        width: 48px;
+    }
+
+    &:not(:last-child) {
+        margin: {
+            right: 48px;
+        }
+    }
+}

@@ -3,19 +3,22 @@ package api
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
-	"github.com/adam-hanna/sessions"
-	"github.com/adam-hanna/sessions/user"
+	// "github.com/adam-hanna/jwt-auth/jwt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
+	"github.com/golang-jwt/jwt"
+	"github.com/mingrammer/cfmt"
 	"github.com/mystic-case/back/models"
 	"github.com/pkg/errors"
-	"github.com/qor/validations"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -41,95 +44,166 @@ func hashPassword(password string) (hashedPassword string) {
 	return
 }
 
-// tryLogin tries to login user, basically checks if the username exists in DA
+func createPairOfTokensFromRefreshToken(user models.User, refreshToken models.Token) (tokens *models.TokensPair, err error) {
+	tokens, err = generatePairOfTokens(user)
+	if err != nil {
+		return nil, err
+	}
+
+	tokens.AccessToken.RefreshedFromID = &refreshToken.ID
+	tokens.RefreshToken.RefreshedFromID = &refreshToken.ID
+
+	err = tokenStore.SaveUserTokens(tokens)
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't store tokens %s", err.Error()))
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func createPairOfTokens(user models.User) (tokens *models.TokensPair, err error) {
+	tokens, err = generatePairOfTokens(user)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tokenStore.SaveUserTokens(tokens)
+	if err != nil {
+		log.Print(cfmt.Swarningf("[WARNING] can't store tokens %s", err.Error()))
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func generatePairOfTokens(user models.User) (tokens *models.TokensPair, err error) {
+	// var userID uuid.UUID
+
+	secret := os.Getenv("MYSTIC_CASE_SECRET_KEY")
+	tokens = new(models.TokensPair)
+
+	tokens.AccessToken.ID, _ = uuid.NewV4()
+	tokens.AccessToken.ExpiresAt = time.Now().Add(time.Minute * 15).Unix()
+	tokens.AccessToken.Type = models.AccessToken
+	tokens.AccessToken.UserID = user.ID
+	tokens.AccessToken.Active = true
+	tokens.RefreshToken.ID, _ = uuid.NewV4()
+	tokens.RefreshToken.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
+	tokens.RefreshToken.Type = models.RefreshToken
+	tokens.RefreshToken.UserID = user.ID
+	tokens.RefreshToken.Active = true
+
+	// Creating Access Token
+	atClaims := jwt.MapClaims{}
+	// atClaims["authorized"] = true
+	atClaims["sub"] = user.ID
+	atClaims["aud"] = "http://mysticcase.io/api/v1"
+	atClaims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+	atClaims["username"] = user.Username
+	atClaims["admin"] = user.IsAdmin
+	atClaims["uuid"] = tokens.AccessToken.ID
+	atClaims["exp"] = tokens.AccessToken.ExpiresAt
+	atClaims["iss"] = "mystic-case.co.uk"
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	tokens.AccessToken.Value, err = at.SignedString([]byte(secret))
+	if err != nil {
+		return nil, err
+	}
+
+	// Creating Refresh Token
+	rtClaims := jwt.MapClaims{}
+	rtClaims["sub"] = user.ID
+	rtClaims["refresh_uuid"] = tokens.RefreshToken.ID
+	rtClaims["access_uuid"] = tokens.AccessToken.ID
+	rtClaims["exp"] = tokens.RefreshToken.ExpiresAt
+	rtClaims["iss"] = "mystic-case.co.uk"
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	tokens.RefreshToken.Value, err = rt.SignedString([]byte(secret))
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+// tryLogin tries to login user, basically checks if the username exists in DB
 // and password corresponds to this user
 func tryLogin(u *models.User, password string) (bool, error) {
-	// var errors = validate.NewErrors()
-	// var hashedPassword = hashPassword(password)
-
-	if models.DB.Where("username = ?", u.Username).Find(u); u.ID == uuid.Nil {
-		models.DB.AddError(validations.NewError(u, "Password", "Password is incorrect"))
-		// errors.Add("Username", "Username and password don't match")
-		return false, validations.NewError(u, "Password", "Password is incorrect")
-	} else if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)); err != nil {
-		log.Printf("[WARNING] Password is incorrect: %s, expected: %s", password, u.Password)
-		models.DB.AddError(validations.NewError(u, "Username", "Username and password don't match"))
-		return false, validations.NewError(u, "Username", "Username and password don't match")
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)); err != nil {
+		// log.Printf("[WARNING] Password is incorrect: %s, expected: %s", password, u.Password)
+		log.Print(cfmt.Swarningf("[WARNING] Passwords do not match: %s", err.Error()))
+		// models.DB.AddError(validations.NewError(u, "Username", "Username and password don't match"))
+		// return false, validations.NewError(u, "Username", "Username and password don't match")
+		return false, errors.New("Username and password don't match")
 	}
 
 	return true, nil
 }
 
-func issueSession(c *gin.Context, sesh *sessions.Service, u *models.User) (*user.Session, error) {
-	csrf, err := generateKey()
-	if err != nil {
-		log.Fatal("Something happened during csrf generation")
-		return nil, err
-	}
+// func checkSessionAndInvalidate(r *http.Request) error {
+// 	session, err := sesh.GetUserSession(r)
+// 	if err != nil {
+// 		log.Print(cfmt.Sinfof("[INFO] Houston, we've got a problem with session %s", err.Error()))
+// 		return err
+// 	}
 
-	csrfJSON := SessionJSON{CSRF: csrf}
+// 	if session != nil {
+// 		userSession, err := models.GetSession(session.ID)
+// 		err = userSession.Invalidate(false)
+// 		if err != nil {
+// 			log.Print(cfmt.Swarningf("[WARNING] can't invalidate session %s %s", userSession.ID, err.Error()))
+// 			return err
+// 		}
+// 	}
 
-	JSONBytes, err := json.Marshal(csrfJSON)
-	if err != nil {
-		log.Fatalf("Couldn't marshal csrf structure: %s", err)
-		return nil, err
-	}
+// 	return nil
+// }
 
-	session, err := sesh.IssueUserSession(u.ID.String(), string(JSONBytes[:]), c.Writer)
-	if err != nil {
-		log.Fatalf("Couldn't issue session: %s", err)
-		return nil, err
-	}
-
-	log.Printf("Issued session id: %s; user id: %s", session.ID, session.UserID)
-	log.Printf("Issued csrf: %s", csrf)
-	// c.SetCookie("csrf", csrf, 3600, "/", "localhost", false, false) // TODO: should depend on the environment
-	return session, nil
-}
-
-// LoginHandlerFunc handler for the Login/Signin action
-func LoginHandlerFunc(c *gin.Context) {
+// LoginTokenHandlerFunc is an alternative handler for Login action
+// that creates an access/refresh tokens instead of CSRF
+func LoginTokenHandlerFunc(c *gin.Context) {
 	var (
 		input struct {
 			Login    string `json:"username"`
 			Password string `json:"password"`
 		}
-		user       models.User
-		sesh       *sessions.Service
-		tmpCookies SessionJSON
-		tmp, _     = c.Get("sessionManager")
+		user models.User
+		err  error
 	)
-
-	sesh = tmp.(*sessions.Service)
 
 	c.ShouldBind(&input)
 
-	err := models.DB.Where("username = ?", input.Login).First(&user).Error
+	err = models.DB.Where("username = ?", input.Login).First(&user).Error
 	if err != nil {
-		log.Printf("[WARNING] Can't find user %s in system", input.Login)
-		c.JSON(http.StatusUnauthorized, map[string]string{"Username": "Username and password don't match"})
+		log.Print(cfmt.Swarningf("[WARNING] Can't find user %s in system", input.Login))
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Username and password don't match"})
+		return
 	}
 
 	if ok, errors := tryLogin(&user, input.Password); ok {
-		session, err := issueSession(c, sesh, &user)
+		token, err := createPairOfTokens(user)
 		if err != nil {
-			log.Printf("[ERROR] Can't login user")
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
+			return
+		}
+		// tokenJSON, err := json.Marshal(token)
+		if err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
+			return
 		}
 
-		// log.Printf("Issued session id: %s", sesh.)
-		err = json.Unmarshal([]byte(session.JSON), &tmpCookies)
+		// _, err = sesh.IssueUserSession(user.ID.String(), string(tokenJSON), c.Writer)
 		if err != nil {
-			log.Printf("[ERROR] Couldn't unmarshal issued cookies: %s", err)
-			c.JSON(http.StatusInternalServerError, err)
+			log.Print(cfmt.Serror("[ERROR] Can't login user"))
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+			return
 		}
-
-		c.SetCookie("csrf", tmpCookies.CSRF, 3600*24, "/", "", false, false)
-		// c.SetCookie("csrf", csrf, 3600, "/", "localhost", false, false)
-		// log.Printf(c.GetHeader("Set-Cookie"))
-		c.JSON(http.StatusOK, map[string]bool{"success": true})
+		// c.SetSameSite(http.SameSiteNoneMode)
+		// c.SetCookie("session", user.ID.String(), 3600*24, "/", os.Getenv("MYSTIC_CASE_DOMAIN"), false, true)
+		c.JSON(http.StatusOK, gin.H{"success": true, "access_token": token.AccessToken.Value, "refresh_token": token.RefreshToken.Value})
 	} else {
-		c.JSON(http.StatusUnauthorized, errors.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": errors.Error()})
 	}
 }
 
@@ -138,29 +212,116 @@ func LoginHandlerFunc(c *gin.Context) {
 // user in the DB. If something wrong happens then sends
 // errors to the front.
 func RegisterHandlerFunc(c *gin.Context) {
-	var user models.User
+	var (
+		input struct {
+			Login    string `json:"username"`
+			Password string `json:"password"`
+			// Email    string `json:"email"`
+		}
+		user models.User
+	)
 
-	err := c.ShouldBind(&user)
+	err := c.ShouldBind(&input)
 	if err != nil {
-		log.Printf("[ERROR] %s", err.Error())
+		log.Print(cfmt.Serrorf("[ERROR] %s", err.Error()))
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	user = models.User{
+		Username: input.Login,
+		Email:    input.Login,
+		Password: input.Password,
 	}
 
 	result := models.DB.Create(&user).Error
-	// if err != nil {
-	// 	log.Printf("[WARNING] %s", err)
-	// 	c.JSON(http.StatusInternalServerError, map[string]error{"error": err})
-	// 	return
-	// }
 
 	if result != nil {
-		log.Printf("[WARNING] Incorrect input: %s", result.Error())
+		log.Print(cfmt.Swarningf("[WARNING] Incorrect input: %s", result.Error()))
 		response := gin.H{}
 		for _, err := range strings.Split(result.Error(), ",") {
 			fieldWithMsg := strings.Split(err, ":")
 			response[fieldWithMsg[0]] = fieldWithMsg[1] // .(validations.Error).Message
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "errors": response})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "errors": response})
 	} else {
-		c.JSON(http.StatusCreated, gin.H{"status": "success"})
+		c.JSON(http.StatusCreated, gin.H{"success": true})
+	}
+}
+
+// TokenRefreshHandlerFunc is a handler to process POST requests
+// for tokens refresh. It creates a new pair of tokens and invalidates
+// current refresh token. In case invalidated token is sent
+// invalidates all issued tokens
+func TokenRefreshHandlerFunc(c *gin.Context) {
+	var (
+		input struct {
+			RefreshToken string `json:"refresh_token"`
+		}
+		accessToken  models.Token
+		refreshToken models.Token
+		user         models.User
+	)
+
+	_ = c.ShouldBind(&input)
+
+	parsedToken, err := parseToken(input.RefreshToken)
+
+	refreshTokenID, _ := parsedToken.Claims.(jwt.MapClaims)["refresh_uuid"].(string)
+	accessTokenID, _ := parsedToken.Claims.(jwt.MapClaims)["access_uuid"].(string)
+	userID, _ := parsedToken.Claims.(jwt.MapClaims)["sub"].(string)
+	models.GetTokenByID(&refreshToken, refreshTokenID, models.RefreshTokens)
+	models.GetTokenByID(&accessToken, accessTokenID, models.AccessTokens)
+	err = models.GetUserByID(&user, userID)
+
+	if !refreshToken.Active {
+
+		log.Print(cfmt.Swarningf("[WARNING] the token used %s has been already invalidated", refreshToken.ID))
+		// invalidate all tokens
+		user.InvalidateTokenTree(refreshTokenID)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"success": false, "error": "incorrect refresh token"})
+		return
+	}
+
+	accessToken.Invalidate()
+	refreshToken.Invalidate()
+
+	tokens, err := createPairOfTokensFromRefreshToken(user, refreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "access_token": tokens.AccessToken.Value, "refresh_token": tokens.RefreshToken.Value})
+}
+
+// TokenHealthHandlerFunc is an endpoint to check the state of the
+// token. In case token is valid return successful response. If
+// token is invalid then return 401 to initiate token refresh process
+func TokenHealthHandlerFunc(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+// WhoamiHandlerFunc tries to identify the user by session cookie or
+// if available access_token. If it's not available, then issue new
+// session only for the guest user. If session is expired and there's
+// no access token, then invalidate current session and re-issue new one.
+// If access_token is available, that means that user was logged in, so
+// he should have refresh token as well, so we return 401 and let him
+// go trhough refresh token process
+func WhoamIHandlerFunc(c *gin.Context) {
+	var user models.User
+	if userID, exists := c.Get("user_id"); exists {
+		err := models.GetUserByID(&user, userID.(string))
+		if err != nil {
+			log.Print(cfmt.Swarning("[WARNING] user not found"))
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"success": false, "error": "user not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"success": true, "user": user})
+	} else {
+		log.Print(cfmt.Swarning("[WARNING] user not found"))
+		c.JSON(http.StatusOK, gin.H{"success": true, "user": "anonymous"})
 	}
 }

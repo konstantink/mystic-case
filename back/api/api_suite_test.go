@@ -22,12 +22,14 @@ func setupRouter() *gin.Engine {
 	authGroup := router.Group("/u")
 	{
 		authGroup.POST("/signup", uut.RegisterHandlerFunc)
-		authGroup.POST("/signin", uut.LoginHandlerFunc)
+		authGroup.POST("/signin", uut.LoginTokenHandlerFunc)
+		authGroup.POST("/token/refresh", uut.TokenRefreshHandlerFunc)
 	}
 
 	productsGroup := router.Group("/products")
 	{
 		productsGroup.GET("/featured", uut.GetFeaturedProductsList)
+		productsGroup.POST("/product", uut.ProductHandlerFunc)
 	}
 
 	return router
