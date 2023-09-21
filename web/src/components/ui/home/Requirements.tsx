@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { animated, config, useTransition } from "@react-spring/web";
 
-import styles from "@styles/ui/home/requirements.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export interface Requirement {
     icon: React.ReactElement;

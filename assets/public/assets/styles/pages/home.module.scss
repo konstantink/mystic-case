@@ -7,9 +7,9 @@
 }
 
 .mc-stripe-row {
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 .mc-requirements-row {
@@ -21,8 +21,8 @@
 .mc-products-row {
     @include mixins.mc-bg(variables.$light-white);
     padding: {
-        bottom: 120px;
-        top: 160px;
+        bottom: 120px !important;
+        top: 160px !important;
     }
 }
 
@@ -30,19 +30,19 @@
     @include mixins.mc-bg(variables.$dark-purple);
     @include mixins.mc-shadow-top;
     padding: {
-        bottom: 160px;
-        top: 160px;
+        bottom: 160px !important;
+        top: 160px !important;
     }
 }
 
 .mc-pmc-row {
     padding: {
-        top: 160px;
+        top: 160px !important;
     }
 }
 
 .mc-dsc-row {
-    padding: 200px 96px;
+    padding: 200px 96px !important;
 }
 
 .mc-feedback-row {
@@ -51,13 +51,12 @@
     display: flex;
     filter: drop-shadow(2px -4px 6px black);
     flex-direction: column;
-    padding: 168px 96px;
+    padding: 168px 96px !important;
 }
 
 .mc-faq-row {
     background: variables.$white;
     display: flex;
     justify-content: center;
-    padding: 160px 96px;
-    // width: 100%;
+    padding: 160px 96px !important;
 }

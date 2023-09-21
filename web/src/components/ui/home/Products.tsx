@@ -8,7 +8,7 @@ import { getFeaturedProducts } from "@mysticcase/api/api";
 import { ProductItem } from "@mysticcase/types";
 import { ButtonLink, ProductsList } from "@mysticcase/ui/common";
 
-import styles from "@styles/ui/home/products.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 const sortFeaturedProducts = (left: ProductItem, right: ProductItem) => {
     if (left.isNew && !right.isNew) {

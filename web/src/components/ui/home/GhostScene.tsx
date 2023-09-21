@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 
 import { Stars } from "@mysticcase/ui";
 
-import styles from "@styles/ui/home/main-scene.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export const GhostScene = () => {
     return (

@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 
 import { ButtonLink } from "@mysticcase/ui";
 
-import styles from "@styles/ui/home/home.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export const PlanetMysticCase = () => (
     <Box component="div">

@@ -3,7 +3,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import styles from "@styles/ui/home/home.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export const VideoIntroduction = () => {
     const [video, swapVideo] = React.useState<boolean>(false);

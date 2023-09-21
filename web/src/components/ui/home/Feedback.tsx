@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight } from "@mysticcase/icons/Arrows";
 import { AvatarGirl1, AvatarGirl2, AvatarMan1, AvatarMan2, AvatarMan3 } from "@mysticcase/icons/Avatars";
 import { FunctionComponent } from "react";
 
-import styles from "@styles/ui/home/home.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 const feedbacks = [{
     avatar: AvatarMan1,
@@ -98,7 +98,7 @@ export const FeedbackSection = () => {
     React.useEffect(() => {
         const interval: number = window.setInterval(() => {
             api.slideToNextItem();
-        }, 3000);
+        }, 4000);
 
         return () => {
             window.clearInterval(interval);

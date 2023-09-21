@@ -11,7 +11,7 @@ import { styled } from "@mui/material/styles";
 
 import { Collapse, Expand } from "@mysticcase/icons/Expand";
 
-import styles from "@styles/ui/home/home.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 interface Question {
     question: string,

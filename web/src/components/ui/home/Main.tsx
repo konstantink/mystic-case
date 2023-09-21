@@ -8,7 +8,7 @@ import { ButtonLink } from "@mysticcase/ui";
 
 import GhostScene from "./GhostScene";
 
-import styles from "@styles/ui/home/main.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export const Main = () => (
     <Box>
@@ -18,7 +18,7 @@ export const Main = () => (
             </Grid>
             <Grid xs={6} className={styles["mc-home-text-container"]}
             >
-                <Typography variant="h1" sx={{ color: "#FFD644" }}>
+                <Typography variant="h1" className={styles["mc-color-yellow"]}>
                     Challenge your brain
                 </Typography>
                 <Typography variant="h1" sx={{ color: "#FFF" }} gutterBottom>

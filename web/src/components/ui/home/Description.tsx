@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 
 import { ButtonLink } from "@mysticcase/ui";
 
-import styles from "@styles/ui/home/home.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 const BulletIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">

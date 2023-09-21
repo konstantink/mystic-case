@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 
-import styles from "@styles/ui/home/features.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export type Feature = {
     name: string;
@@ -41,7 +41,7 @@ export const Features = ({ content }: FeaturesProps) => (
             <Grid xs={4}></Grid>
             <Grid xs={8}>
                 <Typography className={styles["mc-features-interactive-text"]} variant="h2">
-                    <span className={styles["mc-features-yellow-text"]}>Mystic case</span> is an interactive game you can play on the table
+                    <span className={styles["mc-color-yellow"]}>Mystic case</span> is an interactive game you can play on the table
                 </Typography>
             </Grid>
         </Grid>

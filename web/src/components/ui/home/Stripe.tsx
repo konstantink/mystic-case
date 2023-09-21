@@ -4,7 +4,7 @@ import Marquee from "react-fast-marquee";
 import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import styles from "@styles/ui/home/stripe.module.scss";
+import styles from "@styles/ui/home.module.scss";
 
 export const Stripe = ({ children }: React.PropsWithChildren<BoxProps>) => (
     <Box className={styles["mc-stripe-container"]} component="div">
